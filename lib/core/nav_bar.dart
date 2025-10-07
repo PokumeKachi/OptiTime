@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class _NavButton extends StatefulWidget {
-<<<<<<< HEAD
   const _NavButton({
     super.key,
     required this.icon,
@@ -12,7 +11,6 @@ class _NavButton extends StatefulWidget {
   final Icon icon;
   final int? targetIndex;
   final ValueChanged<int?> clickEvent;
->>>>>>> resign-temp
 
   @override
   State<_NavButton> createState() => _NavButtonState();
@@ -23,7 +21,6 @@ class _NavButtonState extends State<_NavButton> {
   Widget build(BuildContext context) {
     return Expanded(
       child: SizedBox.expand(
-<<<<<<< HEAD
         child: (widget.targetIndex == null)
             ? ElevatedButton.icon(label: widget.icon, onPressed: () {})
             : IconButton(
@@ -32,25 +29,21 @@ class _NavButtonState extends State<_NavButton> {
                   widget.clickEvent(widget.targetIndex);
                 },
               ),
->>>>>>> resign-temp
       ),
     );
   }
 }
 
 class Class extends StatefulWidget {
-<<<<<<< HEAD
   const Class({super.key, required this.clickEvent});
 
   final ValueChanged<int?> clickEvent;
->>>>>>> resign-temp
 
   @override
   State<Class> createState() => _ClassState();
 }
 
 class _ClassState extends State<Class> {
-<<<<<<< HEAD
   static const navItems = [
     {'icon': Icons.delete, 'target': 1},
     {'icon': Icons.energy_savings_leaf, 'target': 2},
@@ -74,7 +67,6 @@ class _ClassState extends State<Class> {
             clickEvent: widget.clickEvent,
           );
         }).toList(),
->>>>>>> resign-temp
       ),
     );
   }
