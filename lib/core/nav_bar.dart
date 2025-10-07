@@ -52,14 +52,12 @@ class _ClassState extends State<Class> {
     {'icon': Icons.settings, 'target': 4},
   ];
 
->>>>>>> resign-temp
   @override
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.08,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-<<<<<<< HEAD
         children: navItems.map((item) {
           return _NavButton(
             icon: Icon(item['icon'] as IconData),

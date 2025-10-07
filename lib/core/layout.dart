@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'nav_bar.dart' as NavBar;
 
 import 'package:todo/pages/settings.dart' as SettingsPage;
+
+import 'nav_bar.dart' as NavBar;
 
 class Class extends StatefulWidget {
   const Class({super.key});
@@ -35,17 +36,17 @@ class _ClassState extends State<Class> {
       Container(),
 
       Container(
-        color: Colors.black,
+        color: colorScheme.background,
         child: Center(child: Text('trash bin')),
       ),
 
       Container(
-        color: Colors.green,
+        color: colorScheme.background,
         child: Center(child: Text('tree')),
       ),
 
       Container(
-        color: Colors.red,
+        color: colorScheme.tertiary,
         child: Center(child: Text('alarms')),
       ),
 
@@ -74,7 +75,6 @@ class _ClassState extends State<Class> {
           ),
         ],
       ),
-      // body: Center(child: pages[pageIndex]),
       bottomNavigationBar: NavBar.Class(clickEvent: onNavigationButtonClick),
     );
   }
