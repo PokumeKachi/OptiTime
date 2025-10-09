@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage_plus/get_storage_plus.dart';
 
 class ThemeModeProvider with ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
+  String _themeMode = GetStorage().read('themeMode') ?? 'System';
 
-  ThemeMode get themeMode => _themeMode;
+  String get themeMode => _themeMode;
 
-  set themeMode(ThemeMode themeData) {
+  set themeMode(String themeData) {
     _themeMode = themeData;
     notifyListeners();
   }
 
-  void changeThemeMode(ThemeMode newThemeMode) {
+  void changeThemeMode(String newThemeMode) {
     themeMode = newThemeMode;
   }
 }

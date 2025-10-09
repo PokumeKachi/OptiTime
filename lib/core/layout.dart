@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:todo/pages/settings.dart' as SettingsPage;
-
-import 'nav_bar.dart' as NavBar;
+import 'layout/nav_bar.dart' as NavBar;
+import 'layout/overlay.dart' as Overlay;
 
 class Class extends StatefulWidget {
   const Class({super.key});
@@ -12,70 +11,39 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> {
-  int pageIndex = 0;
+  final pageIndex = ValueNotifier<int>(0);
 
   void onNavigationButtonClick(int? targetIndex) {
-    setState(() {
-      if (targetIndex == null) {
-        return;
-      }
+    if (targetIndex == null) {
+      return;
+    }
 
-      if (pageIndex == targetIndex) {
-        pageIndex = 0;
-      } else {
-        pageIndex = targetIndex;
-      }
-    });
+    pageIndex.value = (pageIndex.value == targetIndex) ? 0 : targetIndex;
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    final pages = [
-      Container(),
-
-      Container(
-        color: colorScheme.background,
-        child: Center(child: Text('trash bin')),
-      ),
-
-      Container(
-        color: colorScheme.background,
-        child: Center(child: Text('tree')),
-      ),
-
-      Container(
-        color: colorScheme.tertiary,
-        child: Center(child: Text('alarms')),
-      ),
-
-      SettingsPage.Class(),
-    ];
-
     return Scaffold(
       body: Stack(
         children: [
           Column(children: [Text('todo task 1'), Text('todo task 2')]),
 
-          AnimatedSwitcher(
-            transitionBuilder: (child, animation) {
-              final offsetAnim = Tween<Offset>(
-                begin: const Offset(1.0, 0.0), // slide in from right
-                end: Offset.zero,
-              ).animate(animation);
+          ValueListenableBuilder<int>(
+            valueListenable: pageIndex,
+            builder: (_, value, __) => Overlay.Class(pageIndex: value),
+          ),
 
-              return SlideTransition(position: offsetAnim, child: child);
-            },
-            duration: const Duration(seconds: 5),
-            child: KeyedSubtree(
-              key: ValueKey(pageIndex),
-              child: pages[pageIndex],
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: SafeArea(
+              child: NavBar.Class(clickEvent: onNavigationButtonClick),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: NavBar.Class(clickEvent: onNavigationButtonClick),
+      // bottomNavigationBar: NavBar.Class(clickEvent: onNavigationButtonClick),
     );
   }
 }

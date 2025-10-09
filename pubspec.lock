@@ -99,11 +99,10 @@ packages:
   get_storage_plus:
     dependency: "direct main"
     description:
-      name: get_storage_plus
-      sha256: "665c4ceb8b696668bfbd3f42b701978325f1fdd211b23802da6c5f93e9de8a30"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0-beta.2.1"
+      path: get_storage_plus
+      relative: true
+    source: path
+    version: "1.0.0-beta.2"
   go_router:
     dependency: "direct main"
     description:

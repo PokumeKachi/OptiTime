@@ -12,14 +12,8 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> {
-  // static const List<String> themeModes = ['System', 'Light', 'Dark'];
-  static const Map<String, ThemeMode> themeModes = {
-    'System': ThemeMode.system,
-    'Light': ThemeMode.light,
-    'Dark': ThemeMode.dark,
-  };
-
-  String selectedThemeMode = themeModes.keys.toList()[0];
+  static const List<String> themeModes = ['System', 'Light', 'Dark'];
+  String selectedThemeMode = GetStorage().read('themeMode') ?? themeModes[0];
 
   @override
   Widget build(BuildContext context) {
@@ -33,20 +27,18 @@ class _ClassState extends State<Class> {
             DropdownButton<String>(
               value: selectedThemeMode,
               hint: Text('Select an option'),
-              items: themeModes.keys.toList().map((e) {
+              items: themeModes.map((e) {
                 return DropdownMenuItem(value: e, child: Text(e));
               }).toList(),
               onChanged: (value) {
-                setState(() {
-                  selectedThemeMode = value ?? 'System';
-                });
+                selectedThemeMode = value ?? 'System';
 
                 Provider.of<ThemeModeProvider>(
                   context,
                   listen: false,
-                ).changeThemeMode(themeModes[value]!);
+                ).changeThemeMode(value!);
 
-                print(themeModes[value]);
+                GetStorage().write('themeMode', value);
               },
             ),
           ],

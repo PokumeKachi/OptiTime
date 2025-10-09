@@ -15,9 +15,16 @@ flake-develop:
 		fi'
 
 compile: flake-develop
-	flutter
+	flutter run
 
 run: flake-develop
+	flutter run -d linux
+
+web-run: flake-develop
+	flutter run -d chrome
+	# flutter run
+
+apk-run: flake-develop
 	flutter run -d R58WA1L5GYY
 	# flutter run
 
