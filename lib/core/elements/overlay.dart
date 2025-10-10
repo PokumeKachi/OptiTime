@@ -47,8 +47,10 @@ class _ClassState extends State<Class> {
           begin: Offset(
             (widget.pageIndex == 0)
                 ? 0
-                : (widget.pageIndex - pages.length / 2) * 0.5,
-            0.2,
+                : (widget.pageIndex - pages.length / 2) * 0.8,
+            (widget.pageIndex == 0)
+                ? 0.8
+                : (1.75 - (pages.length / 2 - widget.pageIndex).abs()) * 0.5,
           ),
           end: Offset.zero,
         ).animate(animation);

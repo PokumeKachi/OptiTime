@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'layout/nav_bar.dart' as NavBar;
-import 'layout/overlay.dart' as Overlay;
+import 'elements/nav_bar.dart' as NavBar;
+import 'elements/overlay.dart' as Overlay;
 
 class Class extends StatefulWidget {
   const Class({super.key});
