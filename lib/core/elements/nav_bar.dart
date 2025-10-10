@@ -1,49 +1,28 @@
 import 'package:flutter/material.dart';
 
-class _NavButton extends StatefulWidget {
-  const _NavButton({
-    super.key,
-    required this.icon,
-    required this.targetIndex,
-    required this.clickEvent,
-  });
+class _NavButton extends StatelessWidget {
+  const _NavButton({super.key, required this.icon, required this.onClick});
 
-  final Icon icon;
-  final int? targetIndex;
-  final ValueChanged<int?> clickEvent;
+  final IconData icon;
+  final VoidCallback? onClick;
 
-  @override
-  State<_NavButton> createState() => _NavButtonState();
-}
-
-class _NavButtonState extends State<_NavButton> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: SizedBox.expand(
-        child: (widget.targetIndex == null)
-            ? ElevatedButton.icon(label: widget.icon, onPressed: () {})
-            : IconButton(
-                icon: widget.icon,
-                onPressed: () {
-                  widget.clickEvent(widget.targetIndex);
-                },
-              ),
+        child: onClick == null
+            ? ElevatedButton(onPressed: () {}, child: Icon(icon))
+            : IconButton(icon: Icon(icon), onPressed: onClick),
       ),
     );
   }
 }
 
-class Class extends StatefulWidget {
+class Class extends StatelessWidget {
   const Class({super.key, required this.clickEvent});
 
   final ValueChanged<int?> clickEvent;
 
-  @override
-  State<Class> createState() => _ClassState();
-}
-
-class _ClassState extends State<Class> {
   static const navItems = [
     {'icon': Icons.delete, 'target': 1},
     {'icon': Icons.energy_savings_leaf, 'target': 2},
@@ -52,17 +31,21 @@ class _ClassState extends State<Class> {
     {'icon': Icons.settings, 'target': 4},
   ];
 
+  void _handleClick(int? target) => clickEvent(target);
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.08,
+    final height = MediaQuery.of(context).size.height * 0.08;
+
+    return SizedBox(
+      height: height,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: navItems.map((item) {
+          final target = item['target'] as int?;
           return _NavButton(
-            icon: Icon(item['icon'] as IconData),
-            targetIndex: item['target'] as int?,
-            clickEvent: widget.clickEvent,
+            icon: item['icon'] as IconData,
+            onClick: target != null ? () => _handleClick(target) : null,
           );
         }).toList(),
       ),

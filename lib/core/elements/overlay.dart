@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-import 'package:todo/pages/settings.dart' as SettingsPage;
+import 'package:todo/overlays/settings.dart' as SettingsPage;
 
 class Class extends StatefulWidget {
   const Class({super.key, required this.pageIndex});
@@ -39,7 +39,7 @@ class _ClassState extends State<Class> {
     ];
 
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 250),
       switchInCurve: Curves.decelerate,
       switchOutCurve: Curves.easeIn,
       transitionBuilder: (child, animation) {
@@ -50,7 +50,7 @@ class _ClassState extends State<Class> {
                 : (widget.pageIndex - pages.length / 2) * 0.8,
             (widget.pageIndex == 0)
                 ? 0.8
-                : (1.75 - (pages.length / 2 - widget.pageIndex).abs()) * 0.5,
+                : (1.75 - (pages.length / 2 - widget.pageIndex).abs()) * 0.3,
           ),
           end: Offset.zero,
         ).animate(animation);

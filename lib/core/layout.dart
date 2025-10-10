@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'elements/body.dart' as Body;
 import 'elements/nav_bar.dart' as NavBar;
 import 'elements/overlay.dart' as Overlay;
 
@@ -26,7 +27,7 @@ class _ClassState extends State<Class> {
     return Scaffold(
       body: Stack(
         children: [
-          Column(children: [Text('todo task 1'), Text('todo task 2')]),
+          Body.Class(),
 
           ValueListenableBuilder<int>(
             valueListenable: pageIndex,
