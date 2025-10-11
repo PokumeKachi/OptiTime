@@ -25,7 +25,7 @@ web-run: flake-develop
 	# flutter run
 
 apk-run: flake-develop
-	flutter run -d R58WA1L5GYY
+	clear && flutter run -d R58WA1L5GYY
 	# flutter run
 
 watch: flake-develop

@@ -24,6 +24,7 @@
                 zlib
                 bzip2
                 jdk
+                firebase-tools
             ];
             sdkPath = "$HOME/.android-sdk";
         in
@@ -42,7 +43,7 @@
                     export ANDROID_SDK_ROOT=${sdkPath}
                     export ANDROID_HOME=$ANDROID_SDK_ROOT
                     export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath buildInputs}:$LD_LIBRARY_PATH
-                    export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/build-tools/34.0.0:$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+                    export PATH=$HOME/.pub-cache/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/build-tools/34.0.0:$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
                     export QT_QPA_PLATFORM=xcb
 
                     export CHROME_EXECUTABLE=$(which brave)

@@ -39,12 +39,12 @@ class _ClassState extends State<Class> {
             right: 0,
             bottom: 0,
             child: SafeArea(
+              top: false,
               child: NavBar.Class(clickEvent: onNavigationButtonClick),
             ),
           ),
         ],
       ),
-      // bottomNavigationBar: NavBar.Class(clickEvent: onNavigationButtonClick),
     );
   }
 }

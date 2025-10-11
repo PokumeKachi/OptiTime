@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:todo/core/task.dart';
+import 'package:todo/core/provider.dart';
 
 class _NavButton extends StatelessWidget {
   const _NavButton({super.key, required this.icon, required this.onClick});
@@ -11,7 +15,15 @@ class _NavButton extends StatelessWidget {
     return Expanded(
       child: SizedBox.expand(
         child: onClick == null
-            ? ElevatedButton(onPressed: () {}, child: Icon(icon))
+            ? ElevatedButton(
+                onPressed: () {
+                  Provider.of<TaskListProvider>(
+                    context,
+                    listen: false,
+                  ).addTask(Task());
+                },
+                child: Icon(icon),
+              )
             : IconButton(icon: Icon(icon), onPressed: onClick),
       ),
     );

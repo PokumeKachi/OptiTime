@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_storage_plus/get_storage_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/core/provider.dart';
 
@@ -13,12 +12,11 @@ class Class extends StatefulWidget {
 class _ClassState extends State<Class> {
   static const themeModes = ['System', 'Light', 'Dark'];
   late String selectedThemeMode;
-  final storage = GetStorage();
 
   @override
   void initState() {
     super.initState();
-    selectedThemeMode = storage.read('themeMode') ?? themeModes[0];
+    selectedThemeMode = context.read<ThemeModeProvider>().themeMode;
   }
 
   @override
@@ -40,7 +38,6 @@ class _ClassState extends State<Class> {
               context,
               listen: false,
             ).changeThemeMode(newThemeSelection);
-            storage.write('themeMode', newThemeSelection);
           },
         ),
       ),
