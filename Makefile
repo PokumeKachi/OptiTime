@@ -26,6 +26,7 @@ web-run: flake-develop
 
 apk-run: flake-develop
 	clear && flutter run -d R58WA1L5GYY
+	# | grep -v "I/VRI" | grep -v "I/InsetsController"
 	# flutter run
 
 watch: flake-develop

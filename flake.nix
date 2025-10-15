@@ -24,7 +24,6 @@
                 zlib
                 bzip2
                 jdk
-                firebase-tools
             ];
             sdkPath = "$HOME/.android-sdk";
         in

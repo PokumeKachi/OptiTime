@@ -4,6 +4,8 @@ import 'elements/body.dart' as Body;
 import 'elements/nav_bar.dart' as NavBar;
 import 'elements/overlay.dart' as Overlay;
 
+import 'config.dart' as Config;
+
 class Class extends StatefulWidget {
   const Class({super.key});
 
@@ -28,6 +30,23 @@ class _ClassState extends State<Class> {
       body: Stack(
         children: [
           Body.Class(),
+
+          ValueListenableBuilder<int>(
+            valueListenable: pageIndex,
+            builder: (context, value, __) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              final color = Colors.black.withOpacity(isDark ? 0.3 : 0.5);
+
+              return AnimatedOpacity(
+                duration: const Duration(milliseconds: Config.ANIMATION_DURATION),
+                opacity: value == 0 ? 0.0 : 1.0,
+                child: IgnorePointer(
+                  ignoring: value == 0,
+                  child: Container(color: color),
+                ),
+              );
+            },
+          ),
 
           ValueListenableBuilder<int>(
             valueListenable: pageIndex,

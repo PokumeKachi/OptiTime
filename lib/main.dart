@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get_storage_plus/get_storage_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 import 'dart:io';
 
 import 'core/layout.dart' as Layout;
 import 'core/config.dart' as Config;
 import 'core/provider.dart';
-import 'firebase_options.dart';
 
 const themeModeMap = {
   'System': ThemeMode.system,
@@ -19,7 +17,6 @@ const themeModeMap = {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GetStorage.init();
 
   final _storage = GetStorage();

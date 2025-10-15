@@ -1,33 +1,113 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'package:todo/core/task.dart';
-import 'package:todo/core/provider.dart';
 
-class _NavButton extends StatelessWidget {
-  const _NavButton({super.key, required this.icon, required this.onClick});
+import 'package:todo/core/config.dart' as Config;
+import 'dialogs.dart' as Dialogs;
+
+class _NavButton extends StatefulWidget {
+  const _NavButton({
+    super.key,
+    required this.icon,
+    required this.onClick,
+    this.targetIndex,
+  });
 
   final IconData icon;
   final VoidCallback? onClick;
+  final int? targetIndex;
 
   @override
-  Widget build(BuildContext context) {
-    return Expanded(
+  State<_NavButton> createState() => _NavButtonState();
+}
+
+class _NavButtonState extends State<_NavButton> {
+  @override
+  Widget build(BuildContext context) => Expanded(
       child: SizedBox.expand(
-        child: onClick == null
+        child: widget.onClick == null
             ? ElevatedButton(
                 onPressed: () {
-                  Provider.of<TaskListProvider>(
-                    context,
-                    listen: false,
-                  ).addTask(Task());
+                  showGeneralDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    barrierLabel: "Dismiss dialog",
+                    transitionDuration: const Duration(
+                      milliseconds: Config.ANIMATION_DURATION,
+                    ),
+                    pageBuilder: (context, anim1, anim2) => Align(
+                      alignment: Alignment.center,
+                      child: Dialogs.NewTask(),
+                    ),
+                    transitionBuilder: (context, anim1, anim2, child) =>
+                        SlideTransition(
+                          position:
+                              Tween<Offset>(
+                                begin: const Offset(0, -1),
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: anim1,
+                                  curve: Curves.easeOutQuart,
+                                ),
+                              ),
+                          child: ScaleTransition(
+                            scale: Tween<double>(begin: 0.7, end: 1.0).animate(
+                              CurvedAnimation(
+                                parent: anim1,
+                                curve: Curves.easeOutExpo,
+                              ),
+                            ),
+                            child: FadeTransition(
+                              opacity: Tween<double>(
+                                begin: 0.0,
+                                end: 1.0,
+                              ).animate(anim1),
+                              child: child,
+                            ),
+                          ),
+                        ),
+                  );
                 },
-                child: Icon(icon),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(Config.MIN_CORNER),
+                  ),
+                  elevation: 8,
+                ),
+                child: Icon(widget.icon),
               )
-            : IconButton(icon: Icon(icon), onPressed: onClick),
+            : IconButton(
+                icon: Icon(widget.icon),
+                onPressed: widget.onClick,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(
+                        widget.targetIndex == 1
+                            ? Config.MAX_CORNER
+                            : Config.MIN_CORNER,
+                      ),
+                      bottomLeft: Radius.circular(
+                        widget.targetIndex == 1
+                            ? Config.MAX_CORNER
+                            : Config.MIN_CORNER,
+                      ),
+                      topRight: Radius.circular(
+                        widget.targetIndex == 4
+                            ? Config.MAX_CORNER
+                            : Config.MIN_CORNER,
+                      ),
+                      bottomRight: Radius.circular(
+                        widget.targetIndex == 4
+                            ? Config.MAX_CORNER
+                            : Config.MIN_CORNER,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
       ),
     );
-  }
 }
 
 class Class extends StatelessWidget {
@@ -47,7 +127,8 @@ class Class extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height * 0.08;
+    final height =
+        MediaQuery.of(context).size.height * Config.NAV_BAR_HEIGHT_RATIO;
 
     return SizedBox(
       height: height,
@@ -57,6 +138,7 @@ class Class extends StatelessWidget {
           final target = item['target'] as int?;
           return _NavButton(
             icon: item['icon'] as IconData,
+            targetIndex: target,
             onClick: target != null ? () => _handleClick(target) : null,
           );
         }).toList(),
