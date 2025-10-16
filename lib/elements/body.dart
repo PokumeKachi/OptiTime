@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/core/provider.dart';
-import 'package:todo/core/task.dart';
+import 'package:todo/utils/provider.dart';
+import 'package:todo/utils/task.dart';
 
-import 'package:todo/core/config.dart' as Config;
+import 'package:todo/utils/config.dart' as Config;
 
 class Class extends StatelessWidget {
   const Class({super.key});
 
   @override
   Widget build(BuildContext context) {
+    print('body rebuild');
+
     final tasks = context.watch<TaskListProvider>().tasks;
 
     return SafeArea(

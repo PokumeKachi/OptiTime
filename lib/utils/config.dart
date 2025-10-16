@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 // Core properties
 
-const String TITLE = 'Todo';
+const TITLE = 'Todo';
+const PRELOAD_DURATION = Duration(milliseconds: 200);
 
 // Color scheming
 
@@ -20,12 +21,13 @@ final ColorScheme COLOR_SCHEME_DARK = ColorScheme.fromSeed(
 // Element sizing
 
 const NAV_BAR_HEIGHT_RATIO = 0.07;
+const NAV_BAR_WIDTH_RATIO = 0.03;
 
-const FONT_SIZE = {
-  "SMALL": 16.0,
-  "MEDIUM": 24.0,
-  "BIG": 32.0,
-};
+class FONT_SIZE {
+  static const SMALL = 16.0;
+  static const MEDIUM = 24.0;
+  static const BIG = 32.0;
+}
 
 // Element positioning
 
