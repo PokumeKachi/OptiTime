@@ -20,8 +20,8 @@ final ColorScheme COLOR_SCHEME_DARK = ColorScheme.fromSeed(
 
 // Element sizing
 
-const NAV_BAR_HEIGHT_RATIO = 0.07;
-const NAV_BAR_WIDTH_RATIO = 0.03;
+const NAV_BAR_RATIO = 0.08;
+// const NAV_BAR_WIDTH_RATIO = 0.05;
 
 class FONT_SIZE {
   static const SMALL = 16.0;

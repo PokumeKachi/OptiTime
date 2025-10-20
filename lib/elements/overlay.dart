@@ -5,26 +5,18 @@ import 'overlays/settings.dart' as SettingsPage;
 import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/provider.dart';
 
-class Class extends StatefulWidget {
+class Class extends StatelessWidget {
   const Class({super.key});
 
-  @override
-  State<Class> createState() => _ClassState();
-}
-
-class _ClassState extends State<Class> {
-  final pages = [
+  static final pages = [
     Container(),
-
-    Container(child: Center(child: Text('trash bin'))),
-
-    Container(child: Center(child: Text('tree'))),
-
-    Container(child: Center(child: Text('alarms'))),
-
+    Center(child: Text('trash bin')),
+    Center(child: Text('tree')),
+    Center(child: Text('alarms')),
     const SettingsPage.Class(),
   ];
-  late final medianIndex = pages.length / 2;
+
+  static final medianIndex = pages.length / 2;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +41,13 @@ class _ClassState extends State<Class> {
           transitionBuilder: (child, animation) {
             final opened = overlayIndex != 0;
 
-            final dx = opened ? (overlayIndex - medianIndex) * 0.8 : 0.0;
+            final height = MediaQuery.of(context).size.height;
+            final width = MediaQuery.of(context).size.width;
+            final portraitView = height > width;
+
+            final dx = portraitView
+                ? (opened ? (overlayIndex - medianIndex) * 0.8 : 0.0)
+                : 0.5;
             final dy = opened
                 ? (1.75 - (medianIndex - overlayIndex).abs()) * 0.3
                 : 0.5;
@@ -70,7 +68,6 @@ class _ClassState extends State<Class> {
               ),
             );
           },
-
           child: KeyedSubtree(
             key: ValueKey(overlayIndex),
             child: pages[overlayIndex],

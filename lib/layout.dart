@@ -20,13 +20,7 @@ class Class extends StatelessWidget {
         children: [
           const Body.Class(),
           const Overlay.Class(),
-          Positioned(
-            right: 0,
-            left: height > width ? 0 : null,
-            top: height > width ? null : 0,
-            bottom: 0,
-            child: SafeArea(top: false, child: const NavBar.Class()),
-          ),
+          const NavBar.Class(),
         ],
       ),
     );

@@ -18,7 +18,7 @@ class Class extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(
           bottom:
-              MediaQuery.of(context).size.height * Config.NAV_BAR_HEIGHT_RATIO,
+              MediaQuery.of(context).size.height * Config.NAV_BAR_RATIO,
         ),
         child: ListView.builder(
           itemCount: tasks.length,

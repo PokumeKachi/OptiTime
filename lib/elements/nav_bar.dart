@@ -12,7 +12,7 @@ class _NavButton extends StatefulWidget {
   final int? targetIndex;
 
   static void handleClick(BuildContext context, int? targetIndex) {
-    print(targetIndex);
+    debugPrint(targetIndex);
     if (targetIndex != null) {
       final provider = context.read<OverlayIndexProvider>();
       provider.overlayIndex = provider.overlayIndex == targetIndex
@@ -20,7 +20,6 @@ class _NavButton extends StatefulWidget {
           : targetIndex;
       return;
     }
-
     // showGeneralDialog(
     //                   context: context,
     //                   barrierDismissible: true,
@@ -76,12 +75,6 @@ class _NavButtonState extends State<_NavButton> {
 
   @override
   Widget build(BuildContext context) {
-    final leftCorner = Radius.circular(
-      widget.targetIndex == 1 ? Config.MAX_CORNER : Config.MIN_CORNER,
-    );
-    final rightCorner = Radius.circular(
-      widget.targetIndex == 4 ? Config.MAX_CORNER : Config.MIN_CORNER,
-    );
     return Expanded(
       child: SizedBox.expand(
         child: IconButton(
@@ -89,12 +82,7 @@ class _NavButtonState extends State<_NavButton> {
           onPressed: () => _NavButton.handleClick(context, widget.targetIndex),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: leftCorner,
-                bottomLeft: leftCorner,
-                topRight: rightCorner,
-                bottomRight: rightCorner,
-              ),
+              borderRadius: BorderRadius.circular(Config.MIN_CORNER),
             ),
             elevation: widget.targetIndex == null ? 8 : 0,
             backgroundColor: widget.targetIndex == null
@@ -126,25 +114,32 @@ class Class extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('navbar rebuild');
+
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final portraitView = height > width;
 
-    if (height > width) {
-      return SizedBox(
-        height: height * Config.NAV_BAR_HEIGHT_RATIO,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: _cachedButtons,
+    return Positioned(
+      left: portraitView ? 0 : null,
+      top: (!portraitView) ? 0 : null,
+      right: 0,
+      bottom: 0,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: portraitView
+              ? height * Config.NAV_BAR_RATIO
+              : double.infinity,
+          width: (!portraitView)
+              ? width * Config.NAV_BAR_RATIO
+              : double.infinity,
+          child: Flex(
+            direction: portraitView ? Axis.horizontal : Axis.vertical,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _cachedButtons,
+          ),
         ),
-      );
-    } else {
-      return SizedBox(
-        width: width * Config.NAV_BAR_WIDTH_RATIO,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: _cachedButtons,
-        ),
-      );
-    }
+      ),
+    );
   }
 }
