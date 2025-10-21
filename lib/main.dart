@@ -22,7 +22,10 @@ void main() async {
           create: (context) => TaskListProvider(_storage),
         ),
         ChangeNotifierProvider<OverlayIndexProvider>(
-          create: (context) => OverlayIndexProvider(0),
+          create: (context) => OverlayIndexProvider(),
+        ),
+        ChangeNotifierProvider<DialogIndexProvider>(
+          create: (context) => DialogIndexProvider(),
         ),
       ],
       child: const App(),
@@ -39,7 +42,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('app rebuild');
+    debugPrint('app rebuild');
 
     final themeMode = switch (context.watch<ThemeModeProvider>().themeMode) {
       'Light' => ThemeMode.light,

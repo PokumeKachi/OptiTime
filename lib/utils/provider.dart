@@ -31,7 +31,7 @@ class TaskListProvider with ChangeNotifier {
 
   List<Task> get tasks => List.unmodifiable(_tasks);
 
-  void addTask(Task task) {
+  void createTask(Task task) {
     _tasks.add(task);
     _save();
   }
@@ -46,10 +46,11 @@ class TaskListProvider with ChangeNotifier {
   }
 }
 
-class OverlayIndexProvider extends ValueNotifier<int> {
-  OverlayIndexProvider([int initial = 0]) : super(initial);
 
-  int get overlayIndex => value;
-  set overlayIndex(int newValue) => value = newValue;
+class OverlayIndexProvider extends ValueNotifier<int> {
+  OverlayIndexProvider() : super(0);
 }
 
+class DialogIndexProvider extends ValueNotifier<int> {
+  DialogIndexProvider() : super(0);
+}

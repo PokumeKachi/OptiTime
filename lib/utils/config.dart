@@ -18,6 +18,9 @@ final ColorScheme COLOR_SCHEME_DARK = ColorScheme.fromSeed(
   brightness: Brightness.dark,
 );
 
+const DIM_OPACITY = 0.3;
+const DIM_OPACITY_DARK = 0.5;
+
 // Element sizing
 
 const NAV_BAR_RATIO = 0.08;

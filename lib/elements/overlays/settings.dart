@@ -12,7 +12,7 @@ class Class extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('settings rebuild');
+    debugPrint('settings rebuild');
 
     final provider = context.watch<ThemeModeProvider>();
     final colorScheme = Theme.of(context).colorScheme;

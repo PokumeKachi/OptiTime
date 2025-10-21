@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/provider.dart';
-import 'dialogs.dart' as Dialogs;
+import 'dialog.dart' as Dialogs;
 
 class _NavButton extends StatefulWidget {
   const _NavButton({super.key, required this.icon, this.targetIndex});
@@ -12,13 +12,15 @@ class _NavButton extends StatefulWidget {
   final int? targetIndex;
 
   static void handleClick(BuildContext context, int? targetIndex) {
-    debugPrint(targetIndex);
+    debugPrint('Target index of navigation button is $targetIndex');
+    final overlayIndex = context.read<OverlayIndexProvider>();
+    final dialogIndex = context.read<DialogIndexProvider>();
+
     if (targetIndex != null) {
-      final provider = context.read<OverlayIndexProvider>();
-      provider.overlayIndex = provider.overlayIndex == targetIndex
-          ? 0
-          : targetIndex;
-      return;
+      overlayIndex.value =
+          overlayIndex.value == targetIndex ? 0 : targetIndex;
+    } else {
+      dialogIndex.value = 1;
     }
     // showGeneralDialog(
     //                   context: context,
@@ -65,14 +67,6 @@ class _NavButton extends StatefulWidget {
 }
 
 class _NavButtonState extends State<_NavButton> {
-  late final Widget _cachedDialog;
-
-  @override
-  void initState() {
-    super.initState();
-    _cachedDialog = const Dialogs.NewTask();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -136,7 +130,9 @@ class Class extends StatelessWidget {
           child: Flex(
             direction: portraitView ? Axis.horizontal : Axis.vertical,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: _cachedButtons,
+            children: portraitView
+                ? _cachedButtons
+                : _cachedButtons.reversed.toList(),
           ),
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'elements/body.dart' as Body;
 import 'elements/nav_bar.dart' as NavBar;
 import 'elements/overlay.dart' as Overlay;
+import 'elements/dialog.dart' as Dialog;
 
 import 'utils/config.dart' as Config;
 
@@ -11,7 +12,7 @@ class Class extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('layout rebuild');
+    debugPrint('layout rebuild');
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
@@ -21,6 +22,7 @@ class Class extends StatelessWidget {
           const Body.Class(),
           const Overlay.Class(),
           const NavBar.Class(),
+          const Dialog.Class(),
         ],
       ),
     );

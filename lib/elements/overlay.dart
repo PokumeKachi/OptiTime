@@ -9,7 +9,7 @@ class Class extends StatelessWidget {
   const Class({super.key});
 
   static final pages = [
-    Container(),
+    const SizedBox.shrink(),
     Center(child: Text('trash bin')),
     Center(child: Text('tree')),
     Center(child: Text('alarms')),
@@ -20,9 +20,9 @@ class Class extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final overlayIndex = context.watch<OverlayIndexProvider>().overlayIndex;
+    final overlayIndex = context.watch<OverlayIndexProvider>().value;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dimOpacity = isDark ? 0.8 : 0.3;
+    final dimOpacity = isDark ? Config.DIM_OPACITY_DARK : Config.DIM_OPACITY;
 
     return Stack(
       children: [
@@ -45,12 +45,16 @@ class Class extends StatelessWidget {
             final width = MediaQuery.of(context).size.width;
             final portraitView = height > width;
 
+            debugPrint('${overlayIndex - medianIndex}');
+
             final dx = portraitView
                 ? (opened ? (overlayIndex - medianIndex) * 0.8 : 0.0)
                 : 0.5;
-            final dy = opened
-                ? (1.75 - (medianIndex - overlayIndex).abs()) * 0.3
-                : 0.5;
+            final dy = portraitView
+                ? (opened
+                      ? (1.75 - (medianIndex - overlayIndex).abs()) * 0.3
+                      : 0.5)
+                : -(opened ? (overlayIndex - medianIndex) * 0.8 : 0.0);
 
             final slide = Tween<Offset>(begin: Offset(dx, dy), end: Offset.zero)
                 .animate(
