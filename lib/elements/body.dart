@@ -34,7 +34,7 @@ class Class extends StatelessWidget {
                 final task = tasks[i];
                 return ListTile(
                   title: Text('${task.title} $i'),
-                  subtitle: Text(task.description ?? ''),
+                  subtitle: Text('${task.description}'),
                   trailing: Icon(
                     task.trashed
                         ? Icons.check_circle

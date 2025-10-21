@@ -43,47 +43,49 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+final colorScheme = Theme.of(context).colorScheme;
     final dialogIndex = context.watch<DialogIndexProvider>();
     final visible = widget.index == dialogIndex.value;
+
     return Container(
-        width: 300,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'New Task',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      width: 300,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.onPrimary,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'New Task',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: Config.ITEM_PADDING),
+          TextField(
+            controller: _editControllers[0],
+            decoration: const InputDecoration(
+              labelText: 'Name',
+              border: OutlineInputBorder(),
             ),
-            const SizedBox(height: Config.ITEM_PADDING),
-            TextField(
-              controller: _editControllers[0],
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
+            onSubmitted: _createTask,
+          ),
+          const SizedBox(height: Config.ITEM_PADDING),
+          ActionRow.Class(
+            visible: visible,
+            buttons: [
+              ActionRow.Button(
+                text: 'Cancel',
+                callback: () {
+                  context.read<DialogIndexProvider>().value = 0;
+                  debugPrint('help');
+                },
               ),
-              onSubmitted: _createTask,
-            ),
-            const SizedBox(height: Config.ITEM_PADDING),
-            ActionRow.Class(
-              visible: visible,
-              buttons: [
-                ActionRow.Button(
-                  text: 'Cancel',
-                  callback: () {
-                    context.read<DialogIndexProvider>().value = 0;
-                    debugPrint('help');
-                  },
-                ),
-                ActionRow.Button(text: 'Create'),
-              ],
-            ),
-          ],
-        ),
+              ActionRow.Button(text: 'Create'),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

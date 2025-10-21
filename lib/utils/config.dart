@@ -18,8 +18,7 @@ final ColorScheme COLOR_SCHEME_DARK = ColorScheme.fromSeed(
   brightness: Brightness.dark,
 );
 
-const DIM_OPACITY = 0.3;
-const DIM_OPACITY_DARK = 0.5;
+const DIM_OPACITY = 0.7;
 
 // Element sizing
 

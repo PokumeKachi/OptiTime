@@ -20,9 +20,10 @@ class Class extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('overlay rebuild');
+
     final overlayIndex = context.watch<OverlayIndexProvider>().value;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dimOpacity = isDark ? Config.DIM_OPACITY_DARK : Config.DIM_OPACITY;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Stack(
       children: [
@@ -31,7 +32,7 @@ class Class extends StatelessWidget {
           opacity: overlayIndex == 0 ? 0 : 1,
           child: IgnorePointer(
             ignoring: overlayIndex == 0,
-            child: Container(color: Colors.black.withOpacity(dimOpacity)),
+            child: Container(color: colorScheme.scrim.withOpacity(Config.DIM_OPACITY)),
           ),
         ),
         AnimatedSwitcher(

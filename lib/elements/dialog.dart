@@ -34,8 +34,7 @@ class _ClassState extends State<Class> {
     debugPrint('dialog rebuild');
 
     final dialogIndex = context.watch<DialogIndexProvider>().value;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dimOpacity = isDark ? Config.DIM_OPACITY_DARK : Config.DIM_OPACITY;
+    final colorScheme = Theme.of(context).colorScheme;
 
     debugPrint('Current dialog index is $dialogIndex');
 
@@ -47,7 +46,7 @@ class _ClassState extends State<Class> {
             duration: const Duration(milliseconds: Config.ANIMATION_DURATION),
             child: IgnorePointer(
               ignoring: dialogIndex == 0,
-              child: Container(color: Colors.black.withOpacity(dimOpacity)),
+              child: Container(color: colorScheme.scrim.withOpacity(Config.DIM_OPACITY)),
             ),
           ),
 
@@ -60,7 +59,7 @@ class _ClassState extends State<Class> {
                   milliseconds: Config.ANIMATION_DURATION,
                 ),
                 child: Container(
-                  color: Colors.black.withOpacity(dimOpacity),
+                  color: Colors.transparent,
                   width: double.infinity,
                   height: double.infinity,
                 ),
