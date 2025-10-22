@@ -21,7 +21,7 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   void _createTask([String? _]) {
     final text = _editControllers[0].text;
-    print('Text: $text');
+    debugPrint('Text: $text');
     context.read<TaskListProvider>().createTask(Task(title: text));
 
     Navigator.pop(context);

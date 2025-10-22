@@ -107,7 +107,7 @@ class Class extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('navbar rebuild');
+    debugPrint('navbar rebuild');
 
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;

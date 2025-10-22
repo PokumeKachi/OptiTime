@@ -35,10 +35,6 @@ void main() async {
 
 class App extends StatelessWidget {
   const App({super.key});
-  static final lightTheme = ThemeData.from(colorScheme: Config.COLOR_SCHEME);
-  static final darkTheme = ThemeData.from(
-    colorScheme: Config.COLOR_SCHEME_DARK,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +48,8 @@ class App extends StatelessWidget {
 
     return MaterialApp(
       title: Config.TITLE,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: Config.THEME,
+      darkTheme: Config.THEME_DARK,
       themeMode: themeMode,
       home: Layout.Class(),
     );
