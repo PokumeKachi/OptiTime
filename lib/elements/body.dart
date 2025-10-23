@@ -5,7 +5,6 @@ import 'package:todo/utils/task.dart';
 
 import 'package:todo/utils/config.dart' as Config;
 
-
 class Class extends StatelessWidget {
   const Class({super.key});
 
@@ -17,6 +16,7 @@ class Class extends StatelessWidget {
 
     return OrientationBuilder(
       builder: (context, orientation) {
+        final colorScheme = Theme.of(context).colorScheme;
         final size = MediaQuery.of(context).size;
         final height = size.height;
         final width = size.width;
@@ -28,20 +28,21 @@ class Class extends StatelessWidget {
               bottom: portrait ? height * Config.NAV_BAR_RATIO : 0,
               right: !portrait ? width * Config.NAV_BAR_RATIO : 0,
             ),
-            child: ListView.builder(
-              itemCount: tasks.length,
-              itemBuilder: (context, i) {
-                final task = tasks[i];
-                return ListTile(
-                  title: Text('${task.title} $i'),
-                  subtitle: Text('${task.description}'),
-                  trailing: Icon(
-                    task.trashed
-                        ? Icons.check_circle
-                        : Icons.circle_outlined,
-                  ),
-                );
-              },
+            child: Container(
+              color: colorScheme.background,
+              child: ListView.builder(
+                itemCount: tasks.length,
+                itemBuilder: (context, i) {
+                  final task = tasks[i];
+                  return ListTile(
+                    title: Text('${task.title} $i'),
+                    subtitle: Text('${task.description}'),
+                    trailing: Icon(
+                      task.trashed ? Icons.check_circle : Icons.circle_outlined,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -49,4 +50,3 @@ class Class extends StatelessWidget {
     );
   }
 }
-
