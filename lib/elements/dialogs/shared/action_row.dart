@@ -52,6 +52,7 @@ class _ClassState extends State<Class> {
             curve: Curves.easeOutExpo,
             child: TextButton(
               onPressed: buttons[i].callback,
+              style: buttons[i].style,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
