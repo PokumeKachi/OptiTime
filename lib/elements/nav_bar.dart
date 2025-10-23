@@ -17,49 +17,10 @@ class _NavButton extends StatefulWidget {
     final dialogIndex = context.read<DialogIndexProvider>();
 
     if (targetIndex != null) {
-      overlayIndex.value =
-          overlayIndex.value == targetIndex ? 0 : targetIndex;
+      overlayIndex.value = overlayIndex.value == targetIndex ? 0 : targetIndex;
     } else {
       dialogIndex.value = 1;
     }
-    // showGeneralDialog(
-    //                   context: context,
-    //                   barrierDismissible: true,
-    //                   barrierLabel: "Dismiss dialog",
-    //                   transitionDuration: const Duration(
-    //                     milliseconds: Config.ANIMATION_DURATION,
-    //                   ),
-    //                   pageBuilder: (context, anim1, anim2) => _cachedDialog,
-    //                   // Align(alignment: Alignment.center, child: _cachedDialog),
-    //                   transitionBuilder: (context, anim1, anim2, child) =>
-    //                       SlideTransition(
-    //                         position:
-    //                             Tween<Offset>(
-    //                               begin: const Offset(0, -1),
-    //                               end: Offset.zero,
-    //                             ).animate(
-    //                               CurvedAnimation(
-    //                                 parent: anim1,
-    //                                 curve: Curves.easeOutQuart,
-    //                               ),
-    //                             ),
-    //                         child: ScaleTransition(
-    //                           scale: Tween<double>(begin: 0.7, end: 1.0).animate(
-    //                             CurvedAnimation(
-    //                               parent: anim1,
-    //                               curve: Curves.easeOutExpo,
-    //                             ),
-    //                           ),
-    //                           child: FadeTransition(
-    //                             opacity: Tween<double>(
-    //                               begin: 0.0,
-    //                               end: 1.0,
-    //                             ).animate(anim1),
-    //                             child: child,
-    //                           ),
-    //                         ),
-    //                       ),
-    //                 );
   }
 
   @override
@@ -69,19 +30,28 @@ class _NavButton extends StatefulWidget {
 class _NavButtonState extends State<_NavButton> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isCenter = widget.targetIndex == null;
+
     return Expanded(
       child: SizedBox.expand(
-        child: IconButton(
-          icon: Icon(widget.icon),
+        child: TextButton(
           onPressed: () => _NavButton.handleClick(context, widget.targetIndex),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(Config.MIN_CORNER),
             ),
-            elevation: widget.targetIndex == null ? 8 : 0,
-            backgroundColor: widget.targetIndex == null
-                ? Theme.of(context).colorScheme.tertiaryContainer
+            elevation: isCenter ? 32 : 0,
+            backgroundColor: isCenter
+                ? colorScheme.primary
                 : Colors.transparent,
+            foregroundColor: isCenter
+                ? colorScheme.onPrimary
+                : colorScheme.primary,
+          ),
+          child: Icon(
+            widget.icon,
+            size: isCenter ? Config.ICON_SIZE.BIG : Config.ICON_SIZE.MEDIUM,
           ),
         ),
       ),
