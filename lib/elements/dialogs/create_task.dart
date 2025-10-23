@@ -43,7 +43,7 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final dialogIndex = context.watch<DialogIndexProvider>();
     final visible = widget.index == dialogIndex.value;
 
@@ -76,12 +76,25 @@ final colorScheme = Theme.of(context).colorScheme;
             buttons: [
               ActionRow.Button(
                 text: 'Cancel',
+                // style: ,
+                style: TextButton.styleFrom(
+                  // backgroundColor: colorScheme.background,
+                  // foregroundColor: colorScheme.onBackground,
+                ),
                 callback: () {
                   context.read<DialogIndexProvider>().value = 0;
-                  debugPrint('help');
                 },
               ),
-              ActionRow.Button(text: 'Create'),
+              ActionRow.Button(
+                text: 'Create',
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
+                ),
+                callback: () {
+                  context.read<DialogIndexProvider>().value = 0;
+                },
+              ),
             ],
           ),
         ],
