@@ -9,9 +9,7 @@ const PRELOAD_DURATION = Duration(milliseconds: 200);
 
 const SEED_COLOR = Color.fromRGBO(225, 215, 125, 1);
 
-final ColorScheme COLOR_SCHEME = ColorScheme.fromSeed(
-  seedColor: SEED_COLOR,
-);
+final ColorScheme COLOR_SCHEME = ColorScheme.fromSeed(seedColor: SEED_COLOR);
 
 final ColorScheme COLOR_SCHEME_DARK = ColorScheme.fromSeed(
   seedColor: SEED_COLOR,
@@ -26,12 +24,17 @@ const DIM_OPACITY = 0.7;
 // Element sizing
 
 const NAV_BAR_RATIO = 0.08;
-// const NAV_BAR_WIDTH_RATIO = 0.05;
 
 class FONT_SIZE {
   static const SMALL = 16.0;
   static const MEDIUM = 24.0;
   static const BIG = 32.0;
+}
+
+class ICON_SIZE {
+  static const SMALL = 16.0;
+  static const MEDIUM = 24.0;
+  static const BIG = 36.0;
 }
 
 // Element positioning
