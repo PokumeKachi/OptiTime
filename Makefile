@@ -33,9 +33,8 @@ watch: flake-develop
 	foot -e sh -c 'exec watchexec -r --ignore .git/ --ignore .gitignore --ignore .target-clippy/ --ignore build/ -- make run' & disown
 
 git:
-	git add .
-	git commit
-	git push
+	gitui
+	# git push
 
 todo:
 	taskwarrior-tui --taskdata .tasks
