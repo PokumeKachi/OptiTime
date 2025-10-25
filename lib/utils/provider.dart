@@ -22,26 +22,41 @@ class ThemeModeProvider with ChangeNotifier {
 
 class TaskListProvider with ChangeNotifier {
   final GetStorage _storage;
-  final List<Task> _tasks;
+  final List<StorageItem> _items;
 
+  // TaskListProvider(this._storage)
+  //   : _items = List<Map<String, dynamic>>.from(
+  //       _storage.read('tasks') ?? const <Map<String, dynamic>>[],
+  //     ).map(Task.fromMap).toList();
   TaskListProvider(this._storage)
-    : _tasks = List<Map<String, dynamic>>.from(
-        _storage.read('tasks') ?? const <Map<String, dynamic>>[],
-      ).map(Task.fromMap).toList();
+      : _items = ((_storage.read('tasks') ?? <Map<String, dynamic>>[]) as List)
+          .map((e) => StorageItem.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
 
-  List<Task> get tasks => List.unmodifiable(_tasks);
+  // List<Task> get tasks => List.unmodifiable(_items);
 
-  void createTask(Task task) {
-    _tasks.add(task);
+  List<StorageItem> get items => List.unmodifiable(_items);
+
+  // void createTask(Task task) {
+  //   _items.add(task);
+  //   _save();
+  // }
+  //
+  // void removeTask(Task task) {
+  //   if (_items.remove(task)) _save();
+  // }
+
+  void addItem(StorageItem item) {
+    _items.add(item);
     _save();
   }
 
-  void removeTask(Task task) {
-    if (_tasks.remove(task)) _save();
+  void removeItem(StorageItem item) {
+    if (_items.remove(item)) _save();
   }
 
   void _save() {
-    _storage.write('tasks', _tasks.map((item) => item.toMap()).toList());
+    _storage.write('tasks', _items.map((item) => item.toMap()).toList());
     notifyListeners();
   }
 }

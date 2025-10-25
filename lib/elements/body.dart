@@ -12,7 +12,7 @@ class Class extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('body rebuild');
 
-    final tasks = context.watch<TaskListProvider>().tasks;
+    final items = context.watch<TaskListProvider>().items;
 
     return OrientationBuilder(
       builder: (context, orientation) {
@@ -31,16 +31,21 @@ class Class extends StatelessWidget {
             child: Container(
               color: colorScheme.background,
               child: ListView.builder(
-                itemCount: tasks.length,
+                itemCount: items.length,
                 itemBuilder: (context, i) {
-                  final task = tasks[i];
-                  return ListTile(
-                    title: Text('${task.title} $i'),
-                    subtitle: Text('${task.description}'),
-                    trailing: Icon(
-                      task.trashed ? Icons.check_circle : Icons.circle_outlined,
-                    ),
-                  );
+                  final item = items[i];
+                  if (item is Task) {
+                    return ListTile(
+                      title: Text('${item.title} $i'),
+                      subtitle: Text('${item.description}'),
+                      trailing: Icon(
+                        item.trashed
+                            ? Icons.check_circle
+                            : Icons.circle_outlined,
+                      ),
+                    );
+                  }
+                  ;
                 },
               ),
             ),
