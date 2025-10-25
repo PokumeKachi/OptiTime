@@ -35,7 +35,9 @@
             ];
 
             devShells.${system}.default = pkgs.mkShell {
-                packages = with pkgs; [ pkg-config ];
+                packages = with pkgs; [
+                    pkg-config
+                ];
                 inherit buildInputs;
                 shellHook = ''
                     export JAVA_HOME=${pkgs.jdk}
@@ -52,6 +54,7 @@
 
                     # ensure writable sdk exists
                     mkdir -p "$ANDROID_SDK_ROOT"
+                    export SHELL=/run/current-system/sw/bin/bash
                 '';
             };
         };
