@@ -34,7 +34,6 @@ watch: flake-develop
 
 git:
 	gitui
-	# git push
 
 todo:
 	taskwarrior-tui --taskdata .tasks
