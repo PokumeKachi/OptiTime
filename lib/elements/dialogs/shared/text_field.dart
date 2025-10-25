@@ -5,7 +5,7 @@ class FieldInfo {
   final TextEditingController? controller;
   final bool readOnly;
   final MouseCursor? mouseCursor;
-  final Icon? suffixIcon;
+  Widget? suffixIcon;
   final VoidCallback? onTap;
 
   FieldInfo({

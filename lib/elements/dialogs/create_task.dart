@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:date_picker_plus/date_picker_plus.dart';
+// import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -41,17 +41,16 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     final deadlineController = TextEditingController();
     controllersInfo = [
       FieldInfo(label: 'Name'),
+      FieldInfo(label: 'Description'),
       FieldInfo(
         label: 'Deadline',
         controller: deadlineController,
         readOnly: true,
         mouseCursor: SystemMouseCursors.click,
-        suffixIcon: Icon(Icons.calendar_today),
 
+        // suffixIcon: ,
         onTap: () async {
           final initial = DateTime.tryParse(deadlineController.text);
-
-          debugPrint('$initial');
 
           final pickedDate = await showDatePicker(
             context: context,
@@ -64,14 +63,14 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
             final pickedTime = await showTimePicker(
               context: context,
               initialTime: TimeOfDay.now(),
+              cancelText: 'Whole day',
+              confirmText: 'Set time',
             );
             if (pickedTime != null) {
-              print('selected time: ${pickedTime.format(context)}');
-              print(pickedDate.toLocal().toString());
-              print(pickedDate.toLocal().toString().split(' '));
-              deadlineController.text = pickedDate.toLocal().toString().split(
-                ' ',
-              )[0];
+              setState(
+                () => deadlineController.text =
+                    '${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}',
+              );
             }
           }
         },
@@ -92,6 +91,15 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     final colorScheme = Theme.of(context).colorScheme;
     final dialogIndex = context.watch<DialogIndexProvider>();
     final visible = widget.index == dialogIndex.value;
+
+    controllersInfo[2].suffixIcon =
+        (controllersInfo[2].controller?.text.isEmpty ?? true)
+        ? const Icon(Icons.calendar_today)
+        : IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () =>
+                setState(() => controllersInfo[2].controller?.clear()),
+          );
 
     return Container(
       width: 300,
