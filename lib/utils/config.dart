@@ -40,7 +40,12 @@ class ICON_SIZE {
 // Element positioning
 
 const MARGIN_PADDING = EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 16.0);
-const ITEM_PADDING = 8.0;
+
+class ITEM_PADDING {
+  static const SMALL = 8.0;
+  static const MEDIUM = 16.0;
+  static const BIG = 24.0;
+}
 
 // Element decorating
 

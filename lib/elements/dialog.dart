@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:todo/utils/task.dart';
-import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/config.dart' as Config;
-
+import 'package:todo/utils/provider.dart';
 import 'dialogs/create_task.dart' as NewTask;
 
 class Class extends StatefulWidget {
@@ -15,17 +12,19 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> {
-  static final List<Widget> _dialogs = [const SizedBox.shrink()];
-  static final _dialogConstructors = [
-    (int index) => NewTask.Class(index: index),
-  ];
+  late final List<Widget> _dialogs;
 
   @override
   void initState() {
     super.initState();
+    _dialogs = [const SizedBox.shrink(), NewTask.Class(index: 1)];
+  }
 
-    for (int i = 0; i < _dialogConstructors.length; i++) {
-      _dialogs.add(_dialogConstructors[i](i + 1));
+  void _closeDialog(BuildContext context) {
+    final provider = context.read<DialogIndexProvider>();
+    if (provider.value != 0) {
+      FocusScope.of(context).unfocus();
+      provider.value = 0;
     }
   }
 
@@ -35,63 +34,57 @@ class _ClassState extends State<Class> {
 
     final dialogIndex = context.watch<DialogIndexProvider>().value;
     final colorScheme = Theme.of(context).colorScheme;
-
-    debugPrint('Current dialog index is $dialogIndex');
+    final isDialogOpen = dialogIndex != 0;
 
     return Center(
       child: Stack(
         children: [
           AnimatedOpacity(
-            opacity: dialogIndex == 0 ? 0 : 1,
+            opacity: isDialogOpen ? 1 : 0,
             duration: const Duration(milliseconds: Config.ANIMATION_DURATION),
             child: IgnorePointer(
-              ignoring: dialogIndex == 0,
-              child: Container(color: colorScheme.scrim.withOpacity(Config.DIM_OPACITY)),
-            ),
-          ),
-
-          if (dialogIndex != 0)
-            GestureDetector(
-              onTap: () => context.read<DialogIndexProvider>().value = 0,
-              child: AnimatedOpacity(
-                opacity: 1,
-                duration: const Duration(
-                  milliseconds: Config.ANIMATION_DURATION,
-                ),
-                child: Container(
-                  color: Colors.transparent,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
+              ignoring: !isDialogOpen,
+              child: Container(
+                color: colorScheme.scrim.withOpacity(Config.DIM_OPACITY),
               ),
             ),
-
-          for (int i = 1; i < _dialogs.length; i++) ...[
-            IgnorePointer(
-              ignoring: dialogIndex != i,
+          ),
+          if (isDialogOpen)
+            GestureDetector(
+              onTap: () => _closeDialog(context),
+              child: const ColoredBox(
+                color: Colors.transparent,
+                child: SizedBox.expand(),
+              ),
+            ),
+          ...List.generate(_dialogs.length - 1, (i) {
+            final idx = i + 1;
+            final active = dialogIndex == idx;
+            return IgnorePointer(
+              ignoring: !active,
               child: AnimatedSlide(
-                offset: (dialogIndex == i) ? Offset.zero : const Offset(0, -.5),
+                offset: active ? Offset.zero : const Offset(0, -0.5),
                 duration: const Duration(
                   milliseconds: Config.ANIMATION_DURATION,
                 ),
                 curve: Curves.easeInOutCubic,
                 child: AnimatedScale(
-                  scale: (dialogIndex == i) ? 1 : 0.3,
+                  scale: active ? 1 : 0.3,
                   duration: const Duration(
                     milliseconds: Config.ANIMATION_DURATION,
                   ),
                   curve: Curves.easeInOutSine,
                   child: AnimatedOpacity(
-                    opacity: (dialogIndex == i) ? 1 : 0,
+                    opacity: active ? 1 : 0,
                     duration: const Duration(
                       milliseconds: Config.ANIMATION_DURATION,
                     ),
-                    child: Center(child: _dialogs[i]),
+                    child: Center(child: _dialogs[idx]),
                   ),
                 ),
               ),
-            ),
-          ],
+            );
+          }),
         ],
       ),
     );

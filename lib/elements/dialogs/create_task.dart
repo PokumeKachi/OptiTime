@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:date_picker_plus/date_picker_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:todo/utils/task.dart';
@@ -6,6 +8,7 @@ import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/config.dart' as Config;
 
 import 'shared/action_row.dart' as ActionRow;
+import 'shared/text_field.dart';
 
 class Class extends StatefulWidget {
   const Class({super.key, required this.index});
@@ -17,26 +20,69 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
-  late final List<TextEditingController> _editControllers;
+  late final List<FieldInfo> controllersInfo;
+
+  void _close() {
+    FocusScope.of(context).unfocus();
+    context.read<DialogIndexProvider>().value = 0;
+  }
 
   void _createTask([String? _]) {
-    final text = _editControllers[0].text;
-    debugPrint('Text: $text');
-    context.read<TaskListProvider>().createTask(Task(title: text));
-
-    Navigator.pop(context);
+    final title = controllersInfo[0].controller?.text;
+    debugPrint('Creating a new task from the dialog');
+    debugPrint('Text: $title');
+    context.read<TaskListProvider>().createTask(Task(title: title ?? ''));
+    _close();
   }
 
   @override
   void initState() {
     super.initState();
-    _editControllers = List.generate(3, (_) => TextEditingController());
+    final deadlineController = TextEditingController();
+    controllersInfo = [
+      FieldInfo(label: 'Name'),
+      FieldInfo(
+        label: 'Deadline',
+        controller: deadlineController,
+        readOnly: true,
+        mouseCursor: SystemMouseCursors.click,
+        suffixIcon: Icon(Icons.calendar_today),
+
+        onTap: () async {
+          final initial = DateTime.tryParse(deadlineController.text);
+
+          debugPrint('$initial');
+
+          final pickedDate = await showDatePicker(
+            context: context,
+            initialDate: initial,
+            firstDate: DateTime.now(),
+            lastDate: DateTime(DateTime.now().year + 100),
+          );
+
+          if (pickedDate != null) {
+            final pickedTime = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
+            if (pickedTime != null) {
+              print('selected time: ${pickedTime.format(context)}');
+              print(pickedDate.toLocal().toString());
+              print(pickedDate.toLocal().toString().split(' '));
+              deadlineController.text = pickedDate.toLocal().toString().split(
+                ' ',
+              )[0];
+            }
+          }
+        },
+      ),
+    ];
   }
 
   @override
   void dispose() {
-    for (final c in _editControllers) {
-      c.dispose();
+    for (final info in controllersInfo) {
+      info.controller?.dispose();
     }
     super.dispose();
   }
@@ -51,7 +97,7 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
       width: 300,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.onPrimary,
+        color: colorScheme.background,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -59,31 +105,39 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
         children: [
           const Text(
             'New Task',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: Config.ITEM_PADDING),
-          TextField(
-            controller: _editControllers[0],
-            decoration: const InputDecoration(
-              labelText: 'Name',
-              border: OutlineInputBorder(),
+            style: TextStyle(
+              fontSize: Config.FONT_SIZE.BIG,
+              fontWeight: FontWeight.bold,
             ),
-            onSubmitted: _createTask,
           ),
-          const SizedBox(height: Config.ITEM_PADDING),
+          const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
+          for (final info in controllersInfo) ...[
+            TextField(
+              decoration: InputDecoration(
+                labelText: info.label,
+                border: OutlineInputBorder(),
+                suffixIcon: info.suffixIcon,
+              ),
+              controller: info.controller,
+              readOnly: info.readOnly,
+              mouseCursor: info.mouseCursor,
+              onSubmitted: _createTask,
+              onTap: info.onTap,
+            ),
+
+            const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
+          ],
+
           ActionRow.Class(
             visible: visible,
             buttons: [
               ActionRow.Button(
                 text: 'Cancel',
-                // style: ,
                 style: TextButton.styleFrom(
-                  // backgroundColor: colorScheme.background,
-                  // foregroundColor: colorScheme.onBackground,
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: colorScheme.onBackground,
                 ),
-                callback: () {
-                  context.read<DialogIndexProvider>().value = 0;
-                },
+                callback: _close,
               ),
               ActionRow.Button(
                 text: 'Create',
@@ -91,9 +145,7 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
                   backgroundColor: colorScheme.primary,
                   foregroundColor: colorScheme.onPrimary,
                 ),
-                callback: () {
-                  context.read<DialogIndexProvider>().value = 0;
-                },
+                callback: _createTask,
               ),
             ],
           ),
