@@ -29,14 +29,12 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
         border: OutlineInputBorder(),
       ),
       controller: nameController,
-      onSubmitted: _createTask,
     ),
     TextField(
       decoration: InputDecoration(
         labelText: 'Description (optional)',
         border: OutlineInputBorder(),
       ),
-      onSubmitted: _createTask,
     ),
   ];
 
