@@ -20,47 +20,46 @@ class ThemeModeProvider with ChangeNotifier {
   }
 }
 
-class TaskListProvider with ChangeNotifier {
+class TaskProvider with ChangeNotifier {
   final GetStorage _storage;
-  final List<StorageItem> _items;
+  final List<Task> _tasks;
+  final List<TaskGroup> _groups;
 
-  // TaskListProvider(this._storage)
-  //   : _items = List<Map<String, dynamic>>.from(
-  //       _storage.read('tasks') ?? const <Map<String, dynamic>>[],
-  //     ).map(Task.fromMap).toList();
-  TaskListProvider(this._storage)
-      : _items = ((_storage.read('tasks') ?? <Map<String, dynamic>>[]) as List)
-          .map((e) => StorageItem.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
+  TaskProvider(this._storage)
+    : _tasks = List.from(
+        _storage.read('tasks') ?? [],
+      ).map((e) => Task.fromMap(Map<String, dynamic>.from(e))).toList(),
+      _groups = List.from(
+        _storage.read('groups') ?? [],
+      ).map((e) => TaskGroup.fromMap(Map<String, dynamic>.from(e))).toList();
 
-  // List<Task> get tasks => List.unmodifiable(_items);
+  List<Task> get tasks => List.unmodifiable(_tasks);
+  List<TaskGroup> get groups => List.unmodifiable(_groups);
 
-  List<StorageItem> get items => List.unmodifiable(_items);
-
-  // void createTask(Task task) {
-  //   _items.add(task);
-  //   _save();
-  // }
-  //
-  // void removeTask(Task task) {
-  //   if (_items.remove(task)) _save();
-  // }
-
-  void addItem(StorageItem item) {
-    _items.add(item);
+  void addTask(Task task) {
+    _tasks.add(task);
     _save();
   }
 
-  void removeItem(StorageItem item) {
-    if (_items.remove(item)) _save();
+  void addGroup(TaskGroup group) {
+    _groups.add(group);
+    _save();
+  }
+
+  void removeTask(Task task) {
+    if (_tasks.remove(task)) _save();
+  }
+
+  void removeGroup(TaskGroup group) {
+    if (_groups.remove(group)) _save();
   }
 
   void _save() {
-    _storage.write('tasks', _items.map((item) => item.toMap()).toList());
+    _storage.write('tasks', _tasks.map((e) => e.toMap()).toList());
+    _storage.write('groups', _groups.map((e) => e.toMap()).toList());
     notifyListeners();
   }
 }
-
 
 class OverlayIndexProvider extends ValueNotifier<int> {
   OverlayIndexProvider() : super(0);

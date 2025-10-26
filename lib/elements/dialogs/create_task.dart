@@ -22,21 +22,10 @@ class Class extends StatefulWidget {
 class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
   late final nameController = TextEditingController();
 
-  late final List<Widget> formWidgets = [
-    TextField(
-      decoration: InputDecoration(
-        labelText: 'Name',
-        border: OutlineInputBorder(),
-      ),
-      controller: nameController,
-    ),
-    TextField(
-      decoration: InputDecoration(
-        labelText: 'Description (optional)',
-        border: OutlineInputBorder(),
-      ),
-    ),
-  ];
+  late String? selectedGroup = "";
+  late List<DropdownMenuItem<String?>> dropdownItems;
+
+  bool promptingGroupName = false;
 
   final _focusNode = FocusNode();
 
@@ -64,7 +53,7 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     final name = nameController.text;
     debugPrint('Creating a new task from the dialog');
     debugPrint('Text: $name');
-    context.read<TaskListProvider>().addItem(Task(name: name ?? ''));
+    context.read<TaskProvider>().addTask(Task(name: name ?? ''));
     _close();
   }
 
@@ -73,12 +62,76 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     final colorScheme = Theme.of(context).colorScheme;
     final dialogIndex = context.watch<DialogIndexProvider>();
     final visible = widget.index == dialogIndex.value;
+    final groups = context.watch<TaskProvider>().groups;
+
+    final formWidgets = [
+      TextField(
+        decoration: InputDecoration(
+          labelText: 'Name',
+          border: OutlineInputBorder(),
+        ),
+        controller: nameController,
+      ),
+      TextField(
+        decoration: InputDecoration(
+          labelText: 'Description (optional)',
+          border: OutlineInputBorder(),
+        ),
+      ),
+      DropdownButton<String?>(
+        value: selectedGroup,
+        items: [
+          const DropdownMenuItem(value: '', child: Text('<No Group>')),
+          ...groups.map(
+            (g) => DropdownMenuItem(value: g.name, child: Text(g.name)),
+          ),
+          DropdownMenuItem(
+            value: 'new',
+            child: Text(
+              '<New Group>',
+              style: TextStyle(
+                backgroundColor: colorScheme.tertiary,
+                color: colorScheme.onTertiary,
+              ),
+            ),
+          ),
+        ],
+        onChanged: (value) {
+          if (value == 'new') {
+            promptingGroupName = true;
+          } else {
+            setState(() => selectedGroup = value);
+          }
+        },
+      ),
+    ];
+
+    dropdownItems = [
+      const DropdownMenuItem(value: '', child: Text('<No Group>')),
+      ...groups.map(
+        (g) => DropdownMenuItem(value: '.' + g.name, child: Text(g.name)),
+      ),
+      DropdownMenuItem(
+        value: 'new',
+        child: Text(
+          '<New Group>',
+          style: TextStyle(
+            backgroundColor: colorScheme.tertiary,
+            color: colorScheme.onTertiary,
+          ),
+        ),
+      ),
+    ];
 
     return RawKeyboardListener(
       focusNode: _focusNode,
       onKey: (event) {
         if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
-          _createTask();
+          if (promptingGroupName) {
+            promptingGroupName = false;
+          } else {
+            _createTask();
+          }
         }
       },
       child: Container(

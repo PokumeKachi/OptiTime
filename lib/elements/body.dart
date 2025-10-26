@@ -12,7 +12,7 @@ class Class extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('body rebuild');
 
-    final items = context.watch<TaskListProvider>().items;
+    final tasks = context.watch<TaskProvider>().tasks;
 
     return OrientationBuilder(
       builder: (context, orientation) {
@@ -31,9 +31,9 @@ class Class extends StatelessWidget {
             child: Container(
               color: colorScheme.background,
               child: ListView.builder(
-                itemCount: items.length,
+                itemCount: tasks.length,
                 itemBuilder: (context, i) {
-                  final item = items[i];
+                  final item = tasks[i];
                   if (item is Task) {
                     return ListTile(
                       title: Text('${item.name} $i'),

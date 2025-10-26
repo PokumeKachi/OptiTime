@@ -1,22 +1,6 @@
 import 'package:flutter/material.dart';
 
-abstract class StorageItem {
-  StorageItem();
-
-  Map<String, dynamic> toMap();
-  factory StorageItem.fromMap(Map<String, dynamic> map) {
-    switch (map['type']) {
-      case 0:
-        return Task.fromMap(map);
-      case 1:
-        return TaskGroup.fromMap(map);
-      default:
-        throw Exception('Unknown type');
-    }
-  }
-}
-
-class Task extends StorageItem {
+class Task {
   String name;
   String description;
   DateTime? deadline;
@@ -31,8 +15,13 @@ class Task extends StorageItem {
     this.trashed = false,
   });
 
-  @override
-  Map<String, dynamic> toMap() => {'type': 0, 'title': name};
+  Map<String, dynamic> toMap() => {
+    'title': name,
+    'description': description,
+    'deadline': deadline?.toIso8601String(),
+    'duration': duration?.inSeconds,
+    'trashed': trashed,
+  };
 
   factory Task.fromMap(Map<String, dynamic> map) {
     final title = map['title'] as String? ?? '';
@@ -51,15 +40,13 @@ class Task extends StorageItem {
   }
 }
 
-class TaskGroup extends StorageItem {
+class TaskGroup {
   final String name;
   final List<Task> tasks;
 
   TaskGroup({required this.name, required this.tasks});
 
-  @override
   Map<String, dynamic> toMap() => {
-    'type': 1,
     'name': name,
     'tasks': tasks.map((t) => t.toMap()).toList(),
   };
