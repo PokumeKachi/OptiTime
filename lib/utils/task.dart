@@ -17,14 +17,14 @@ abstract class StorageItem {
 }
 
 class Task extends StorageItem {
-  String title;
+  String name;
   String description;
   DateTime? deadline;
   Duration? duration;
   bool trashed;
 
   Task({
-    this.title = '',
+    this.name = '',
     this.description = '',
     this.deadline,
     this.duration,
@@ -32,7 +32,7 @@ class Task extends StorageItem {
   });
 
   @override
-  Map<String, dynamic> toMap() => {'type': 0, 'title': title};
+  Map<String, dynamic> toMap() => {'type': 0, 'title': name};
 
   factory Task.fromMap(Map<String, dynamic> map) {
     final title = map['title'] as String? ?? '';
@@ -42,7 +42,7 @@ class Task extends StorageItem {
     final trashed = map['trashed'] as bool? ?? false;
 
     return Task(
-      title: title,
+      name: title,
       description: description,
       deadline: deadlineStr != null ? DateTime.parse(deadlineStr) : null,
       duration: durationSec != null ? Duration(seconds: durationSec) : null,

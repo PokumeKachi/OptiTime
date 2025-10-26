@@ -9,7 +9,6 @@ import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/config.dart' as Config;
 
 import 'shared/action_row.dart' as ActionRow;
-import 'shared/text_field.dart';
 
 class Class extends StatefulWidget {
   const Class({super.key, required this.index});
@@ -21,7 +20,42 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
-  late final List<FieldInfo> controllersInfo;
+  late final nameController = TextEditingController();
+
+  late final List<Widget> formWidgets = [
+    TextField(
+      decoration: InputDecoration(
+        labelText: 'Name',
+        border: OutlineInputBorder(),
+      ),
+      controller: nameController,
+      onSubmitted: _createTask,
+    ),
+    TextField(
+      decoration: InputDecoration(
+        labelText: 'Description (optional)',
+        border: OutlineInputBorder(),
+      ),
+      onSubmitted: _createTask,
+    ),
+  ];
+
+  final _focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final dialogIndex = context.read<DialogIndexProvider>().value;
+    if (widget.index == dialogIndex) {
+      Future.microtask(() => _focusNode.requestFocus());
+    }
+  }
 
   void _close() {
     FocusScope.of(context).unfocus();
@@ -29,61 +63,11 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
   }
 
   void _createTask([String? _]) {
-    final title = controllersInfo[0].controller?.text;
+    final name = nameController.text;
     debugPrint('Creating a new task from the dialog');
-    debugPrint('Text: $title');
-    context.read<TaskListProvider>().addItem(Task(title: title ?? ''));
+    debugPrint('Text: $name');
+    context.read<TaskListProvider>().addItem(Task(name: name ?? ''));
     _close();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final deadlineController = TextEditingController();
-    controllersInfo = [
-      FieldInfo(label: 'Name'),
-      FieldInfo(label: 'Description (optional)'),
-      // FieldInfo(
-      //   label: 'Deadline',
-      //   controller: deadlineController,
-      //   readOnly: true,
-      //   mouseCursor: SystemMouseCursors.click,
-      //
-      //   onTap: () async {
-      //     final initial = DateTime.tryParse(deadlineController.text);
-      //
-      //     final pickedDate = await showDatePicker(
-      //       context: context,
-      //       initialDate: initial,
-      //       firstDate: DateTime.now(),
-      //       lastDate: DateTime(DateTime.now().year + 100),
-      //     );
-      //
-      //     if (pickedDate != null) {
-      //       final pickedTime = await showTimePicker(
-      //         context: context,
-      //         initialTime: TimeOfDay.now(),
-      //         cancelText: 'Whole day',
-      //         confirmText: 'Set time',
-      //       );
-      //       if (pickedTime != null) {
-      //         setState(
-      //           () => deadlineController.text =
-      //               '${pickedDate.toLocal().toString().split(' ')[0]} ${pickedTime.format(context)}',
-      //         );
-      //       }
-      //     }
-      //   },
-      // ),
-    ];
-  }
-
-  @override
-  void dispose() {
-    for (final info in controllersInfo) {
-      info.controller?.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -92,17 +76,8 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     final dialogIndex = context.watch<DialogIndexProvider>();
     final visible = widget.index == dialogIndex.value;
 
-    // controllersInfo[2].suffixIcon =
-    //     (controllersInfo[2].controller?.text.isEmpty ?? true)
-    //     ? const Icon(Icons.calendar_today)
-    //     : IconButton(
-    //         icon: const Icon(Icons.clear),
-    //         onPressed: () =>
-    //             setState(() => controllersInfo[2].controller?.clear()),
-    //       );
-
     return RawKeyboardListener(
-      focusNode: FocusNode(),
+      focusNode: _focusNode,
       onKey: (event) {
         if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
           _createTask();
@@ -126,20 +101,9 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
               ),
             ),
             const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-            for (final info in controllersInfo) ...[
-              TextField(
-                decoration: InputDecoration(
-                  labelText: info.label,
-                  border: OutlineInputBorder(),
-                  suffixIcon: info.suffixIcon,
-                ),
-                controller: info.controller,
-                readOnly: info.readOnly,
-                mouseCursor: info.mouseCursor,
-                onSubmitted: _createTask,
-                onTap: info.onTap,
-              ),
 
+            for (final widget in formWidgets) ...[
+              widget,
               const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
             ],
 

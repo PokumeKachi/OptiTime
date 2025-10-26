@@ -36,7 +36,7 @@ class Class extends StatelessWidget {
                   final item = items[i];
                   if (item is Task) {
                     return ListTile(
-                      title: Text('${item.title} $i'),
+                      title: Text('${item.name} $i'),
                       subtitle: Text('${item.description}'),
                       trailing: Icon(
                         item.trashed
