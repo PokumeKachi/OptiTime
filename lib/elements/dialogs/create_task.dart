@@ -20,17 +20,18 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
-  late final nameController = TextEditingController();
+  late final _nameController = TextEditingController();
+  late final _groupNameController = TextEditingController();
+  late final _focusNode = FocusNode();
 
-  late String? selectedGroup = "";
-  late List<DropdownMenuItem<String?>> dropdownItems;
+  String? _selectedGroup = "";
 
-  bool promptingGroupName = false;
-
-  final _focusNode = FocusNode();
+  bool _promptingGroupName = false;
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _groupNameController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -47,10 +48,15 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
   void _close() {
     FocusScope.of(context).unfocus();
     context.read<DialogIndexProvider>().value = 0;
+
+    _nameController.text = "";
+    _groupNameController.text = "";
+    _selectedGroup = "";
+    _promptingGroupName = false;
   }
 
   void _createTask([String? _]) {
-    final name = nameController.text;
+    final name = _nameController.text;
     debugPrint('Creating a new task from the dialog');
     debugPrint('Text: $name');
     context.read<TaskProvider>().addTask(Task(name: name ?? ''));
@@ -62,51 +68,10 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     final colorScheme = Theme.of(context).colorScheme;
     final dialogIndex = context.watch<DialogIndexProvider>();
     final visible = widget.index == dialogIndex.value;
-    final groups = context.watch<TaskProvider>().groups;
+    final taskProvider = context.watch<TaskProvider>();
+    final groups = taskProvider.groups;
 
-    final formWidgets = [
-      TextField(
-        decoration: InputDecoration(
-          labelText: 'Name',
-          border: OutlineInputBorder(),
-        ),
-        controller: nameController,
-      ),
-      TextField(
-        decoration: InputDecoration(
-          labelText: 'Description (optional)',
-          border: OutlineInputBorder(),
-        ),
-      ),
-      DropdownButton<String?>(
-        value: selectedGroup,
-        items: [
-          const DropdownMenuItem(value: '', child: Text('<No Group>')),
-          ...groups.map(
-            (g) => DropdownMenuItem(value: g.name, child: Text(g.name)),
-          ),
-          DropdownMenuItem(
-            value: 'new',
-            child: Text(
-              '<New Group>',
-              style: TextStyle(
-                backgroundColor: colorScheme.tertiary,
-                color: colorScheme.onTertiary,
-              ),
-            ),
-          ),
-        ],
-        onChanged: (value) {
-          if (value == 'new') {
-            promptingGroupName = true;
-          } else {
-            setState(() => selectedGroup = value);
-          }
-        },
-      ),
-    ];
-
-    dropdownItems = [
+    final _dropdownItems = [
       const DropdownMenuItem(value: '', child: Text('<No Group>')),
       ...groups.map(
         (g) => DropdownMenuItem(value: '.' + g.name, child: Text(g.name)),
@@ -123,23 +88,93 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
       ),
     ];
 
+    final formWidgets = [
+      TextField(
+        decoration: InputDecoration(
+          labelText: 'Name',
+          border: OutlineInputBorder(),
+        ),
+        controller: _nameController,
+      ),
+      TextField(
+        decoration: InputDecoration(
+          labelText: 'Description (optional)',
+          border: OutlineInputBorder(),
+        ),
+      ),
+      _promptingGroupName
+          ? TextField(
+              decoration: InputDecoration(
+                labelText: 'New Group Name',
+                border: OutlineInputBorder(),
+              ),
+              controller: _groupNameController,
+            )
+          : DropdownButton<String?>(
+              value: _selectedGroup,
+              items: [
+                const DropdownMenuItem(value: '', child: Text('<No Group>')),
+                ...groups.map(
+                  (g) => DropdownMenuItem(value: g.name, child: Text(g.name)),
+                ),
+                DropdownMenuItem(
+                  value: 'new',
+                  child: Text(
+                    '<New Group>',
+                    style: TextStyle(
+                      backgroundColor: colorScheme.tertiary,
+                      color: colorScheme.onTertiary,
+                    ),
+                  ),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  if (value == 'new') {
+                    _promptingGroupName = true;
+                  } else {
+                    _selectedGroup = value;
+                  }
+                });
+              },
+            ),
+    ];
+
     return RawKeyboardListener(
       focusNode: _focusNode,
       onKey: (event) {
         if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
-          if (promptingGroupName) {
-            promptingGroupName = false;
+          print('received enter signal');
+          if (_promptingGroupName) {
+            final newGroupName = _groupNameController.text;
+
+            if (newGroupName.isEmpty) {
+              return;
+            }
+
+            _promptingGroupName = false;
+            _selectedGroup = newGroupName;
+
+            if (!(groups.any((gr) => gr.name == newGroupName))) {
+              taskProvider.addGroup(TaskGroup(name: newGroupName, tasks: []));
+            } else {
+              setState(() {});
+            }
           } else {
             _createTask();
           }
         }
+
+        if (event.isKeyPressed(LogicalKeyboardKey.escape)) {
+          _close();
+        }
       },
       child: Container(
-        width: 300,
-        padding: const EdgeInsets.all(16),
+        width: MediaQuery.of(context).size.width * Config.DIALOG_RATIO,
+        padding: Config.MARGIN_PADDING,
         decoration: BoxDecoration(
           color: colorScheme.background,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(Config.MAX_CORNER),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

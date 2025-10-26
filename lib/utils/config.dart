@@ -24,6 +24,7 @@ const DIM_OPACITY = 0.7;
 // Element sizing
 
 const NAV_BAR_RATIO = 0.08;
+const DIALOG_RATIO = 0.8;
 
 class FONT_SIZE {
   static const SMALL = 16.0;
