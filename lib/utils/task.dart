@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class Task {
-  String title;
+  String name;
   String description;
   DateTime? deadline;
   Duration? duration;
   bool trashed;
 
   Task({
-    this.title = '',
+    this.name = '',
     this.description = '',
     this.deadline,
     this.duration,
@@ -16,10 +16,10 @@ class Task {
   });
 
   Map<String, dynamic> toMap() => {
-    'title': title,
+    'title': name,
     'description': description,
-    if (deadline != null) 'deadline': deadline!.toIso8601String(),
-    if (duration != null) 'duration': duration!.inSeconds,
+    'deadline': deadline?.toIso8601String(),
+    'duration': duration?.inSeconds,
     'trashed': trashed,
   };
 
@@ -31,11 +31,30 @@ class Task {
     final trashed = map['trashed'] as bool? ?? false;
 
     return Task(
-      title: title,
+      name: title,
       description: description,
       deadline: deadlineStr != null ? DateTime.parse(deadlineStr) : null,
       duration: durationSec != null ? Duration(seconds: durationSec) : null,
       trashed: trashed,
     );
   }
+}
+
+class TaskGroup {
+  final String name;
+  final List<Task> tasks;
+
+  TaskGroup({required this.name, required this.tasks});
+
+  Map<String, dynamic> toMap() => {
+    'name': name,
+    'tasks': tasks.map((t) => t.toMap()).toList(),
+  };
+
+  factory TaskGroup.fromMap(Map<String, dynamic> map) => TaskGroup(
+    name: map['name'],
+    tasks: (map['tasks'] as List)
+        .map((e) => Task.fromMap(Map<String, dynamic>.from(e)))
+        .toList(),
+  );
 }

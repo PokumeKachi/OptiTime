@@ -39,7 +39,7 @@ class _NavButtonState extends State<_NavButton> {
           onPressed: () => _NavButton.handleClick(context, widget.targetIndex),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(Config.MIN_CORNER),
+              borderRadius: BorderRadius.circular(Config.CORNER.MIN),
             ),
             elevation: isCenter ? 32 : 0,
             backgroundColor: isCenter

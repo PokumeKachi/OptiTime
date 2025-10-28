@@ -36,12 +36,17 @@ class _ClassState extends State<Class> {
     final colorScheme = Theme.of(context).colorScheme;
     final isDialogOpen = dialogIndex != 0;
 
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
+    final portrait = height > width;
+
     return Center(
       child: Stack(
         children: [
           AnimatedOpacity(
             opacity: isDialogOpen ? 1 : 0,
-            duration: const Duration(milliseconds: Config.ANIMATION_DURATION),
+            duration: Config.ANIMATION.MEDIUM,
             child: IgnorePointer(
               ignoring: !isDialogOpen,
               child: Container(
@@ -63,22 +68,19 @@ class _ClassState extends State<Class> {
             return IgnorePointer(
               ignoring: !active,
               child: AnimatedSlide(
-                offset: active ? Offset.zero : const Offset(0, -0.5),
-                duration: const Duration(
-                  milliseconds: Config.ANIMATION_DURATION,
-                ),
+                offset: active
+                    ? Offset.zero
+                    // : Offset(portrait ? 0 : -0.5, (!portrait) ? 0 : -0.5),
+                    : const Offset(0, -0.5),
+                duration: Config.ANIMATION.MEDIUM,
                 curve: Curves.easeInOutCubic,
                 child: AnimatedScale(
                   scale: active ? 1 : 0.3,
-                  duration: const Duration(
-                    milliseconds: Config.ANIMATION_DURATION,
-                  ),
+                  duration: Config.ANIMATION.MEDIUM,
                   curve: Curves.easeInOutSine,
                   child: AnimatedOpacity(
                     opacity: active ? 1 : 0,
-                    duration: const Duration(
-                      milliseconds: Config.ANIMATION_DURATION,
-                    ),
+                    duration: Config.ANIMATION.MEDIUM,
                     child: Center(child: _dialogs[idx]),
                   ),
                 ),

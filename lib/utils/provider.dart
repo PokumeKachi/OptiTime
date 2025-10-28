@@ -20,19 +20,36 @@ class ThemeModeProvider with ChangeNotifier {
   }
 }
 
-class TaskListProvider with ChangeNotifier {
+class TaskProvider with ChangeNotifier {
   final GetStorage _storage;
   final List<Task> _tasks;
+  final List<TaskGroup> _groups;
 
-  TaskListProvider(this._storage)
-    : _tasks = List<Map<String, dynamic>>.from(
-        _storage.read('tasks') ?? const <Map<String, dynamic>>[],
-      ).map(Task.fromMap).toList();
+  TaskProvider(this._storage)
+    : _tasks = List.from(
+        _storage.read('tasks') ?? [],
+      ).map((e) => Task.fromMap(Map<String, dynamic>.from(e))).toList(),
+      _groups = List.from(
+        _storage.read('groups') ?? [],
+      ).map((e) => TaskGroup.fromMap(Map<String, dynamic>.from(e))).toList();
 
   List<Task> get tasks => List.unmodifiable(_tasks);
+  List<TaskGroup> get groups => List.unmodifiable(_groups);
 
-  void createTask(Task task) {
+  void addTask(Task task) {
     _tasks.add(task);
+    _save();
+  }
+
+  void addTaskToGroup(Task task, TaskGroup group) {
+    // final g = _groups.firstWhere((g) => g == group);
+    // g.tasks.add(task);
+    group.tasks.add(task);
+    _save();
+  }
+
+  void addGroup(TaskGroup group) {
+    _groups.add(group);
     _save();
   }
 
@@ -40,12 +57,16 @@ class TaskListProvider with ChangeNotifier {
     if (_tasks.remove(task)) _save();
   }
 
+  void removeGroup(TaskGroup group) {
+    if (_groups.remove(group)) _save();
+  }
+
   void _save() {
-    _storage.write('tasks', _tasks.map((item) => item.toMap()).toList());
+    _storage.write('tasks', _tasks.map((e) => e.toMap()).toList());
+    _storage.write('groups', _groups.map((e) => e.toMap()).toList());
     notifyListeners();
   }
 }
-
 
 class OverlayIndexProvider extends ValueNotifier<int> {
   OverlayIndexProvider() : super(0);

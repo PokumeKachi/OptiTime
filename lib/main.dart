@@ -10,6 +10,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
+// await GetStorage().erase();
+
   final _storage = GetStorage();
 
   runApp(
@@ -18,8 +20,8 @@ void main() async {
         ChangeNotifierProvider<ThemeModeProvider>(
           create: (context) => ThemeModeProvider(_storage),
         ),
-        ChangeNotifierProvider<TaskListProvider>(
-          create: (context) => TaskListProvider(_storage),
+        ChangeNotifierProvider<TaskProvider>(
+          create: (context) => TaskProvider(_storage),
         ),
         ChangeNotifierProvider<OverlayIndexProvider>(
           create: (context) => OverlayIndexProvider(),
