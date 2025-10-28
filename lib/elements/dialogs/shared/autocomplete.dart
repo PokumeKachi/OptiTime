@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/config.dart' as Config;
 
 class Class extends StatefulWidget {
+  const Class({super.key, required this.controller, required this.getOptions});
+
   final TextEditingController controller;
-  const Class({super.key, required this.controller});
+  final List<String> Function() getOptions;
 
   static const FOCUSED_BORDER_WIDTH = 2.0;
 
@@ -14,9 +19,11 @@ class Class extends StatefulWidget {
 class _ClassState extends State<Class> {
   late final _focusNode = FocusNode();
   late final _layerLink = LayerLink();
+  late final _textFieldKey = GlobalKey();
 
   late final _overlayEntry;
-  late final _textFieldKey = GlobalKey();
+
+  List<String> matchingOptions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -24,28 +31,27 @@ class _ClassState extends State<Class> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final shouldShowOptions =
+            (_focusNode.hasFocus && matchingOptions.isNotEmpty);
         return CompositedTransformTarget(
           key: _textFieldKey,
           link: _layerLink,
           child: AnimatedContainer(
             duration: Config.ANIMATION.MEDIUM,
             curve: Curves.easeInOut,
+            padding: EdgeInsets.only(top: Config.CORNER.MAX / 2),
             decoration: BoxDecoration(
-              color: _focusNode.hasFocus
+              color: shouldShowOptions
                   ? colorScheme.surfaceBright
                   : colorScheme.surface,
               borderRadius: BorderRadius.vertical(
                 top: Radius.circular(Config.CORNER.MAX),
-                bottom: _focusNode.hasFocus
+                bottom: shouldShowOptions
                     ? Radius.circular(Config.CORNER.MIN)
                     : Radius.circular(Config.CORNER.MAX),
               ),
-
-              // borderRadius: BorderRadius.circular(
-              //   _focusNode.hasFocus ? Config.CORNER.MAX : Config.CORNER.MIN,
-              // ),
               border: Border.all(
-                color: _focusNode.hasFocus
+                color: shouldShowOptions
                     ? Theme.of(context).colorScheme.primary
                     : Colors.grey,
                 width: Class.FOCUSED_BORDER_WIDTH,
@@ -57,6 +63,7 @@ class _ClassState extends State<Class> {
               decoration: InputDecoration(
                 labelText: 'Group',
                 border: InputBorder.none,
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: Config.SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT,
                 ),
@@ -79,6 +86,10 @@ class _ClassState extends State<Class> {
   void initState() {
     super.initState();
     widget.controller.addListener(_onTextChanged);
+
+    _focusNode.addListener(() {
+      _onTextChanged();
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final size = _textFieldKey.currentContext?.size;
 
@@ -86,45 +97,101 @@ class _ClassState extends State<Class> {
         return;
       }
 
-      print(size.width);
-      print(size.height);
-
       _overlayEntry = OverlayEntry(
-        builder: (_) => Positioned(
-          width: size.width,
-          child: CompositedTransformFollower(
-            link: _layerLink,
-            showWhenUnlinked: false,
-            offset: Offset(0, size.height),
-            child: Material(
-              elevation: Config.ELEVATION.LOW,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: Class.FOCUSED_BORDER_WIDTH),
-                // borderRadius: border.borderRadius,
-              ),
-              clipBehavior: Clip.antiAlias,
+        builder: (context) {
+          final colorScheme = Theme.of(context).colorScheme;
 
-              child: Offstage(
-                offstage: (!_focusNode.hasFocus),
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  children: const [Text('help me')],
+          final shouldShowOptions =
+              (_focusNode.hasFocus && matchingOptions.isNotEmpty);
+
+          return Positioned(
+            width: size.width,
+            child: CompositedTransformFollower(
+              link: _layerLink,
+              showWhenUnlinked: false,
+              offset: Offset(0, size.height - Class.FOCUSED_BORDER_WIDTH),
+              child: Material(
+                clipBehavior: Clip.antiAlias,
+                color: Colors.transparent,
+                elevation: Config.ELEVATION.LOW,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    width: Class.FOCUSED_BORDER_WIDTH,
+                    color: colorScheme.outline,
+                  ),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(Config.CORNER.MIN),
+                    bottom: Radius.circular(Config.CORNER.MAX),
+                  ),
+                ),
+                child: AnimatedContainer(
+                  duration: Config.ANIMATION.SHORT,
+                  curve: Curves.easeOutExpo,
+                  height: shouldShowOptions ? 150 : 0,
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          colorScheme.surfaceBright,
+                          colorScheme.surfaceDim,
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        for (final option in matchingOptions) ...[
+                          TextButton(
+                            onPressed: () => _onOptionPressed(option),
+                            style: TextButton.styleFrom(
+                              minimumSize: Size(double.infinity, 0),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Config
+                                    .SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT,
+                                vertical: Config.ITEM_PADDING.SMALL,
+                              ),
+                              alignment: Alignment.centerLeft,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                              ),
+                            ),
+                            child: Text(option),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       );
       Overlay.of(context).insert(_overlayEntry);
     });
-
-    _focusNode.addListener(
-      () => setState(() {
-        _overlayEntry.markNeedsBuild();
-      }),
-    );
   }
 
-  void _onTextChanged() {}
+  void _onTextChanged() {
+    setState(() {
+      matchingOptions = widget
+          .getOptions()
+          .where(
+            (option) => option.toLowerCase().contains(
+              widget.controller.text.toLowerCase(),
+            ),
+          )
+          .toList();
+    });
+
+    _overlayEntry.markNeedsBuild();
+  }
+
+  void _onOptionPressed(final String name) {
+    setState(() {
+      widget.controller.text = name;
+    });
+  }
 }

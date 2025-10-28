@@ -10,7 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
-await GetStorage().erase();
+// await GetStorage().erase();
 
   final _storage = GetStorage();
 

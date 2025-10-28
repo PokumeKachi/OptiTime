@@ -58,6 +58,7 @@ class ELEVATION {
 }
 
 class CORNER {
+  // static const MIN = 0.0;
   static const MIN = 4.0;
   static const MEDIUM = 10.0;
   static const MAX = 16.0;

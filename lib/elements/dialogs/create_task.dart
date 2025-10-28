@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/task.dart';
@@ -68,83 +68,10 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
           ),
         ),
       ),
-      Autocomplete.Class(controller: _groupController),
-      // Autocomplete<String>(
-      //   key: ValueKey(groups.length),
-      //   optionsBuilder: (TextEditingValue textEditingValue) {
-      //     if (textEditingValue.text.isEmpty) return groups.map((g) => g.name);
-      //     return groups
-      //         .map((g) => g.name)
-      //         .where(
-      //           (name) => name.toLowerCase().contains(
-      //             textEditingValue.text.toLowerCase(),
-      //           ),
-      //         );
-      //   },
-      //   fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-      //     _groupController = controller;
-      //
-      //     controller
-      //       ..removeListener(_onGroupTextChanged)
-      //       ..addListener(_onGroupTextChanged);
-      //
-      //     return AnimatedBuilder(
-      //       animation: _inputCornerTween,
-      //       builder: (context, child) {
-      //         return TextField(
-      //           controller: controller,
-      //           focusNode: _groupInputFocusNode,
-      //           decoration: InputDecoration(
-      //             border: OutlineInputBorder(
-      //               borderRadius: BorderRadius.vertical(
-      //                 top: Radius.circular(Config.CORNER.MAX),
-      //                 bottom: Radius.circular(
-      //                   _groupInputFocusNode.hasFocus
-      //                       ? _inputCornerTween.value
-      //                       : Config.CORNER.MAX,
-      //                 ),
-      //               ),
-      //             ),
-      //           ),
-      //         );
-      //       },
-      //     );
-      //   },
-      //   optionsViewBuilder: (context, onSelected, options) {
-      //     return FadeTransition(
-      //       opacity: _matchFoundCurvedAnimation,
-      //       child: ClipRRect(
-      //         borderRadius: BorderRadius.only(
-      //           topLeft: Radius.circular(Config.CORNER.MIN),
-      //           topRight: Radius.circular(Config.CORNER.MIN),
-      //           bottomLeft: Radius.circular(Config.CORNER.MAX),
-      //           bottomRight: Radius.circular(Config.CORNER.MAX),
-      //         ),
-      //         child: Material(
-      //           color: colorScheme.primary,
-      //           elevation: Config.ELEVATION.HIGH,
-      //           child: SizedBox(
-      //             child: ListView.builder(
-      //               shrinkWrap: true,
-      //               padding: EdgeInsets.zero,
-      //               itemCount: options.length,
-      //               itemBuilder: (context, index) {
-      //                 final option = options.elementAt(index);
-      //                 return ListTile(
-      //                   title: Text(
-      //                     option,
-      //                     style: TextStyle(color: colorScheme.onPrimary),
-      //                   ),
-      //                   onTap: () => onSelected(option),
-      //                 );
-      //               },
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //     );
-      //   },
-      // ),
+      Autocomplete.Class(
+        controller: _groupController,
+        getOptions: () => taskProvider.groups.map((g) => g.name).toList(),
+      ),
     ];
 
     return Focus(
@@ -217,32 +144,12 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     _nameController.dispose();
     _groupController.dispose();
 
-    // _groupInputAnimationController.dispose();
-
     super.dispose();
   }
-
-  // late final _groupInputAnimationController = AnimationController(
-  //   vsync: this,
-  //   duration: Config.ANIMATION.MEDIUM,
-  // );
-// late final FocusNode _groupInputFocusNode = FocusNode();
-//   late final _matchFoundCurvedAnimation = CurvedAnimation(
-//     parent: _groupInputAnimationController,
-//     curve: Curves.easeInOut,
-//   );
-//   late final _inputCornerTween =
-//       Tween<double>(begin: Config.CORNER.MAX, end: Config.CORNER.MIN).animate(
-//         CurvedAnimation(
-//           parent: _groupInputAnimationController,
-//           curve: Curves.easeInOut,
-//         ),
-//       );
 
   @override
   void initState() {
     super.initState();
-    // _onGroupTextChanged();
   }
 
   void _close() {
