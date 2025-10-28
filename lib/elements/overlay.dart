@@ -28,30 +28,33 @@ class Class extends StatelessWidget {
     return Stack(
       children: [
         AnimatedOpacity(
-          duration: const Duration(milliseconds: Config.ANIMATION_DURATION),
+          duration: Config.ANIMATION.MEDIUM,
           opacity: overlayIndex == 0 ? 0 : 1,
           child: IgnorePointer(
             ignoring: overlayIndex == 0,
-            child: Container(color: colorScheme.scrim.withOpacity(Config.DIM_OPACITY)),
+            child: Container(
+              color: colorScheme.scrim.withOpacity(Config.DIM_OPACITY),
+            ),
           ),
         ),
         AnimatedSwitcher(
-          duration: const Duration(milliseconds: Config.ANIMATION_DURATION),
+          duration: Config.ANIMATION.MEDIUM,
           switchInCurve: Curves.decelerate,
           switchOutCurve: Curves.easeIn,
           transitionBuilder: (child, animation) {
             final opened = overlayIndex != 0;
 
-            final height = MediaQuery.of(context).size.height;
-            final width = MediaQuery.of(context).size.width;
-            final portraitView = height > width;
+            final size = MediaQuery.of(context).size;
+            final height = size.height;
+            final width = size.width;
+            final portrait = height > width;
 
             debugPrint('${overlayIndex - medianIndex}');
 
-            final dx = portraitView
+            final dx = portrait
                 ? (opened ? (overlayIndex - medianIndex) * 0.8 : 0.0)
                 : 0.5;
-            final dy = portraitView
+            final dy = portrait
                 ? (opened
                       ? (1.75 - (medianIndex - overlayIndex).abs()) * 0.3
                       : 0.5)

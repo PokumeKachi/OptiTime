@@ -12,6 +12,7 @@ class Class extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('body rebuild');
 
+    final groups = context.watch<TaskProvider>().groups;
     final tasks = context.watch<TaskProvider>().tasks;
 
     return OrientationBuilder(
@@ -20,7 +21,7 @@ class Class extends StatelessWidget {
         final size = MediaQuery.of(context).size;
         final height = size.height;
         final width = size.width;
-        final portrait = orientation == Orientation.portrait;
+        final portrait = height > width;
 
         return SafeArea(
           child: Padding(
@@ -28,26 +29,30 @@ class Class extends StatelessWidget {
               bottom: portrait ? height * Config.NAV_BAR_RATIO : 0,
               right: !portrait ? width * Config.NAV_BAR_RATIO : 0,
             ),
-            child: Container(
-              color: colorScheme.background,
-              child: ListView.builder(
-                itemCount: tasks.length,
-                itemBuilder: (context, i) {
-                  final item = tasks[i];
-                  if (item is Task) {
-                    return ListTile(
-                      title: Text('${item.name} $i'),
-                      subtitle: Text('${item.description}'),
+            child: CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) =>
+                        ListTile(title: Text('${groups[i].name} $i')),
+                    childCount: groups.length,
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) => ListTile(
+                      title: Text('${tasks[i].name} $i'),
+                      subtitle: Text('${tasks[i].description}'),
                       trailing: Icon(
-                        item.trashed
+                        tasks[i].trashed
                             ? Icons.check_circle
                             : Icons.circle_outlined,
                       ),
-                    );
-                  }
-                  ;
-                },
-              ),
+                    ),
+                    childCount: tasks.length,
+                  ),
+                ),
+              ],
             ),
           ),
         );

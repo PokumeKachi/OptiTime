@@ -41,6 +41,13 @@ class TaskProvider with ChangeNotifier {
     _save();
   }
 
+  void addTaskToGroup(Task task, TaskGroup group) {
+    // final g = _groups.firstWhere((g) => g == group);
+    // g.tasks.add(task);
+    group.tasks.add(task);
+    _save();
+  }
+
   void addGroup(TaskGroup group) {
     _groups.add(group);
     _save();

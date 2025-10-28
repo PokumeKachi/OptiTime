@@ -8,7 +8,6 @@ const PRELOAD_DURATION = Duration(milliseconds: 200);
 // Color scheming
 
 const SEED_COLOR = Color.fromRGBO(225, 215, 125, 1);
-
 final ColorScheme COLOR_SCHEME = ColorScheme.fromSeed(seedColor: SEED_COLOR);
 
 final ColorScheme COLOR_SCHEME_DARK = ColorScheme.fromSeed(
@@ -48,9 +47,35 @@ class ITEM_PADDING {
   static const BIG = 24.0;
 }
 
+const SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT = 12.0;
+
 // Element decorating
 
-const MIN_CORNER = 2.0;
-const MAX_CORNER = 16.0;
+class ELEVATION {
+  static const LOW = 4.0;
+  static const MEDIUM = 8.0;
+  static const HIGH = 12.0;
+}
 
-const ANIMATION_DURATION = 250;
+class CORNER {
+  static const MIN = 4.0;
+  static const MEDIUM = 10.0;
+  static const MAX = 16.0;
+}
+
+// Animation
+
+// const ANIMATION_DURATION = 250;
+
+class ANIMATION {
+  static const SHORT = const Duration(milliseconds: 150);
+  static const MEDIUM = const Duration(milliseconds: 300);
+  static const LONG = const Duration(milliseconds: 450);
+  static const VERY_LONG = const Duration(milliseconds: 600);
+}
+
+class BOBBING_SCALE {
+  static const MILD = 0.99;
+  static const MEDIUM = 0.95;
+  static const AGGRESSIVE = 0.9;
+}

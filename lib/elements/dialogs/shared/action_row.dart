@@ -45,11 +45,9 @@ class _ClassState extends State<Class> {
       children: [
         for (int i = 0; i < buttons.length; i++) ...[
           AnimatedSlide(
-            offset: widget.visible ? Offset.zero : Offset(.5 + .5 * i, 0),
-            duration: const Duration(
-              milliseconds: Config.ANIMATION_DURATION * 3,
-            ),
-            curve: Curves.easeOutExpo,
+            offset: widget.visible ? Offset.zero : Offset(.7 + .7 * i, 0),
+            duration: Config.ANIMATION.VERY_LONG,
+            curve: Curves.easeOutCubic,
             child: TextButton(
               onPressed: buttons[i].callback,
               style: buttons[i].style,
