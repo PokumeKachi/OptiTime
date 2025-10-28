@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
 import 'package:todo/utils/provider.dart';
@@ -60,6 +61,7 @@ class _ClassState extends State<Class> {
             child: TextField(
               focusNode: _focusNode,
               controller: widget.controller,
+              style: TextStyle(fontSize: Config.FONT_SIZE.MEDIUM),
               decoration: InputDecoration(
                 labelText: 'Group',
                 border: InputBorder.none,
@@ -89,6 +91,8 @@ class _ClassState extends State<Class> {
 
     _focusNode.addListener(() {
       _onTextChanged();
+      setState(() {});
+      _overlayEntry.markNeedsBuild();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final size = _textFieldKey.currentContext?.size;
@@ -124,44 +128,54 @@ class _ClassState extends State<Class> {
                     bottom: Radius.circular(Config.CORNER.MAX),
                   ),
                 ),
-                child: AnimatedContainer(
+                child: AnimatedSize(
                   duration: Config.ANIMATION.SHORT,
                   curve: Curves.easeOutExpo,
-                  height: shouldShowOptions ? 150 : 0,
-                  color: Colors.transparent,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          colorScheme.surfaceBright,
-                          colorScheme.surfaceDim,
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: shouldShowOptions
+                          ? 150
+                          : 0, // optional max height
                     ),
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        for (final option in matchingOptions) ...[
-                          TextButton(
-                            onPressed: () => _onOptionPressed(option),
-                            style: TextButton.styleFrom(
-                              minimumSize: Size(double.infinity, 0),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: Config
-                                    .SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT,
-                                vertical: Config.ITEM_PADDING.SMALL,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            colorScheme.surfaceBright,
+                            colorScheme.surfaceDim,
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                      child: ListView(
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                        children: [
+                          for (final option in matchingOptions)
+                            TextButton(
+                              onPressed: () => _onOptionPressed(option),
+                              style: TextButton.styleFrom(
+                                minimumSize: Size(double.infinity, 0),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: Config
+                                      .SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT,
+                                  vertical: Config.ITEM_PADDING.MEDIUM,
+                                ),
+                                alignment: Alignment.centerLeft,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
                               ),
-                              alignment: Alignment.centerLeft,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
+                              child: Text(
+                                option,
+                                style: TextStyle(
+                                  fontSize: Config.FONT_SIZE.MEDIUM,
+                                ),
                               ),
                             ),
-                            child: Text(option),
-                          ),
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -175,15 +189,21 @@ class _ClassState extends State<Class> {
   }
 
   void _onTextChanged() {
+    final newMatchingOptions = widget
+        .getOptions()
+        .where(
+          (option) => option.toLowerCase().contains(
+            widget.controller.text.toLowerCase(),
+          ),
+        )
+        .toList();
+
+    if (listEquals(matchingOptions, newMatchingOptions)) {
+      return;
+    }
+
     setState(() {
-      matchingOptions = widget
-          .getOptions()
-          .where(
-            (option) => option.toLowerCase().contains(
-              widget.controller.text.toLowerCase(),
-            ),
-          )
-          .toList();
+      matchingOptions = newMatchingOptions;
     });
 
     _overlayEntry.markNeedsBuild();

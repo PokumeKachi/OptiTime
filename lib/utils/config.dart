@@ -26,9 +26,9 @@ const NAV_BAR_RATIO = 0.08;
 const DIALOG_RATIO = 0.8;
 
 class FONT_SIZE {
-  static const SMALL = 16.0;
-  static const MEDIUM = 24.0;
-  static const BIG = 32.0;
+  static const SMALL = 12.0;
+  static const MEDIUM = 16.0;
+  static const BIG = 24.0;
 }
 
 class ICON_SIZE {
@@ -42,9 +42,9 @@ class ICON_SIZE {
 const MARGIN_PADDING = EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 16.0);
 
 class ITEM_PADDING {
-  static const SMALL = 8.0;
-  static const MEDIUM = 16.0;
-  static const BIG = 24.0;
+  static const NARROW = 8.0;
+  static const MEDIUM = 12.0;
+  static const WIDE = 16.0;
 }
 
 const SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT = 12.0;
