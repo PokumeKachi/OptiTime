@@ -38,7 +38,7 @@ class _ClassState extends State<Class> {
           key: _textFieldKey,
           link: _layerLink,
           child: AnimatedContainer(
-            duration: Config.ANIMATION.MEDIUM,
+            duration: Config.ANIMATION.SHORT,
             curve: Curves.easeInOut,
             padding: EdgeInsets.only(top: Config.CORNER.MAX / 2),
             decoration: BoxDecoration(

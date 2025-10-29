@@ -23,29 +23,22 @@ class Button {
   }
 }
 
-class Class extends StatefulWidget {
+class Class extends StatelessWidget {
   const Class({super.key, required this.visible, required this.buttons});
 
   final bool visible;
   final List<Button> buttons;
 
   @override
-  State<Class> createState() => _ClassState();
-}
-
-class _ClassState extends State<Class> {
-  @override
   Widget build(BuildContext context) {
     debugPrint('action button row rebuild');
-    final dialogIndex = context.read<DialogIndexProvider>();
-    final buttons = widget.buttons;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         for (int i = 0; i < buttons.length; i++) ...[
           AnimatedSlide(
-            offset: widget.visible ? Offset.zero : Offset(.7 + .7 * i, 0),
+            offset: visible ? Offset.zero : Offset(.7 + .7 * i, 0),
             duration: Config.ANIMATION.VERY_LONG,
             curve: Curves.easeOutCubic,
             child: TextButton(
@@ -54,11 +47,10 @@ class _ClassState extends State<Class> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (buttons[i].icon != null) ...[buttons[i].icon!],
-                  if (buttons[i].icon != null && buttons[i].text != null) ...[
+                  if (buttons[i].icon != null) buttons[i].icon!,
+                  if (buttons[i].icon != null && buttons[i].text != null)
                     const SizedBox(width: 4),
-                  ],
-                  if (buttons[i].text != null) ...[Text(buttons[i].text!)],
+                  if (buttons[i].text != null) Text(buttons[i].text!),
                 ],
               ),
             ),
