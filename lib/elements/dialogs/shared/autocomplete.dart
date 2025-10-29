@@ -134,8 +134,8 @@ class _ClassState extends State<Class> {
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       maxHeight: shouldShowOptions
-                          ? 150
-                          : 0, // optional max height
+                          ? 350
+                          : 0,
                     ),
                     child: Container(
                       decoration: BoxDecoration(
@@ -148,7 +148,13 @@ class _ClassState extends State<Class> {
                           end: Alignment.bottomCenter,
                         ),
                       ),
-                      child: ListView(
+                      child: 
+MediaQuery.removePadding(
+  context: context,
+  removeTop: true,
+  removeBottom: true,
+  child: 
+                      ListView(
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
                         children: [
@@ -175,6 +181,7 @@ class _ClassState extends State<Class> {
                               ),
                             ),
                         ],
+                      ),
                       ),
                     ),
                   ),
@@ -213,5 +220,6 @@ class _ClassState extends State<Class> {
     setState(() {
       widget.controller.text = name;
     });
+    _focusNode.unfocus();
   }
 }
