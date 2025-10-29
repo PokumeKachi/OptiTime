@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/provider.dart';
+
+import 'package:todo/utils/config.dart' as Config;
 import 'dialogs/create_task.dart' as NewTask;
 
-class Class extends StatefulWidget {
+
+class Class extends StatelessWidget {
   const Class({super.key});
 
-  @override
-  State<Class> createState() => _ClassState();
-}
-
-class _ClassState extends State<Class> {
-  late final List<Widget> _dialogs;
-
-  @override
-  void initState() {
-    super.initState();
-    _dialogs = [const SizedBox.shrink(), NewTask.Class(index: 1)];
-  }
+  static final _dialogs = [
+    const SizedBox.shrink(),
+    NewTask.Class(index: 1),
+  ];
 
   void _closeDialog(BuildContext context) {
     final provider = context.read<DialogIndexProvider>();
@@ -31,7 +25,6 @@ class _ClassState extends State<Class> {
   @override
   Widget build(BuildContext context) {
     debugPrint('dialog rebuild');
-
     final dialogIndex = context.watch<DialogIndexProvider>().value;
     final colorScheme = Theme.of(context).colorScheme;
     final isDialogOpen = dialogIndex != 0;
@@ -68,10 +61,7 @@ class _ClassState extends State<Class> {
             return IgnorePointer(
               ignoring: !active,
               child: AnimatedSlide(
-                offset: active
-                    ? Offset.zero
-                    // : Offset(portrait ? 0 : -0.5, (!portrait) ? 0 : -0.5),
-                    : const Offset(0, -0.5),
+                offset: active ? Offset.zero : const Offset(0, -0.5),
                 duration: Config.ANIMATION.MEDIUM,
                 curve: Curves.easeInOutCubic,
                 child: AnimatedScale(
@@ -92,3 +82,4 @@ class _ClassState extends State<Class> {
     );
   }
 }
+
