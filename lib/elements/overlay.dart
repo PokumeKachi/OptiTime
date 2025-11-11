@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:blur/blur.dart';
 
 import 'overlays/settings.dart' as SettingsPage;
 import 'package:todo/utils/config.dart' as Config;
@@ -33,7 +34,16 @@ class Class extends StatelessWidget {
           child: IgnorePointer(
             ignoring: overlayIndex == 0,
             child: Container(
-              color: colorScheme.scrim.withOpacity(Config.DIM_OPACITY),
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    colorScheme.surfaceDim.withOpacity(1.0),
+                    colorScheme.surfaceDim.withOpacity(Config.DIM.NEAR_SOLID),
+                  ],
+                  center: Alignment.center,
+                  radius: 1,
+                ),
+              ),
             ),
           ),
         ),

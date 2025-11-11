@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage_plus/get_storage_plus.dart';
 
-import 'task.dart';
+import 'data_types.dart';
 
 class ThemeModeProvider with ChangeNotifier {
   final GetStorage _storage;
@@ -69,7 +69,7 @@ class TaskProvider with ChangeNotifier {
 }
 
 class OverlayIndexProvider extends ValueNotifier<int> {
-  OverlayIndexProvider() : super(0);
+  OverlayIndexProvider(): super(0);
 }
 
 class DialogIndexProvider extends ValueNotifier<int> {

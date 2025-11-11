@@ -11,8 +11,6 @@ class Class extends StatefulWidget {
   final TextEditingController controller;
   final List<String> Function() getOptions;
 
-  static const FOCUSED_BORDER_WIDTH = 2.0;
-
   @override
   _ClassState createState() => _ClassState();
 }
@@ -22,7 +20,7 @@ class _ClassState extends State<Class> {
   late final _layerLink = LayerLink();
   late final _textFieldKey = GlobalKey();
 
-  late final _overlayEntry;
+  OverlayEntry? _overlayEntry;
 
   List<String> matchingOptions = [];
 
@@ -32,30 +30,30 @@ class _ClassState extends State<Class> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final shouldShowOptions =
-            (_focusNode.hasFocus && matchingOptions.isNotEmpty);
+        final isFocused = _focusNode.hasFocus;
+        final colorScheme = Theme.of(context).colorScheme;
         return CompositedTransformTarget(
           key: _textFieldKey,
           link: _layerLink,
           child: AnimatedContainer(
             duration: Config.ANIMATION.SHORT,
             curve: Curves.easeInOut,
-            padding: EdgeInsets.only(top: Config.CORNER.MAX / 2),
+            padding: EdgeInsets.only(top: Config.CORNER.ROUNDEST / 2),
             decoration: BoxDecoration(
-              color: shouldShowOptions
+              color: isFocused
                   ? colorScheme.surfaceBright
                   : colorScheme.surface,
               borderRadius: BorderRadius.vertical(
-                top: Radius.circular(Config.CORNER.MAX),
-                bottom: shouldShowOptions
+                top: Radius.circular(Config.CORNER.ROUNDEST),
+                bottom: (isFocused && matchingOptions.isNotEmpty)
                     ? Radius.circular(Config.CORNER.MIN)
-                    : Radius.circular(Config.CORNER.MAX),
+                    : Radius.circular(Config.CORNER.ROUNDEST),
               ),
               border: Border.all(
-                color: shouldShowOptions
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.grey,
-                width: Class.FOCUSED_BORDER_WIDTH,
+                color: isFocused ? colorScheme.primary : colorScheme.outline,
+                width: isFocused
+                    ? Config.FOCUSED_BORDER_WIDTH
+                    : Config.BORDER_WIDTH,
               ),
             ),
             child: TextField(
@@ -92,17 +90,17 @@ class _ClassState extends State<Class> {
     _focusNode.addListener(() {
       _onTextChanged();
       setState(() {});
-      _overlayEntry.markNeedsBuild();
+      _overlayEntry?.markNeedsBuild();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final size = _textFieldKey.currentContext?.size;
-
-      if (size == null) {
-        return;
-      }
+      if (_overlayEntry != null) return;
 
       _overlayEntry = OverlayEntry(
         builder: (context) {
+          final renderBox =
+              _textFieldKey.currentContext?.findRenderObject() as RenderBox?;
+          final size = renderBox?.size ?? Size.zero;
+
           final colorScheme = Theme.of(context).colorScheme;
 
           final shouldShowOptions =
@@ -113,19 +111,19 @@ class _ClassState extends State<Class> {
             child: CompositedTransformFollower(
               link: _layerLink,
               showWhenUnlinked: false,
-              offset: Offset(0, size.height - Class.FOCUSED_BORDER_WIDTH),
+              offset: Offset(0, size.height - Config.FOCUSED_BORDER_WIDTH),
               child: Material(
                 clipBehavior: Clip.antiAlias,
                 color: Colors.transparent,
-                elevation: Config.ELEVATION.LOW,
+                elevation: Config.ELEVATION.MEDIUM,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
-                    width: Class.FOCUSED_BORDER_WIDTH,
-                    color: colorScheme.outline,
+                    width: Config.FOCUSED_BORDER_WIDTH,
+                    color: colorScheme.primary,
                   ),
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(Config.CORNER.MIN),
-                    bottom: Radius.circular(Config.CORNER.MAX),
+                    bottom: Radius.circular(Config.CORNER.ROUNDEST),
                   ),
                 ),
                 child: AnimatedSize(
@@ -133,9 +131,7 @@ class _ClassState extends State<Class> {
                   curve: Curves.easeOutExpo,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxHeight: shouldShowOptions
-                          ? 350
-                          : 0,
+                      maxHeight: shouldShowOptions ? 350 : 0,
                     ),
                     child: Container(
                       decoration: BoxDecoration(
@@ -148,40 +144,38 @@ class _ClassState extends State<Class> {
                           end: Alignment.bottomCenter,
                         ),
                       ),
-                      child: 
-MediaQuery.removePadding(
-  context: context,
-  removeTop: true,
-  removeBottom: true,
-  child: 
-                      ListView(
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                        children: [
-                          for (final option in matchingOptions)
-                            TextButton(
-                              onPressed: () => _onOptionPressed(option),
-                              style: TextButton.styleFrom(
-                                minimumSize: Size(double.infinity, 0),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: Config
-                                      .SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT,
-                                  vertical: Config.ITEM_PADDING.MEDIUM,
+                      child: MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        removeBottom: true,
+                        child: ListView(
+                          shrinkWrap: true,
+                          physics: const ClampingScrollPhysics(),
+                          children: [
+                            for (final option in matchingOptions)
+                              TextButton(
+                                onPressed: () => _onOptionPressed(option),
+                                style: TextButton.styleFrom(
+                                  minimumSize: Size(double.infinity, 0),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: Config
+                                        .SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT,
+                                    vertical: Config.ITEM_PADDING.MEDIUM,
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
                                 ),
-                                alignment: Alignment.centerLeft,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
+                                child: Text(
+                                  option,
+                                  style: TextStyle(
+                                    fontSize: Config.FONT_SIZE.MEDIUM,
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                option,
-                                style: TextStyle(
-                                  fontSize: Config.FONT_SIZE.MEDIUM,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -191,7 +185,7 @@ MediaQuery.removePadding(
           );
         },
       );
-      Overlay.of(context).insert(_overlayEntry);
+      Overlay.of(context).insert(_overlayEntry!);
     });
   }
 
@@ -213,7 +207,7 @@ MediaQuery.removePadding(
       matchingOptions = newMatchingOptions;
     });
 
-    _overlayEntry.markNeedsBuild();
+    _overlayEntry?.markNeedsBuild();
   }
 
   void _onOptionPressed(final String name) {

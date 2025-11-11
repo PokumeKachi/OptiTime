@@ -18,7 +18,7 @@ class Class extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return ColoredBox(
-      color: colorScheme.secondaryContainer,
+      color: Colors.transparent,
       child: Center(
         child: DropdownButton<String>(
           value: provider.themeMode,

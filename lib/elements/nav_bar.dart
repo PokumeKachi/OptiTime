@@ -12,13 +12,13 @@ class Class extends StatelessWidget {
   static const navItems = [
     {'icon': Icons.delete, 'target': 1},
     {'icon': Icons.energy_savings_leaf, 'target': 2},
-    {'icon': Icons.add, 'target': null},
+    {'icon': Icons.add, 'target': 0},
     {'icon': Icons.notifications, 'target': 3},
     {'icon': Icons.settings, 'target': 4},
   ];
 
   static final List<Widget> _cachedButtons = navItems.map((item) {
-    final target = item['target'] as int?;
+    final target = item['target'] as int;
     return NavButton.Class(icon: item['icon'] as IconData, targetIndex: target);
   }).toList();
 

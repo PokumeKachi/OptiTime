@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
+import 'package:todo/utils/notify.dart' as Notify;
 import 'package:todo/utils/provider.dart';
-import 'package:todo/utils/task.dart';
+import 'package:todo/utils/data_types.dart';
 
 import 'shared/action_row.dart' as ActionRow;
 import 'shared/autocomplete.dart' as Autocomplete;
@@ -16,31 +17,12 @@ class Class extends StatefulWidget {
   const Class({super.key, required this.index});
 
   @override
-  State<Class> createState() => _ClassState();
+  State<Class> createState() => ClassState();
 }
 
-class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
+class ClassState extends State<Class> with SingleTickerProviderStateMixin {
   late final _nameController = TextEditingController();
-  late TextEditingController _groupController = TextEditingController();
-
-  // bool _groupMatchExists() {
-  //   final groupName = _groupController.text.toLowerCase();
-  //   final groups = context.read<TaskProvider>().groups;
-  //   if (groupName.isEmpty) return groups.isNotEmpty;
-  //
-  //   print(groupName);
-  //   return groups.any((g) => g.name.toLowerCase().contains(groupName));
-  // }
-  //
-  // void _onGroupTextChanged() {
-  //   if (_groupMatchExists()) {
-  //   print('yuh');
-  //     _groupInputAnimationController.forward();
-  //   } else {
-  //   print('nuh');
-  //     _groupInputAnimationController.reverse();
-  //   }
-  // }
+  late final _groupController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +46,7 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
         decoration: InputDecoration(
           labelText: 'Name',
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(Config.CORNER.MAX),
+            borderRadius: BorderRadius.circular(Config.CORNER.ROUNDEST),
           ),
         ),
       ),
@@ -74,67 +56,52 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
       ),
     ];
 
-    return Focus(
-      onKeyEvent: (node, event) {
-        if (event is KeyDownEvent) {
-          switch (event.logicalKey) {
-            case LogicalKeyboardKey.enter:
-              _createTask();
-              return KeyEventResult.handled;
-            case LogicalKeyboardKey.escape:
-              _close();
-              return KeyEventResult.handled;
-          }
-        }
-        return KeyEventResult.ignored;
-      },
-      child: Container(
-        width: 400,
-        padding: Config.MARGIN_PADDING,
-        decoration: BoxDecoration(
-          color: colorScheme.background,
-          borderRadius: BorderRadius.circular(Config.CORNER.MAX),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // shrink to content
-          children: [
-            const Text(
-              'New Task',
-              style: TextStyle(
-                fontSize: Config.FONT_SIZE.BIG,
-                fontWeight: FontWeight.bold,
-              ),
+    return Container(
+      width: 400,
+      padding: Config.MARGIN_PADDING.MEDIUM,
+      decoration: BoxDecoration(
+        color: colorScheme.background,
+        borderRadius: BorderRadius.circular(Config.CORNER.ROUNDEST),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // shrink to content
+        children: [
+          const Text(
+            'New Task',
+            style: TextStyle(
+              fontSize: Config.FONT_SIZE.BIG,
+              fontWeight: FontWeight.bold,
             ),
+          ),
+          const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
+
+          for (final widget in formWidgets) ...[
+            widget,
             const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-
-            for (final widget in formWidgets) ...[
-              widget,
-              const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-            ],
-
-            ActionRow.Class(
-              visible: visible,
-              buttons: [
-                ActionRow.Button(
-                  text: 'Cancel',
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: colorScheme.onBackground,
-                  ),
-                  callback: _close,
-                ),
-                ActionRow.Button(
-                  text: 'Create',
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
-                  ),
-                  callback: _createTask,
-                ),
-              ],
-            ),
           ],
-        ),
+
+          ActionRow.Class(
+            visible: visible,
+            buttons: [
+              ActionRow.Button(
+                text: 'Cancel',
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: colorScheme.error,
+                ),
+                callback: _close,
+              ),
+              ActionRow.Button(
+                text: 'Create',
+                style: TextButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
+                ),
+                callback: _createTask,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -147,9 +114,13 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
+  void handleKey(RawKeyEvent event) {
+    if (!mounted) return;
+    if (context.read<DialogIndexProvider>().value != widget.index) return;
+    if (event is RawKeyUpEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.enter) _createTask();
+      if (event.logicalKey == LogicalKeyboardKey.escape) _close();
+    }
   }
 
   void _close() {
@@ -176,6 +147,34 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     }
 
     final task = Task(name: name ?? '');
+
+    // ScaffoldMessenger.of(
+    //   context,
+    // ).showSnackBar(SnackBar(content: Text('Added a new task: "$name"')));
+
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Text("custom message"),
+    //     backgroundColor: Colors.blue, // color
+    //     duration: Duration(seconds: 3), // duration
+    //     behavior: SnackBarBehavior.floating, // floating or fixed
+    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    //     action: SnackBarAction(
+    //       label: "UNDO",
+    //       textColor: Colors.white,
+    //       onPressed: () {
+    //         /* do something */
+    //       },
+    //     ),
+    //   ),
+    // );
+
+    Notify.send(
+      context: context,
+      content: "no shit $name",
+      accentColor: Colors.green,
+      duration: Config.NOTIFICATION.MEDIUM,
+    );
 
     if (groupName.isEmpty) {
       context.read<TaskProvider>().addTask(task);

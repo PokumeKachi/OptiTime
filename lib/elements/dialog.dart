@@ -1,24 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
 import 'dialogs/create_task.dart' as NewTask;
 
-
-class Class extends StatelessWidget {
+class Class extends StatefulWidget {
   const Class({super.key});
 
+  @override
+  State<Class> createState() => _ClassState();
+}
+
+class _ClassState extends State<Class> {
+  static final _dialogKeys = [GlobalKey<NewTask.ClassState>()];
   static final _dialogs = [
     const SizedBox.shrink(),
-    NewTask.Class(index: 1),
+    NewTask.Class(key: _dialogKeys[0], index: 1),
   ];
 
-  void _closeDialog(BuildContext context) {
-    final provider = context.read<DialogIndexProvider>();
-    if (provider.value != 0) {
-      FocusScope.of(context).unfocus();
-      provider.value = 0;
+  @override
+  void initState() {
+    super.initState();
+    RawKeyboard.instance.addListener(_handleKey);
+  }
+
+  @override
+  void dispose() {
+    RawKeyboard.instance.removeListener(_handleKey);
+    super.dispose();
+  }
+
+  void _handleKey(RawKeyEvent event) {
+    final dialogIndex = context.read<DialogIndexProvider>();
+
+    if (dialogIndex.value != 0) {
+      _dialogKeys[dialogIndex.value - 1].currentState?.handleKey(event);
     }
   }
 
@@ -43,18 +61,10 @@ class Class extends StatelessWidget {
             child: IgnorePointer(
               ignoring: !isDialogOpen,
               child: Container(
-                color: colorScheme.scrim.withOpacity(Config.DIM_OPACITY),
+                color: colorScheme.scrim.withOpacity(Config.DIM.MEDIUM),
               ),
             ),
           ),
-          if (isDialogOpen)
-            GestureDetector(
-              onTap: () => _closeDialog(context),
-              child: const ColoredBox(
-                color: Colors.transparent,
-                child: SizedBox.expand(),
-              ),
-            ),
           ...List.generate(_dialogs.length - 1, (i) {
             final idx = i + 1;
             final active = dialogIndex == idx;
@@ -82,4 +92,3 @@ class Class extends StatelessWidget {
     );
   }
 }
-

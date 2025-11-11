@@ -5,48 +5,84 @@ import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/config.dart' as Config;
 
 class Class extends StatelessWidget {
-  const Class({super.key, required this.icon, this.targetIndex});
+  const Class({super.key, required this.icon, required this.targetIndex});
 
   final IconData icon;
-  final int? targetIndex;
+  final int targetIndex;
 
-  static void handleClick(BuildContext context, int? targetIndex) {
+  static void handleClick(BuildContext context, int targetIndex) {
     debugPrint('Target index of navigation button is $targetIndex');
     final overlayIndex = context.read<OverlayIndexProvider>();
     final dialogIndex = context.read<DialogIndexProvider>();
 
-    if (targetIndex != null) {
-      overlayIndex.value = overlayIndex.value == targetIndex ? 0 : targetIndex;
-    } else {
+    overlayIndex.value = overlayIndex.value == targetIndex ? 0 : targetIndex;
+
+    if (targetIndex == 0) {
       dialogIndex.value = 1;
-      overlayIndex.value = 0;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Nav button rebuild');
+
+    final overlayIndex = context.watch<OverlayIndexProvider>().value;
+
     final colorScheme = Theme.of(context).colorScheme;
-    final isCenter = targetIndex == null;
+    final isFocused = targetIndex == overlayIndex;
 
     return Expanded(
       child: SizedBox.expand(
-        child: TextButton(
-          onPressed: () => handleClick(context, targetIndex),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.MIN),
-            ),
-            elevation: isCenter ? 32 : 0,
-            backgroundColor: isCenter
-                ? colorScheme.primary
-                : Colors.transparent,
-            foregroundColor: isCenter
-                ? colorScheme.onPrimary
-                : colorScheme.primary,
+        child: AnimatedContainer(
+          duration: Config.ANIMATION.SHORT,
+          curve: Curves.easeOut,
+          decoration: BoxDecoration(
+            color: isFocused ? colorScheme.tertiary : Colors.transparent,
+            borderRadius: isFocused
+                ? BorderRadius.circular(Config.CORNER.MIN)
+                : BorderRadius.circular(Config.CORNER.ROUNDEST),
+            boxShadow: isFocused
+                ? [
+                    BoxShadow(
+                      color: colorScheme.inverseSurface.withOpacity(Config.BLUR_OPACITY.MEDIUM),
+                      blurRadius: Config.BLUR_RADIUS.MEDIUM,
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.transparent,
+                      blurRadius: Config.BLUR_RADIUS.MEDIUM,
+                    ),
+                  ],
           ),
-          child: Icon(
-            icon,
-            size: isCenter ? Config.ICON_SIZE.BIG : Config.ICON_SIZE.MEDIUM,
+          child: TextButton(
+            onPressed: () => handleClick(context, targetIndex),
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: isFocused
+                    ? BorderRadius.circular(Config.CORNER.MIN)
+                    : BorderRadius.circular(Config.CORNER.ROUNDEST),
+              ),
+              elevation: isFocused ? 32 : 0,
+              backgroundColor: Colors.transparent,
+              // backgroundColor: isFocused
+              //     ? colorScheme.tertiary
+              //     : Colors.transparent,
+              foregroundColor: isFocused
+                  ? colorScheme.onTertiary
+                  : colorScheme.onBackground,
+            ),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(
+                begin: Config.ICON_SIZE.MEDIUM,
+                end: isFocused ? Config.ICON_SIZE.BIG : Config.ICON_SIZE.MEDIUM,
+              ),
+              curve: Curves.easeOut,
+              duration: Config.ANIMATION.MEDIUM,
+              builder: (context, size, child) {
+                return Icon(icon, size: size);
+              },
+            ),
           ),
         ),
       ),
