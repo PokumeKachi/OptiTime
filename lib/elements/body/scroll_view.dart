@@ -18,24 +18,16 @@ class Class extends StatelessWidget {
     final tasks = taskProvider.tasks;
 
     return ListView.separated(
+physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       padding: Config.MARGIN_PADDING.NARROW,
       itemCount: groups.length + tasks.length,
       itemBuilder: (context, i) {
         if (i < groups.length) {
           final group = groups[i];
           return Group.Class(group: group);
-          // return ListTile(key: ValueKey(group.name), title: Text('${group.name} $i'));
         } else {
           final task = tasks[i - groups.length];
           return Task.Class(task: task);
-          // return ListTile(
-          //   key: ValueKey(i),
-          //   title: Text('${task.name} $i'),
-          //   subtitle: Text(task.description),
-          //   trailing: Icon(
-          //     task.trashed ? Icons.check_circle : Icons.circle_outlined,
-          //   ),
-          // );
         }
       },
 
