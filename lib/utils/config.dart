@@ -114,15 +114,16 @@ class ANIMATION {
   static const MEDIUM = const Duration(milliseconds: 300);
   static const LONG = const Duration(milliseconds: 450);
   static const VERY_LONG = const Duration(milliseconds: 600);
-  static const EXTREMELY_LONG = const Duration(milliseconds: 1000);
+  static const VERY_LONGER = const Duration(milliseconds: 750);
+  static const EXTREMELY_LONG = const Duration(milliseconds: 900);
 }
 
 class NOTIFICATION {
   static const NONE = const Duration(seconds: 0);
-  static const SHORT = const Duration(seconds: 2);
-  static const MEDIUM = const Duration(seconds: 5);
-  static const LONG = const Duration(seconds: 10);
-  static const VERY_LONG = const Duration(seconds: 15);
+  static const SHORT = const Duration(seconds: 5);
+  static const MEDIUM = const Duration(seconds: 15);
+  static const LONG = const Duration(seconds: 30);
+  static const VERY_LONG = const Duration(seconds: 60);
 }
 
 class BOBBING_SCALE {

@@ -24,9 +24,13 @@ void main() async {
         ChangeNotifierProvider<ThemeModeProvider>(
           create: (context) => ThemeModeProvider(_storage),
         ),
-        ChangeNotifierProvider<TaskProvider>(
-          create: (context) => TaskProvider(_storage),
+        ChangeNotifierProvider<ItemProvider>(
+          create: (context) => ItemProvider(_storage),
         ),
+        ChangeNotifierProvider<UuidProvider>(
+          create: (context) => UuidProvider(_storage),
+        ),
+
         ChangeNotifierProvider<OverlayIndexProvider>(
           create: (context) => OverlayIndexProvider(),
         ),

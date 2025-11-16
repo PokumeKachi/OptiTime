@@ -32,8 +32,8 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
     final dialogIndex = context.watch<DialogIndexProvider>();
     final visible = widget.index == dialogIndex.value;
-    final taskProvider = context.watch<TaskProvider>();
-    final groups = taskProvider.groups;
+    final itemProvider = context.watch<ItemProvider>();
+    final items = itemProvider.items;
 
     final size = MediaQuery.of(context).size;
     final height = size.height;
@@ -52,7 +52,8 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       ),
       Autocomplete.Class(
         controller: _groupController,
-        getOptions: () => taskProvider.groups.map((g) => g.name).toList(),
+        getOptions: () =>
+            items.whereType<GroupTask>().map((i) => i.name).toList(),
       ),
     ];
 
@@ -132,7 +133,8 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
   }
 
   void _createTask([String? _]) {
-    final taskProvider = context.read<TaskProvider>();
+    final itemProvider = context.read<ItemProvider>();
+    final uuidProvider = context.read<UuidProvider>();
 
     final name = _nameController.text;
     final groupName = _groupController.text;
@@ -146,30 +148,33 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       return;
     }
 
-    final task = SingleTask(name: name ?? '');
+    final task = SingleTask(id: uuidProvider.getUUID(), name: name ?? '');
 
     Notify.send(
       context: context,
       title: "$name" + (groupName.isEmpty ? "" : " ($groupName)"),
       subtitle: "has been added to your todo list!",
       accentColor: Colors.blue,
-      // accentColor: Colors.green,
       duration: Config.NOTIFICATION.MEDIUM,
     );
 
     if (groupName.isEmpty) {
-      context.read<TaskProvider>().addTask(task);
+      context.read<ItemProvider>().addItem(task);
     } else {
-      final group = taskProvider.groups.firstWhere(
+      final group = itemProvider.items.whereType<GroupTask>().firstWhere(
         (g) => g.name == groupName,
         orElse: () {
-          final group = GroupTask(name: groupName, tasks: []);
-          taskProvider.addGroup(group);
+          final group = GroupTask(
+            id: uuidProvider.getUUID(),
+            name: groupName,
+            tasks: [],
+          );
+          itemProvider.addItem(group);
           return group;
         },
       );
 
-      taskProvider.addTaskToGroup(task, group);
+      itemProvider.addTaskToGroup(task, group);
     }
 
     _close();

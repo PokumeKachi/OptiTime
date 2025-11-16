@@ -36,11 +36,42 @@ class UuidProvider with ChangeNotifier {
   }
 }
 
-class TaskProvider with ChangeNotifier {
+class ItemProvider with ChangeNotifier {
   final GetStorage _storage;
   // final List<SingleTask> _tasks;
   // final List<GroupTask> _groups;
   final List<TaskItem> _items;
+
+  ItemProvider(this._storage)
+    : _items = List.from(
+        _storage.read('items') ?? [],
+      ).map((e) => TaskItem.fromMap(Map<String, dynamic>.from(e))).toList();
+
+  List<TaskItem> get items => List.unmodifiable(_items);
+
+  void addItem(TaskItem item) {
+    _items.add(item);
+    _save();
+  }
+
+  void removeItem(TaskItem item) {
+    if (_items.remove(item)) _save();
+  }
+
+  void addTaskToGroup(SingleTask task, GroupTask group) {
+    group.tasks.add(task);
+    _save();
+  }
+
+  void _save() {
+    _storage.write(
+      'items',
+      _items.map((e) {
+        return e.toMap();
+      }).toList(),
+    );
+    notifyListeners();
+  }
 
   // TaskProvider(this._storage)
   //   : _tasks = List.from(

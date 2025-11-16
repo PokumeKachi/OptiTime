@@ -74,9 +74,9 @@ void send({
                   borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM * t),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.scrim.withOpacity(0.5),
+                      color: colorScheme.scrim.withOpacity(0.2),
                       blurRadius: 16 * t,
-                      spreadRadius: 8 * t,
+                      spreadRadius: 2 * t,
                     ),
                   ],
                 ),
