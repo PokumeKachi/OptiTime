@@ -114,6 +114,7 @@ class ANIMATION {
   static const MEDIUM = const Duration(milliseconds: 300);
   static const LONG = const Duration(milliseconds: 450);
   static const VERY_LONG = const Duration(milliseconds: 600);
+  static const EXTREMELY_LONG = const Duration(milliseconds: 1000);
 }
 
 class NOTIFICATION {
