@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_storage_plus/get_storage_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 
 import 'layout.dart' as Layout;
 import 'utils/config.dart' as Config;
@@ -8,6 +10,8 @@ import 'utils/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   await GetStorage.init();
 
   // await GetStorage().erase();
@@ -33,6 +37,15 @@ void main() async {
       child: const App(),
     ),
   );
+
+  doWhenWindowReady(() {
+    // const initialSize = Size(600, 450);
+    // appWindow.minSize = initialSize;
+    // appWindow.size = initialSize;
+    appWindow.alignment = Alignment.center;
+    appWindow.show();
+    appWindow.maximize();
+  });
 }
 
 class App extends StatelessWidget {
