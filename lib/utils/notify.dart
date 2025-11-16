@@ -1,3 +1,4 @@
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
@@ -5,7 +6,8 @@ import 'package:todo/utils/config.dart' as Config;
 
 void send({
   required BuildContext context,
-  String content = "",
+  String title = "",
+  String subtitle = "",
   Color accentColor = Colors.green,
   Duration duration = Config.NOTIFICATION.MEDIUM,
 }) {
@@ -18,77 +20,117 @@ void send({
   final textColor = isDark ? Colors.white : Colors.black;
 
   final backgroundColor = isDark
-      ? HSLColor.fromAHSL(
-          1.0,
-          hslAccent.hue,
-          hslAccent.saturation * 0.5,
-          1 - lightness,
-        ).toColor()
+      ? hslAccent
+            .withSaturation(hslAccent.saturation * 0.5)
+            .withLightness(1 - lightness)
+            .toColor()
       : Colors.white;
 
-  final borderColor = HSLColor.fromAHSL(
-    1.0,
-    hslAccent.hue,
-    0.75,
-    0.5,
-  ).toColor();
+  final borderColor = hslAccent.withLightness(0.7).toColor();
 
-  AnimatedSnackBar(
-    duration: Config.NOTIFICATION.MEDIUM,
+  late final AnimatedSnackBar snackBar;
 
-    mobileSnackBarPosition : MobileSnackBarPosition.top,
-    desktopSnackBarPosition : DesktopSnackBarPosition.bottomLeft,
+  snackBar = AnimatedSnackBar(
+    duration: duration,
+
+    // mobileSnackBarPosition: MobileSnackBarPosition.top,
+    mobilePositionSettings: const MobilePositionSettings(
+      topOnAppearance: 10,
+      left: 10,
+      right: 10,
+    ),
+
+    desktopSnackBarPosition: DesktopSnackBarPosition.bottomLeft,
     snackBarStrategy: ColumnSnackBarStrategy(),
-    animationDuration: Config.ANIMATION.MEDIUM,
+    animationDuration: Config.ANIMATION.SHORT,
     animationCurve: Curves.easeInOutCubicEmphasized,
 
-    
     builder: ((context) {
-      return Container(
-        padding: Config.MARGIN_PADDING.NARROW,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          border: Border.all(
-            color: borderColor,
-            width: Config.BORDER_WIDTH * 2,
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () {
+            snackBar.remove();
+          },
+          child: TweenAnimationBuilder(
+            tween: Tween<double>(begin: 0, end: 1),
+            duration: Config.ANIMATION.VERY_LONG,
+            curve: Curves.easeOut,
+            builder: (BuildContext context, double t, _) {
+              return Container(
+                padding: Config.MARGIN_PADDING.NARROW,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.lerp(accentColor, backgroundColor, t)!,
+                      Color.lerp(
+                        backgroundColor,
+                        accentColor,
+                        t * Config.NOTIFICATION_GRADIENT_RATIO,
+                      )!,
+                    ],
+                  ),
+                  border: Border.all(
+                    color:
+                        Color.lerp(Colors.white, borderColor, t) ?? borderColor,
+                    width: Config.BORDER_WIDTH * 2 * t,
+                  ),
+                  borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.scrim.withOpacity(0.5 * t),
+                      blurRadius: 16 * t,
+                      spreadRadius: 8 * t,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.info,
+                      size: lerpDouble(
+                        Config.ICON_SIZE.VERY_BIG,
+                        Config.ICON_SIZE.MEDIUM,
+                        t,
+                      ),
+                      color: accentColor,
+                    ),
+                    SizedBox(width: 8 * t),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title.substring(0, (title.length * t).floor()),
+                          style: TextStyle(
+                            color: Color.lerp(
+                              accentColor,
+                              hslAccent
+                                  .withLightness(isDark ? 0.7 : 0.3)
+                                  .toColor(),
+                              t,
+                            ),
+                            fontSize: Config.FONT_SIZE.BIG,
+                          ),
+                        ),
+                        Text(
+                          subtitle.substring(0, (subtitle.length * t).floor()),
+                          style: TextStyle(
+                            color: Color.lerp(backgroundColor, textColor, t),
+                            fontSize: Config.FONT_SIZE.MEDIUM,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-          borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.scrim.withOpacity(0.5),
-              blurRadius: 16,
-              spreadRadius: 8,
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.info, color: accentColor),
-            SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'yela',
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: Config.FONT_SIZE.BIG,
-                  ),
-                ),
-                Text(
-                  'no',
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: Config.FONT_SIZE.MEDIUM,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       );
     }),
-  ).show(context);
-}
+  );
 
+  snackBar.show(context);
+}

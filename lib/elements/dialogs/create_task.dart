@@ -148,31 +148,12 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
     final task = Task(name: name ?? '');
 
-    // ScaffoldMessenger.of(
-    //   context,
-    // ).showSnackBar(SnackBar(content: Text('Added a new task: "$name"')));
-
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: Text("custom message"),
-    //     backgroundColor: Colors.blue, // color
-    //     duration: Duration(seconds: 3), // duration
-    //     behavior: SnackBarBehavior.floating, // floating or fixed
-    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    //     action: SnackBarAction(
-    //       label: "UNDO",
-    //       textColor: Colors.white,
-    //       onPressed: () {
-    //         /* do something */
-    //       },
-    //     ),
-    //   ),
-    // );
-
     Notify.send(
       context: context,
-      content: "no shit $name",
-      accentColor: Colors.green,
+      title: "$name" + (groupName.isEmpty ? "" : " ($groupName)"),
+      subtitle: "has been added to your todo list!",
+      accentColor: Colors.blue,
+      // accentColor: Colors.green,
       duration: Config.NOTIFICATION.MEDIUM,
     );
 
