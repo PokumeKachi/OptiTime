@@ -7,7 +7,7 @@ import 'package:todo/utils/data_types.dart';
 class Class extends StatelessWidget {
   const Class({super.key, required this.task});
 
-  final Task task;
+  final SingleTask task;
 
   @override
   Widget build(BuildContext context) {

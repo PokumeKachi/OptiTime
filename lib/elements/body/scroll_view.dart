@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:animated_reorderable_list/animated_reorderable_list.dart';
+
 import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
@@ -17,22 +19,24 @@ class Class extends StatelessWidget {
     final groups = taskProvider.groups;
     final tasks = taskProvider.tasks;
 
-    return ListView.separated(
-physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      padding: Config.MARGIN_PADDING.NARROW,
-      itemCount: groups.length + tasks.length,
-      itemBuilder: (context, i) {
-        if (i < groups.length) {
-          final group = groups[i];
-          return Group.Class(group: group);
-        } else {
-          final task = tasks[i - groups.length];
-          return Task.Class(task: task);
-        }
-      },
+    return AnimatedReorderableGridView(items: items, itemBuilder: itemBuilder, sliverGridDelegate: sliverGridDelegate, onReorder: onReorder, isSameItem: isSameItem)
 
-      separatorBuilder: (context, i) =>
-          SizedBox(height: Config.ITEM_PADDING.NARROW),
-    );
+    // return ListView.separated(
+    //   physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+    //   padding: Config.MARGIN_PADDING.NARROW,
+    //   itemCount: groups.length + tasks.length,
+    //   itemBuilder: (context, i) {
+    //     if (i < groups.length) {
+    //       final group = groups[i];
+    //       return Group.Class(group: group);
+    //     } else {
+    //       final task = tasks[i - groups.length];
+    //       return Task.Class(task: task);
+    //     }
+    //   },
+    //
+    //   separatorBuilder: (context, i) =>
+    //       SizedBox(height: Config.ITEM_PADDING.NARROW),
+    // );
   }
 }

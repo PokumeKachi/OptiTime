@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Task {
+abstract class TaskItem {
+  String get id;
+}
+
+class SingleTask extends TaskItem {
+  final String _id;
   String name;
   String description;
   DateTime? deadline;
   Duration? duration;
   bool trashed;
 
-  Task({
+  SingleTask({
+    required this._id,
     this.name = '',
     this.description = '',
     this.deadline,
@@ -16,6 +22,7 @@ class Task {
   });
 
   Map<String, dynamic> toMap() => {
+    'id': _id,
     'title': name,
     'description': description,
     'deadline': deadline?.toIso8601String(),
@@ -23,38 +30,46 @@ class Task {
     'trashed': trashed,
   };
 
-  factory Task.fromMap(Map<String, dynamic> map) {
-    final title = map['title'] as String? ?? '';
-    final description = map['description'] as String? ?? '';
-    final deadlineStr = map['deadline'] as String?;
-    final durationSec = map['duration'] as int?;
-    final trashed = map['trashed'] as bool? ?? false;
-
-    return Task(
-      name: title,
-      description: description,
-      deadline: deadlineStr != null ? DateTime.parse(deadlineStr) : null,
-      duration: durationSec != null ? Duration(seconds: durationSec) : null,
-      trashed: trashed,
+  factory SingleTask.fromMap(Map<String, dynamic> map) {
+    return SingleTask(
+      _id: map['id'] as String,
+      name: map['title'] as String? ?? '',
+      description: map['description'] as String? ?? '',
+      deadline: map['deadline'] != null
+          ? DateTime.parse(map['deadline'])
+          : null,
+      duration: map['duration'] != null
+          ? Duration(seconds: map['duration'])
+          : null,
+      trashed: map['trashed'] as bool? ?? false,
     );
   }
+
+  @override
+  String get id => _id;
 }
 
-class TaskGroup {
+class GroupTask extends TaskItem {
+  final String _id;
   final String name;
-  final List<Task> tasks;
+  final List<SingleTask> tasks;
 
-  TaskGroup({required this.name, required this.tasks});
+  GroupTask({required this._id, required this.name, required this.tasks});
 
   Map<String, dynamic> toMap() => {
+    'id': _id,
     'name': name,
     'tasks': tasks.map((t) => t.toMap()).toList(),
   };
 
-  factory TaskGroup.fromMap(Map<String, dynamic> map) => TaskGroup(
+  factory GroupTask.fromMap(Map<String, dynamic> map) => GroupTask(
+    _id: map['id'] as String,
     name: map['name'],
     tasks: (map['tasks'] as List)
-        .map((e) => Task.fromMap(Map<String, dynamic>.from(e)))
+        .map((e) => SingleTask.fromMap(Map<String, dynamic>.from(e)))
         .toList(),
   );
+
+  @override
+  String get id => _id;
 }

@@ -146,7 +146,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       return;
     }
 
-    final task = Task(name: name ?? '');
+    final task = SingleTask(name: name ?? '');
 
     Notify.send(
       context: context,
@@ -163,7 +163,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       final group = taskProvider.groups.firstWhere(
         (g) => g.name == groupName,
         orElse: () {
-          final group = TaskGroup(name: groupName, tasks: []);
+          final group = GroupTask(name: groupName, tasks: []);
           taskProvider.addGroup(group);
           return group;
         },

@@ -20,56 +20,71 @@ class ThemeModeProvider with ChangeNotifier {
   }
 }
 
-class TaskProvider with ChangeNotifier {
+class UuidProvider with ChangeNotifier {
   final GetStorage _storage;
-  final List<Task> _tasks;
-  final List<TaskGroup> _groups;
+  late int _uuidCounter;
 
-  TaskProvider(this._storage)
-    : _tasks = List.from(
-        _storage.read('tasks') ?? [],
-      ).map((e) => Task.fromMap(Map<String, dynamic>.from(e))).toList(),
-      _groups = List.from(
-        _storage.read('groups') ?? [],
-      ).map((e) => TaskGroup.fromMap(Map<String, dynamic>.from(e))).toList();
+  UuidProvider(this._storage)
+    : _uuidCounter = _storage.read('uuidCounter') ?? -2147483648;
 
-  List<Task> get tasks => List.unmodifiable(_tasks);
-  List<TaskGroup> get groups => List.unmodifiable(_groups);
-
-  void addTask(Task task) {
-    _tasks.add(task);
-    _save();
-  }
-
-  void addTaskToGroup(Task task, TaskGroup group) {
-    // final g = _groups.firstWhere((g) => g == group);
-    // g.tasks.add(task);
-    group.tasks.add(task);
-    _save();
-  }
-
-  void addGroup(TaskGroup group) {
-    _groups.add(group);
-    _save();
-  }
-
-  void removeTask(Task task) {
-    if (_tasks.remove(task)) _save();
-  }
-
-  void removeGroup(TaskGroup group) {
-    if (_groups.remove(group)) _save();
-  }
-
-  void _save() {
-    _storage.write('tasks', _tasks.map((e) => e.toMap()).toList());
-    _storage.write('groups', _groups.map((e) => e.toMap()).toList());
+  int getUUID() {
+    final id = _uuidCounter;
+    _uuidCounter += 1;
+    _storage.write('uuidCounter', _uuidCounter);
     notifyListeners();
+    return id;
   }
 }
 
+class TaskProvider with ChangeNotifier {
+  final GetStorage _storage;
+  // final List<SingleTask> _tasks;
+  // final List<GroupTask> _groups;
+  final List<TaskItem> _items;
+
+  // TaskProvider(this._storage)
+  //   : _tasks = List.from(
+  //       _storage.read('tasks') ?? [],
+  //     ).map((e) => SingleTask.fromMap(Map<String, dynamic>.from(e))).toList(),
+  //     _groups = List.from(
+  //       _storage.read('groups') ?? [],
+  //     ).map((e) => GroupTask.fromMap(Map<String, dynamic>.from(e))).toList();
+  //
+  // List<SingleTask> get tasks => List.unmodifiable(_tasks);
+  // List<GroupTask> get groups => List.unmodifiable(_groups);
+  //
+  // void addTask(SingleTask task) {
+  //   _tasks.add(task);
+  //   _save();
+  // }
+  //
+  // void addTaskToGroup(SingleTask task, GroupTask group) {
+  //   group.tasks.add(task);
+  //   _save();
+  // }
+  //
+  // void addGroup(GroupTask group) {
+  //   _groups.add(group);
+  //   _save();
+  // }
+  //
+  // void removeTask(SingleTask task) {
+  //   if (_tasks.remove(task)) _save();
+  // }
+  //
+  // void removeGroup(GroupTask group) {
+  //   if (_groups.remove(group)) _save();
+  // }
+  //
+  // void _save() {
+  //   _storage.write('tasks', _tasks.map((e) => e.toMap()).toList());
+  //   _storage.write('groups', _groups.map((e) => e.toMap()).toList());
+  //   notifyListeners();
+  // }
+}
+
 class OverlayIndexProvider extends ValueNotifier<int> {
-  OverlayIndexProvider(): super(0);
+  OverlayIndexProvider() : super(0);
 }
 
 class DialogIndexProvider extends ValueNotifier<int> {

@@ -64,7 +64,7 @@ Color randomizeColor(
 class Class extends StatelessWidget {
   const Class({super.key, required this.group});
 
-  final TaskGroup group;
+  final GroupTask group;
 
   @override
   Widget build(BuildContext context) {

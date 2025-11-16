@@ -89,44 +89,27 @@ void send({
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRect(
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              widthFactor: t.clamp(0.0, 1.0),
-                              child: Text(
-                                title,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                  color: Color.lerp(
-                                    accentColor,
-                                    hslAccent
-                                        .withLightness(isDark ? 0.7 : 0.3)
-                                        .toColor(),
-                                    t,
-                                  ),
-                                  fontSize: Config.FONT_SIZE.BIG,
-                                ),
+                          Text(
+                            title.substring(0, (title.length * t).floor()),
+                            style: TextStyle(
+                              color: Color.lerp(
+                                accentColor,
+                                hslAccent
+                                    .withLightness(isDark ? 0.7 : 0.3)
+                                    .toColor(),
+                                t,
                               ),
+                              fontSize: Config.FONT_SIZE.BIG,
                             ),
                           ),
-                          ClipRect(
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              widthFactor: t.clamp(0.0, 1.0),
-                              child: Text(
-                                subtitle,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                  color: Color.lerp(
-                                    backgroundColor,
-                                    textColor,
-                                    t,
-                                  ),
-                                  fontSize: Config.FONT_SIZE.MEDIUM,
-                                ),
-                              ),
+                          Text(
+                            subtitle.substring(
+                              0,
+                              (subtitle.length * t).floor(),
+                            ),
+                            style: TextStyle(
+                              color: Color.lerp(backgroundColor, textColor, t),
+                              fontSize: Config.FONT_SIZE.MEDIUM,
                             ),
                           ),
                         ],
