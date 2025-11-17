@@ -2,41 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 
+import 'package:todo/utils/data_types.dart';
 import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
 import 'group.dart' as Group;
 import 'task.dart' as Task;
 
-class Class extends StatelessWidget {
+class Class extends StatefulWidget {
   const Class({super.key});
+  @override
+  State<Class> createState() => _ClassState();
+}
 
+class _ClassState extends State<Class> {
   @override
   Widget build(BuildContext context) {
-    debugPrint('scroll view rebuild');
+    final itemProvider = context.watch<ItemProvider>();
+    final items = itemProvider.items;
 
-    final taskProvider = context.watch<TaskProvider>();
-    final groups = taskProvider.groups;
-    final tasks = taskProvider.tasks;
-
-    return AnimatedReorderableGridView(items: items, itemBuilder: itemBuilder, sliverGridDelegate: sliverGridDelegate, onReorder: onReorder, isSameItem: isSameItem)
-
-    // return ListView.separated(
-    //   physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-    //   padding: Config.MARGIN_PADDING.NARROW,
-    //   itemCount: groups.length + tasks.length,
-    //   itemBuilder: (context, i) {
-    //     if (i < groups.length) {
-    //       final group = groups[i];
-    //       return Group.Class(group: group);
-    //     } else {
-    //       final task = tasks[i - groups.length];
-    //       return Task.Class(task: task);
-    //     }
-    //   },
-    //
-    //   separatorBuilder: (context, i) =>
-    //       SizedBox(height: Config.ITEM_PADDING.NARROW),
-    // );
+    return AnimatedReorderableGridView(
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      items: items,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return SizedBox.expand(
+          key: ValueKey(item.id),
+          child: TextButton(
+            onPressed: () {
+              print('yea');
+            },
+            child: Text(item.name),
+          ),
+        );
+      },
+      onReorder: (oldIndex, newIndex) {
+        itemProvider.reorder(oldIndex, newIndex);
+      },
+      sliverGridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+      ),
+      enterTransition: [FlipInX(), ScaleIn()],
+      exitTransition: [SlideInLeft()],
+      insertDuration: const Duration(milliseconds: 300),
+      removeDuration: const Duration(milliseconds: 300),
+      dragStartDelay: const Duration(milliseconds: 500),
+      isSameItem: (a, b) => a.id == b.id,
+    );
   }
 }

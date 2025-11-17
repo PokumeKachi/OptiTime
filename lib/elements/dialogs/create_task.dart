@@ -32,7 +32,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
     final dialogIndex = context.watch<DialogIndexProvider>();
     final visible = widget.index == dialogIndex.value;
-    final itemProvider = context.watch<ItemProvider>();
+    final itemProvider = context.read<ItemProvider>();
     final items = itemProvider.items;
 
     final size = MediaQuery.of(context).size;
@@ -65,7 +65,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
         borderRadius: BorderRadius.circular(Config.CORNER.ROUNDEST),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // shrink to content
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
             'New Task',

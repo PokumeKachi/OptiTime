@@ -63,6 +63,12 @@ class ItemProvider with ChangeNotifier {
     _save();
   }
 
+  void reorder(int oldIndex, int newIndex) {
+    final item = _items.removeAt(oldIndex);
+    _items.insert(newIndex, item);
+    _save();
+  }
+
   void _save() {
     _storage.write(
       'items',

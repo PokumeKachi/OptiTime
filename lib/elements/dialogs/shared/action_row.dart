@@ -38,7 +38,7 @@ class Class extends StatelessWidget {
       children: [
         for (int i = 0; i < buttons.length; i++) ...[
           AnimatedSlide(
-            offset: visible ? Offset.zero : Offset(.7 + .7 * i, 0),
+            offset: visible ? Offset.zero : Offset(.5 + .7 * i, 0),
             duration: Config.ANIMATION.VERY_LONG,
             curve: Curves.easeOutCubic,
             child: TextButton(

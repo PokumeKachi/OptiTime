@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 enum ItemType { singleTask, groupTask }
 
 abstract class TaskItem {
-  const TaskItem();
+  final int id;
+  final String name;
+
+  const TaskItem({required this.id, required this.name});
 
   Map<String, dynamic> toMap();
   factory TaskItem.fromMap(Map<String, dynamic> map) {
@@ -28,7 +31,7 @@ class SingleTask extends TaskItem {
     this.deadline,
     this.duration,
     this.trashed = false,
-  });
+  }) : super(id: id, name: name);
 
   Map<String, dynamic> toMap() => {
     'type': ItemType.singleTask.index,
@@ -61,7 +64,7 @@ class GroupTask extends TaskItem {
   final String name;
   final List<SingleTask> tasks;
 
-  GroupTask({required this.id, required this.name, required this.tasks});
+  GroupTask({required this.id, required this.name, required this.tasks}) : super(id: id, name: name);
 
   Map<String, dynamic> toMap() => {
     'type': ItemType.groupTask.index,
