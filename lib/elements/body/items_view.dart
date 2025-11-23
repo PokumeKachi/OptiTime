@@ -15,33 +15,69 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> {
+  Offset? mouseOrigin;
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final itemProvider = context.watch<ItemProvider>();
     final items = itemProvider.items;
 
-    // return SizedBox.expand();
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200,
+        childAspectRatio: 1,
+      ),
+      physics: Config.SCROLL_PHYSICS,
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+
+        late final itemWidget;
+
+        final itemWidgetFactory = (childWidget) {
+          return childWidget;
+        };
+
+        final singleTaskWidgetFactory = (SingleTask taskInfo) {
+          return itemWidgetFactory(Text(taskInfo.name));
+        };
+
+        final groupTaskWidgetFactory = (GroupTask groupInfo) {
+          return itemWidgetFactory(
+            ListView.builder(
+              physics: Config.SCROLL_PHYSICS,
+              itemCount: groupInfo.tasks.length,
+              itemBuilder: (context, index) {
+                return singleTaskWidgetFactory(groupInfo.tasks[index]);
+              },
+            ),
+          );
+        };
+
+        if (item is SingleTask) {
+          itemWidget = singleTaskWidgetFactory(item);
+        } else if (item is GroupTask) {
+          itemWidget = groupTaskWidgetFactory(item);
+        }
+
+        return Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: item is SingleTask ? null : colorScheme.tertiaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: itemWidget,
+          // child: Text(item.name),
+        );
+      },
+    );
+
     //     return AnimatedReorderableGridView(
-    //       physics: const BouncingScrollPhysics(
-    //         parent: AlwaysScrollableScrollPhysics(),
-    //       ),
     //       items: items,
     //       itemBuilder: (context, index) {
     //         final item = items[index];
-    //
-    // retur GestureDetector(
-    //   // onTap: () => select(item),
-    //           onTap: () {},
-    //   onLongPressStart: (details) {
-    //     dragKey.currentState?.startDrag(details.globalPosition);
-    //   },
-    //   child: LongPressDraggable(
-    //     maxSimultaneousDrags: 0,
-    //     data: item,
-    //     feedback: buildGhost(item),
-    //     child: buildItem(item),
-    //   ),
-    // );
     //         // return SizedBox.expand(
     //         //   key: ValueKey(item.id),
     //         //   child: DragTarget(

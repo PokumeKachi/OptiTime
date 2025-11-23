@@ -14,7 +14,7 @@ class Class extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('settings rebuild');
 
-    final provider = context.watch<ThemeModeProvider>();
+    final provider = context.read<ThemeModeProvider>();
     final colorScheme = Theme.of(context).colorScheme;
 
     return ColoredBox(

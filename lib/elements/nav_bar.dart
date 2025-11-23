@@ -35,24 +35,20 @@ class Class extends StatelessWidget {
       top: (!portraitView) ? 0 : null,
       right: 0,
       bottom: 0,
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: portraitView
-              ? height * Config.NAV_BAR_RATIO
-              : double.infinity,
-          width: (!portraitView)
-              ? width * Config.NAV_BAR_RATIO
-              : double.infinity,
-          child: Flex(
-            direction: portraitView ? Axis.horizontal : Axis.vertical,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: portraitView
-                ? _cachedButtons
-                : _cachedButtons.reversed.toList(),
-          ),
+      // child: SafeArea(
+      //   top: false,
+      child: SizedBox(
+        height: portraitView ? height * Config.NAV_BAR_RATIO : double.infinity,
+        width: (!portraitView) ? width * Config.NAV_BAR_RATIO : double.infinity,
+        child: Flex(
+          direction: portraitView ? Axis.horizontal : Axis.vertical,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: portraitView
+              ? _cachedButtons
+              : _cachedButtons.reversed.toList(),
         ),
       ),
+      // ),
     );
   }
 }

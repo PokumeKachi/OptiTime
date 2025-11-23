@@ -30,6 +30,7 @@ class Class extends StatelessWidget {
       children: [
         AnimatedOpacity(
           duration: Config.ANIMATION.MEDIUM,
+          curve: Curves.easeOutQuad,
           opacity: overlayIndex == 0 ? 0 : 1,
           child: IgnorePointer(
             ignoring: overlayIndex == 0,

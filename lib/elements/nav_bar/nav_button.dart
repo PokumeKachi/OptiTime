@@ -26,66 +26,72 @@ class Class extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('Nav button rebuild');
 
-    final overlayIndex = context.watch<OverlayIndexProvider>().value;
-
     final colorScheme = Theme.of(context).colorScheme;
-    final isFocused = targetIndex == overlayIndex;
 
-    return Expanded(
-      child: SizedBox.expand(
-        child: AnimatedContainer(
-          duration: Config.ANIMATION.SHORT,
-          curve: Curves.easeOut,
-          decoration: BoxDecoration(
-            color: isFocused ? colorScheme.tertiary : Colors.transparent,
-            borderRadius: isFocused
-                ? BorderRadius.circular(Config.CORNER.MIN)
-                : BorderRadius.circular(Config.CORNER.ROUNDEST),
-            boxShadow: isFocused
-                ? [
-                    BoxShadow(
-                      color: colorScheme.inverseSurface.withOpacity(Config.BLUR_OPACITY.MEDIUM),
-                      blurRadius: Config.BLUR_RADIUS.MEDIUM,
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: Colors.transparent,
-                      blurRadius: Config.BLUR_RADIUS.MEDIUM,
-                    ),
-                  ],
-          ),
-          child: TextButton(
-            onPressed: () => handleClick(context, targetIndex),
-            style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
+    return Selector<OverlayIndexProvider, bool>(
+      selector: (_, provider) => provider.value == targetIndex,
+      builder: (context, isFocused, child) {
+        return Expanded(
+          child: SizedBox.expand(
+            child: AnimatedContainer(
+              duration: Config.ANIMATION.SHORT,
+              curve: Curves.easeOut,
+              decoration: BoxDecoration(
+                color: isFocused ? colorScheme.tertiary : Colors.transparent,
                 borderRadius: isFocused
                     ? BorderRadius.circular(Config.CORNER.MIN)
                     : BorderRadius.circular(Config.CORNER.ROUNDEST),
+                boxShadow: isFocused
+                    ? [
+                        BoxShadow(
+                          color: colorScheme.inverseSurface.withOpacity(
+                            Config.BLUR_OPACITY.MEDIUM,
+                          ),
+                          blurRadius: Config.BLUR_RADIUS.MEDIUM,
+                        ),
+                      ]
+                    : [
+                        BoxShadow(
+                          color: Colors.transparent,
+                          blurRadius: Config.BLUR_RADIUS.MEDIUM,
+                        ),
+                      ],
               ),
-              elevation: isFocused ? 32 : 0,
-              backgroundColor: Colors.transparent,
-              // backgroundColor: isFocused
-              //     ? colorScheme.tertiary
-              //     : Colors.transparent,
-              foregroundColor: isFocused
-                  ? colorScheme.onTertiary
-                  : colorScheme.onBackground,
-            ),
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(
-                begin: Config.ICON_SIZE.MEDIUM,
-                end: isFocused ? Config.ICON_SIZE.BIG : Config.ICON_SIZE.MEDIUM,
+              child: TextButton(
+                onPressed: () => handleClick(context, targetIndex),
+                style: TextButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: isFocused
+                        ? BorderRadius.circular(Config.CORNER.MIN)
+                        : BorderRadius.circular(Config.CORNER.ROUNDEST),
+                  ),
+                  elevation: isFocused ? 32 : 0,
+                  backgroundColor: Colors.transparent,
+                  // backgroundColor: isFocused
+                  //     ? colorScheme.tertiary
+                  //     : Colors.transparent,
+                  foregroundColor: isFocused
+                      ? colorScheme.onTertiary
+                      : colorScheme.onBackground,
+                ),
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween(
+                    begin: Config.ICON_SIZE.MEDIUM,
+                    end: isFocused
+                        ? Config.ICON_SIZE.BIG
+                        : Config.ICON_SIZE.SMALL,
+                  ),
+                  curve: Curves.easeOut,
+                  duration: Config.ANIMATION.MEDIUM,
+                  builder: (context, size, child) {
+                    return Icon(icon, size: size);
+                  },
+                ),
               ),
-              curve: Curves.easeOut,
-              duration: Config.ANIMATION.MEDIUM,
-              builder: (context, size, child) {
-                return Icon(icon, size: size);
-              },
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

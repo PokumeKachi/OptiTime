@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 
 const TITLE = 'Todo';
 const PRELOAD_DURATION = Duration(milliseconds: 200);
+const SCROLL_PHYSICS = const BouncingScrollPhysics(
+  parent: AlwaysScrollableScrollPhysics(),
+);
 
 // Color scheming
 
@@ -44,7 +47,7 @@ class DIM {
 
 // Element sizing
 
-const NAV_BAR_RATIO = 0.08;
+const NAV_BAR_RATIO = 0.07;
 const DIALOG_RATIO = 0.8;
 
 class FONT_SIZE {
@@ -54,7 +57,8 @@ class FONT_SIZE {
 }
 
 class ICON_SIZE {
-  static const SMALL = 16.0;
+  static const VERY_SMALL = 12.0;
+  static const SMALL = 18.0;
   static const MEDIUM = 24.0;
   static const BIG = 32.0;
   static const VERY_BIG = 36.0;

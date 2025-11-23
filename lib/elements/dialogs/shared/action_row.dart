@@ -40,7 +40,8 @@ class Class extends StatelessWidget {
           AnimatedSlide(
             offset: visible ? Offset.zero : Offset(.5 + .7 * i, 0),
             duration: Config.ANIMATION.VERY_LONG,
-            curve: Curves.easeOutCubic,
+            // curve: Curves.easeOutCubic,
+            curve: Cubic(.3, .3, 0, 1),
             child: TextButton(
               onPressed: buttons[i].callback,
               style: buttons[i].style,

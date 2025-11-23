@@ -154,7 +154,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       context: context,
       title: "$name" + (groupName.isEmpty ? "" : " ($groupName)"),
       subtitle: "has been added to your todo list!",
-      accentColor: Colors.blue,
+      accentColor: Colors.green,
       duration: Config.NOTIFICATION.MEDIUM,
     );
 
