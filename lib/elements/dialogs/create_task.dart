@@ -58,7 +58,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     ];
 
     return Container(
-      width: 400,
+      width: 300,
       padding: Config.MARGIN_PADDING.MEDIUM,
       decoration: BoxDecoration(
         color: colorScheme.background,

@@ -42,7 +42,7 @@ void send({
       return MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
-          onTap: () => snackBar.remove(),
+          onTap: () => snackBar.hide(),
           child: TweenAnimationBuilder<double>(
             tween: Tween(begin: 0.0, end: 1.0),
             duration: Config.ANIMATION.EXTREMELY_LONG,

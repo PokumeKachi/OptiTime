@@ -38,7 +38,7 @@ dependencies:
   get_storage_plus: ^1.0.0-beta.2.1
   provider: ^6.1.5+1
   intl: ^0.20.2
-  animated_snack_bar: ^0.4.0
+  animated_snack_bar: ^0.4.1
   blur: ^4.0.2
   web_smooth_scroll: ^2.0.0
   smooth_scroll_multiplatform: ^1.0.8
@@ -47,7 +47,9 @@ dependencies:
 
 dependency_overrides:
   get_storage_plus:
-    path: get_storage_plus
+    path: deps/get_storage_plus
+  animated_snack_bar:
+    path: deps/animated_snack_bar
 
 dev_dependencies:
   flutter_test:

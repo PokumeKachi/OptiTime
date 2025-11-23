@@ -29,7 +29,7 @@ final ColorScheme COLOR_SCHEME_DARK = ColorScheme.fromSeed(
   brightness: Brightness.dark,
 );
 
-const NOTIFICATION_GRADIENT_RATIO = 0.2;
+const NOTIFICATION_GRADIENT_RATIO = 0.1;
 
 final ThemeData THEME = ThemeData.from(colorScheme: COLOR_SCHEME);
 final ThemeData THEME_DARK = ThemeData.from(colorScheme: COLOR_SCHEME_DARK);
