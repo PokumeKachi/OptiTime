@@ -23,7 +23,7 @@ class Class extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('overlay rebuild');
 
-    final overlayIndex = context.watch<OverlayIndexProvider>().value;
+    final overlayIndex = context.select<CachedProvider, int>((c) => c.overlayIndex);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Stack(

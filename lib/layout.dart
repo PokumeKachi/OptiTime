@@ -13,13 +13,18 @@ class Class extends StatelessWidget {
     debugPrint('layout rebuild');
 
     return Scaffold(
-      body: Stack(
-        children: [
-          const Body.Class(),
-          const Overlay.Class(),
-          const NavBar.Class(),
-          const Dialog.Class(),
-        ],
+      body: Listener(
+        // onPointerDown: (e) => print('down at ${e.globalPosition}'),
+        // onPointerMove: (e) => print('move at ${e.globalPosition}'),
+        // onPointerUp: (e) => print('up at ${e.globalPosition}'),
+        child: Stack(
+          children: [
+            const Body.Class(),
+            const Overlay.Class(),
+            const NavBar.Class(),
+            const Dialog.Class(),
+          ],
+        ),
       ),
     );
   }

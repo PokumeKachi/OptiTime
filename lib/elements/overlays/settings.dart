@@ -14,17 +14,17 @@ class Class extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('settings rebuild');
 
-    final provider = context.read<ThemeModeProvider>();
+    final storedProvider = context.read<StoredProvider>();
     final colorScheme = Theme.of(context).colorScheme;
 
     return ColoredBox(
       color: Colors.transparent,
       child: Center(
         child: DropdownButton<String>(
-          value: provider.themeMode,
+          value: storedProvider.appThemeMode,
           items: _items,
           onChanged: (newMode) {
-            if (newMode != null) provider.changeThemeMode(newMode);
+            if (newMode != null) storedProvider.appThemeMode = newMode;
           },
         ),
       ),

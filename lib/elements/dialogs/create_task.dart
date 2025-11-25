@@ -29,8 +29,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     debugPrint('create task dialog rebuild');
 
     final colorScheme = Theme.of(context).colorScheme;
-    final itemProvider = context.read<ItemProvider>();
-    final items = itemProvider.items;
+    final storedProvider = context.read<StoredProvider>();
 
     final size = MediaQuery.of(context).size;
     final height = size.height;
@@ -50,7 +49,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       Autocomplete.Class(
         controller: _groupController,
         getOptions: () =>
-            items.whereType<GroupTask>().map((i) => i.name).toList(),
+            storedProvider.taskItems.whereType<GroupTask>().map((i) => i.name).toList(),
       ),
     ];
 
@@ -78,8 +77,8 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
             const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
           ],
 
-          Selector<DialogIndexProvider, bool>(
-            selector: (_, provider) => provider.value == widget.index,
+          Selector<CachedProvider, bool>(
+            selector: (_, provider) => provider.dialogIndex == widget.index,
             builder: (context, visible, child) {
               return ActionRow.Class(
                 visible: visible,
@@ -119,7 +118,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   void handleKey(RawKeyEvent event) {
     if (!mounted) return;
-    if (context.read<DialogIndexProvider>().value != widget.index) return;
+    if (context.read<CachedProvider>().dialogIndex != widget.index) return;
     if (event is RawKeyUpEvent) {
       if (event.logicalKey == LogicalKeyboardKey.enter) _createTask();
       if (event.logicalKey == LogicalKeyboardKey.escape) _close();
@@ -128,15 +127,14 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   void _close() {
     FocusScope.of(context).unfocus();
-    context.read<DialogIndexProvider>().value = 0;
+    context.read<CachedProvider>().dialogIndex = 0;
 
     _nameController.text = "";
     _groupController.text = "";
   }
 
   void _createTask([String? _]) {
-    final itemProvider = context.read<ItemProvider>();
-    final uuidProvider = context.read<UuidProvider>();
+    final storedProvider = context.read<StoredProvider>();
 
     final name = _nameController.text;
     final groupName = _groupController.text;
@@ -150,7 +148,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       return;
     }
 
-    final task = SingleTask(id: uuidProvider.getUUID(), name: name ?? '');
+    final task = SingleTask(id: storedProvider.issueNewUUID(), name: name ?? '');
 
     Notify.send(
       context: context,
@@ -161,22 +159,22 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     );
 
     if (groupName.isEmpty) {
-      context.read<ItemProvider>().addItem(task);
+      storedProvider.addTaskItem(task);
     } else {
-      final group = itemProvider.items.whereType<GroupTask>().firstWhere(
+      final group = storedProvider.taskItems.whereType<GroupTask>().firstWhere(
         (g) => g.name == groupName,
         orElse: () {
           final group = GroupTask(
-            id: uuidProvider.getUUID(),
+            id: storedProvider.issueNewUUID(),
             name: groupName,
             tasks: [],
           );
-          itemProvider.addItem(group);
+          storedProvider.addTaskItem(group);
           return group;
         },
       );
 
-      itemProvider.addTaskToGroup(task, group);
+      storedProvider.addTaskToGroup(task, group);
     }
 
     _close();

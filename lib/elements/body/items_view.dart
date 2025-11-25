@@ -21,8 +21,8 @@ class _ClassState extends State<Class> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    final itemProvider = context.watch<ItemProvider>();
-    final items = itemProvider.items;
+    // final itemProvider = context.watch<ItemProvider>();
+    final items = context.select<StoredProvider, List<TaskItem>>((p) => p.taskItems);
 
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

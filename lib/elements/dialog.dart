@@ -33,17 +33,17 @@ class _ClassState extends State<Class> {
   }
 
   void _handleKey(RawKeyEvent event) {
-    final dialogIndex = context.read<DialogIndexProvider>();
+    final dialogIndex = context.read<CachedProvider>().dialogIndex;
 
-    if (dialogIndex.value != 0) {
-      _dialogKeys[dialogIndex.value - 1].currentState?.handleKey(event);
+    if (dialogIndex != 0) {
+      _dialogKeys[dialogIndex - 1].currentState?.handleKey(event);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     debugPrint('dialog rebuild');
-    final dialogIndex = context.watch<DialogIndexProvider>().value;
+    final dialogIndex = context.select<CachedProvider, int>((c) => c.dialogIndex);
     final colorScheme = Theme.of(context).colorScheme;
     final isDialogOpen = dialogIndex != 0;
 

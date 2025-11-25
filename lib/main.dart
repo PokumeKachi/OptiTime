@@ -16,26 +16,14 @@ void main() async {
 
   // await GetStorage().erase();
 
-  final _storage = GetStorage();
-
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThemeModeProvider>(
-          create: (context) => ThemeModeProvider(_storage),
+        ChangeNotifierProvider<StoredProvider>(
+          create: (context) => StoredProvider(),
         ),
-        ChangeNotifierProvider<ItemProvider>(
-          create: (context) => ItemProvider(_storage),
-        ),
-        ChangeNotifierProvider<UuidProvider>(
-          create: (context) => UuidProvider(_storage),
-        ),
-
-        ChangeNotifierProvider<OverlayIndexProvider>(
-          create: (context) => OverlayIndexProvider(),
-        ),
-        ChangeNotifierProvider<DialogIndexProvider>(
-          create: (context) => DialogIndexProvider(),
+        ChangeNotifierProvider<CachedProvider>(
+          create: (context) => CachedProvider(),
         ),
       ],
       child: const App(),
@@ -59,8 +47,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('app rebuild');
 
-    final themeMode = context.select<ThemeModeProvider, ThemeMode>((p) {
-      return switch (p.themeMode) {
+    final themeMode = context.select<StoredProvider, ThemeMode>((p) {
+      return switch (p.appThemeMode) {
         'Light' => ThemeMode.light,
         'Dark' => ThemeMode.dark,
         _ => ThemeMode.system,

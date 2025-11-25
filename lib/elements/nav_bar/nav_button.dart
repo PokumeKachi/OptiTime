@@ -12,13 +12,12 @@ class Class extends StatelessWidget {
 
   static void handleClick(BuildContext context, int targetIndex) {
     debugPrint('Target index of navigation button is $targetIndex');
-    final overlayIndex = context.read<OverlayIndexProvider>();
-    final dialogIndex = context.read<DialogIndexProvider>();
+    final cachedProvider = context.read<CachedProvider>();
 
-    overlayIndex.value = overlayIndex.value == targetIndex ? 0 : targetIndex;
+    cachedProvider.overlayIndex = cachedProvider.overlayIndex == targetIndex ? 0 : targetIndex;
 
     if (targetIndex == 0) {
-      dialogIndex.value = 1;
+      context.read<CachedProvider>().dialogIndex = 1;
     }
   }
 
@@ -30,8 +29,8 @@ class Class extends StatelessWidget {
 
     return Expanded(
       child: SizedBox.expand(
-        child: Selector<OverlayIndexProvider, bool>(
-          selector: (_, provider) => provider.value == targetIndex,
+        child: Selector<CachedProvider, bool>(
+          selector: (_, provider) => provider.dialogIndex == targetIndex,
           builder: (context, isFocused, child) {
             return AnimatedContainer(
               duration: Config.ANIMATION.SHORT,
