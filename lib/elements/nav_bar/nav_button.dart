@@ -28,12 +28,12 @@ class Class extends StatelessWidget {
 
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Selector<OverlayIndexProvider, bool>(
-      selector: (_, provider) => provider.value == targetIndex,
-      builder: (context, isFocused, child) {
-        return Expanded(
-          child: SizedBox.expand(
-            child: AnimatedContainer(
+    return Expanded(
+      child: SizedBox.expand(
+        child: Selector<OverlayIndexProvider, bool>(
+          selector: (_, provider) => provider.value == targetIndex,
+          builder: (context, isFocused, child) {
+            return AnimatedContainer(
               duration: Config.ANIMATION.SHORT,
               curve: Curves.easeOut,
               decoration: BoxDecoration(
@@ -88,10 +88,10 @@ class Class extends StatelessWidget {
                   },
                 ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }

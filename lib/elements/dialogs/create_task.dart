@@ -29,9 +29,6 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     debugPrint('create task dialog rebuild');
 
     final colorScheme = Theme.of(context).colorScheme;
-
-    final dialogIndex = context.watch<DialogIndexProvider>();
-    final visible = widget.index == dialogIndex.value;
     final itemProvider = context.read<ItemProvider>();
     final items = itemProvider.items;
 
@@ -81,26 +78,31 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
             const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
           ],
 
-          ActionRow.Class(
-            visible: visible,
-            buttons: [
-              ActionRow.Button(
-                text: 'Cancel',
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: colorScheme.error,
-                ),
-                callback: _close,
-              ),
-              ActionRow.Button(
-                text: 'Create',
-                style: TextButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
-                  foregroundColor: colorScheme.onPrimary,
-                ),
-                callback: _createTask,
-              ),
-            ],
+          Selector<DialogIndexProvider, bool>(
+            selector: (_, provider) => provider.value == widget.index,
+            builder: (context, visible, child) {
+              return ActionRow.Class(
+                visible: visible,
+                buttons: [
+                  ActionRow.Button(
+                    text: 'Cancel',
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: colorScheme.error,
+                    ),
+                    callback: _close,
+                  ),
+                  ActionRow.Button(
+                    text: 'Create',
+                    style: TextButton.styleFrom(
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
+                    ),
+                    callback: _createTask,
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),

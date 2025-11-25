@@ -25,7 +25,7 @@ web-run: flake-develop
 	# flutter run
 
 apk-run: flake-develop
-	clear && flutter run -d R58WA1L5GYY | grep -v "VRI\|InsetsController\|InteractionJankMonitor\|ProfileInstaller\|W/om.example.todo\|D/\|I/\|E/flutter"
+	clear && flutter run -d R58WA1L5GYY | grep -v "VRI\|InsetsController\|InteractionJankMonitor\|ProfileInstaller\|W/om.example.todo\|D/\|E/flutter"
 	# | grep -v "I/VRI" | grep -v "I/InsetsController"
 	# flutter run
 

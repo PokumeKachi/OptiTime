@@ -59,11 +59,13 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('app rebuild');
 
-    final themeMode = switch (context.watch<ThemeModeProvider>().themeMode) {
-      'Light' => ThemeMode.light,
-      'Dark' => ThemeMode.dark,
-      _ => ThemeMode.system,
-    };
+    final themeMode = context.select<ThemeModeProvider, ThemeMode>((p) {
+      return switch (p.themeMode) {
+        'Light' => ThemeMode.light,
+        'Dark' => ThemeMode.dark,
+        _ => ThemeMode.system,
+      };
+    });
 
     return MaterialApp(
       title: Config.TITLE,
