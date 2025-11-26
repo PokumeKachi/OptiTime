@@ -70,7 +70,7 @@ void send({
                   border: Border.all(
                     color:
                         Color.lerp(Colors.white, borderColor, t) ?? borderColor,
-                    width: Config.BORDER_WIDTH * 2 * t,
+                    width: Config.BORDER_WIDTH.MEDIUM * 2 * t,
                   ),
                   borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM * t),
                   boxShadow: [

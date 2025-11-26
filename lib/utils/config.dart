@@ -119,22 +119,29 @@ class ELEVATION {
 
 class CORNER {
   static const NONE = 0.0;
-  static const MIN = 4.0;
-  static const MEDIUM = 10.0;
-  static const ROUNDER = 16.0;
-  static const ROUNDEST = 20.0;
+  static const SHARPEST = 4.0;
+  static const SHARPER = 8.0;
+  static const SHARP = 12.0;
+  static const MEDIUM = 16.0;
+  static const ROUND = 24.0;
+  static const ROUNDER = 32.0;
+  static const ROUNDEST = 48.0;
 }
 
 class BLUR_OPACITY {
+  static const LESS = 0.4;
   static const MEDIUM = 0.7;
 }
 
 class BLUR_RADIUS {
-  static const MEDIUM = 32.0;
+  static const SHORT = 12.0;
+  static const MEDIUM = 24.0;
 }
 
-const BORDER_WIDTH = 1.0;
-const FOCUSED_BORDER_WIDTH = 2.0;
+class BORDER_WIDTH {
+  static const MEDIUM = 1.0;
+  static const FOCUSED = 2.0;
+}
 
 // Timing
 
@@ -146,6 +153,7 @@ class ANIMATION {
   static const VERY_LONG = const Duration(milliseconds: 600);
   static const VERY_LONGER = const Duration(milliseconds: 750);
   static const EXTREMELY_LONG = const Duration(milliseconds: 900);
+  static const LONG_HAUL = const Duration(seconds: 3);
 }
 
 class NOTIFICATION {

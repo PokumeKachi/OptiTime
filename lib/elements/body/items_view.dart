@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 
 import 'package:todo/utils/data_type.dart';
 import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
+import 'item.dart' as Item;
 import 'group.dart' as Group;
 import 'task.dart' as Task;
 
@@ -60,9 +62,9 @@ class _ClassState extends State<Class> {
 
     final items = context.watch<ItemProvider>().list;
 
-    return GridView.builder(
+    return AnimatedGridView(
       padding: EdgeInsets.all(Config.MAIN_BODY_MARGIN),
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+      sliverGridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: Config.TASK_ITEM_MAX_WIDTH,
         crossAxisSpacing: Config.MAIN_BODY_MARGIN,
         mainAxisSpacing: Config.MAIN_BODY_MARGIN,
@@ -70,7 +72,11 @@ class _ClassState extends State<Class> {
       ),
       controller: _controller,
       physics: Config.SCROLL_PHYSICS,
-      itemCount: items.length,
+      // itemCount: items.length,
+      items: items,
+      enterTransition: [FadeIn(), ScaleIn()],
+      exitTransition: [SlideInDown()],
+      isSameItem: (a, b) => a.uuid == b.uuid,
       itemBuilder: (context, index) {
         final ROW_COUNT = BODY_WIDTH ~/ Config.TASK_ITEM_MAX_WIDTH + 1;
         final CELL_WIDTH = BODY_WIDTH / ROW_COUNT;
@@ -78,85 +84,115 @@ class _ClassState extends State<Class> {
 
         final item = items[index];
 
-        late final itemWidget;
-
-        final itemWidgetFactory = (childWidget) {
-          return childWidget;
-        };
-
-        final singleTaskWidgetFactory = (SingleTask taskInfo) {
-          return itemWidgetFactory(Text(taskInfo.name));
-        };
-
-        final groupTaskWidgetFactory = (GroupTask groupInfo) {
-          return itemWidgetFactory(
-            ListView.builder(
-              physics: Config.SCROLL_PHYSICS,
-              itemCount: groupInfo.tasks.length,
-              itemBuilder: (context, index) {
-                return singleTaskWidgetFactory(groupInfo.tasks[index]);
-              },
-            ),
-          );
-        };
-
-        if (item is SingleTask) {
-          itemWidget = singleTaskWidgetFactory(item);
-        } else if (item is GroupTask) {
-          itemWidget = groupTaskWidgetFactory(item);
-        }
-
         return Selector<CachedProvider, bool>(
-          selector: (_, p) {
-            if (!p.pointerDown) {
-              return false;
-            }
-            if (p.selectedUUID != null) {
-              return p.selectedUUID == item.uuid;
-            }
-
-            // if (Algorithms.aabbCollision(
-            //       p.pointerPosition,
-            //       Offset(
-            //         (index % ROW_COUNT).toDouble() * CELL_WIDTH,
-            //         (index ~/ ROW_COUNT).toDouble() * CELL_HEIGHT,
-            //       ),
-            //       Offset(CELL_WIDTH, CELL_HEIGHT),
-            //     )) {
-            //   p.selectedUUID = item.uuid;
-            //   return true;
-            // } else
-            return false;
-          },
+          key: ValueKey(item.uuid),
+          selector: (_, p) => p.pointerDown && p.selectedUUID == item.uuid,
           builder: (_, isDragged, child) {
-            return Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: item is SingleTask
-                    ? colorScheme.secondaryContainer
-                    : colorScheme.tertiaryContainer,
-                borderRadius: BorderRadius.circular(
-                  isDragged ? Config.CORNER.ROUNDEST : Config.CORNER.NONE,
-                ),
-              ),
-              // child: itemWidget,
-              child: Text(
-                index.toString() +
-                    ' and ' +
-                    ROW_COUNT.toString() +
-                    ' and ' +
-                    Offset(
-                      (index % ROW_COUNT).toDouble() * CELL_WIDTH,
-                      (index ~/ ROW_COUNT).toDouble() * CELL_HEIGHT,
-                    ).toString() +
-                    ' and ' +
-                    Offset(CELL_WIDTH, CELL_HEIGHT).toString(),
-              ),
-            );
+            if (isDragged) {
+              return SizedBox.expand();
+            }
+            return Item.Class(index: index);
           },
         );
       },
     );
+    // return GridView.builder(
+    //   padding: EdgeInsets.all(Config.MAIN_BODY_MARGIN),
+    //   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+    //     maxCrossAxisExtent: Config.TASK_ITEM_MAX_WIDTH,
+    //     crossAxisSpacing: Config.MAIN_BODY_MARGIN,
+    //     mainAxisSpacing: Config.MAIN_BODY_MARGIN,
+    //     childAspectRatio: 1,
+    //   ),
+    //   controller: _controller,
+    //   physics: Config.SCROLL_PHYSICS,
+    //   itemCount: items.length,
+    //   itemBuilder: (context, index) {
+    //     final ROW_COUNT = BODY_WIDTH ~/ Config.TASK_ITEM_MAX_WIDTH + 1;
+    //     final CELL_WIDTH = BODY_WIDTH / ROW_COUNT;
+    //     final CELL_HEIGHT = CELL_WIDTH;
+    //
+    //     final item = items[index];
+    //
+    //     late final itemWidget;
+    //
+    //     final itemWidgetFactory = (childWidget) {
+    //       return childWidget;
+    //     };
+    //
+    //     final singleTaskWidgetFactory = (SingleTask taskInfo) {
+    //       return itemWidgetFactory(Text(taskInfo.name));
+    //     };
+    //
+    //     final groupTaskWidgetFactory = (GroupTask groupInfo) {
+    //       return itemWidgetFactory(
+    //         ListView.builder(
+    //           physics: Config.SCROLL_PHYSICS,
+    //           itemCount: groupInfo.tasks.length,
+    //           itemBuilder: (context, index) {
+    //             return singleTaskWidgetFactory(groupInfo.tasks[index]);
+    //           },
+    //         ),
+    //       );
+    //     };
+    //
+    //     if (item is SingleTask) {
+    //       itemWidget = singleTaskWidgetFactory(item);
+    //     } else if (item is GroupTask) {
+    //       itemWidget = groupTaskWidgetFactory(item);
+    //     }
+    //
+    //     return Selector<CachedProvider, bool>(
+    //       selector: (_, p) {
+    //         if (!p.pointerDown) {
+    //           return false;
+    //         }
+    //         if (p.selectedUUID != null) {
+    //           return p.selectedUUID == item.uuid;
+    //         }
+    //
+    //         // if (Algorithms.aabbCollision(
+    //         //       p.pointerPosition,
+    //         //       Offset(
+    //         //         (index % ROW_COUNT).toDouble() * CELL_WIDTH,
+    //         //         (index ~/ ROW_COUNT).toDouble() * CELL_HEIGHT,
+    //         //       ),
+    //         //       Offset(CELL_WIDTH, CELL_HEIGHT),
+    //         //     )) {
+    //         //   p.selectedUUID = item.uuid;
+    //         //   return true;
+    //         // } else
+    //         return false;
+    //       },
+    //       builder: (_, isDragged, child) {
+    //         return Container(
+    //           padding: EdgeInsets.all(8),
+    //           decoration: BoxDecoration(
+    //             color: item is SingleTask
+    //                 ? colorScheme.secondaryContainer
+    //                 : colorScheme.tertiaryContainer,
+    //             borderRadius: BorderRadius.circular(
+    //               isDragged ? Config.CORNER.ROUNDEST : Config.CORNER.NONE,
+    //             ),
+    //           ),
+    //           // child: itemWidget,
+    //           child: Text(
+    //             index.toString() +
+    //                 ' and ' +
+    //                 ROW_COUNT.toString() +
+    //                 ' and ' +
+    //                 Offset(
+    //                   (index % ROW_COUNT).toDouble() * CELL_WIDTH,
+    //                   (index ~/ ROW_COUNT).toDouble() * CELL_HEIGHT,
+    //                 ).toString() +
+    //                 ' and ' +
+    //                 Offset(CELL_WIDTH, CELL_HEIGHT).toString(),
+    //           ),
+    //         );
+    //       },
+    //     );
+    //   },
+    // );
 
     //     return AnimatedReorderableGridView(
     //       items: items,

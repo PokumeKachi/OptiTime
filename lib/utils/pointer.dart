@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
+import 'package:todo/elements/body/item.dart' as Item;
 
 bool aabbCollision(Offset point, Offset origin, Offset size) {
   return point.dx >= origin.dx &&
@@ -11,8 +12,11 @@ bool aabbCollision(Offset point, Offset origin, Offset size) {
       point.dy <= origin.dy + size.dy;
 }
 
-int? getUuidUnderPointer(BuildContext context) {
+void selectItem(BuildContext context) {
   final cachedProvider = context.read<CachedProvider>();
+
+  if (cachedProvider.overlayIndex != 0 || cachedProvider.dialogIndex != 0)
+    return;
 
   final SIZE = MediaQuery.of(context).size;
   final HEIGHT = SIZE.height;
@@ -36,7 +40,7 @@ int? getUuidUnderPointer(BuildContext context) {
 
   if (cachedProvider.pointerPosition.dx > BODY_WIDTH ||
       cachedProvider.pointerPosition.dy > BODY_HEIGHT) {
-    return null;
+    return;
   }
 
   final REAL_BODY_WIDTH = BODY_WIDTH - Config.MAIN_BODY_MARGIN;
@@ -55,19 +59,73 @@ int? getUuidUnderPointer(BuildContext context) {
   if (REAL_POINTER_POSITION.dx % (CELL_WIDTH + Config.MAIN_BODY_MARGIN) <=
       Config.MAIN_BODY_MARGIN) {
     // Check if we're clicking on the margin gap
-    print('yuh');
-    return null;
+    return;
   }
 
   if (REAL_POINTER_POSITION.dy % (CELL_HEIGHT + Config.MAIN_BODY_MARGIN) <=
       Config.MAIN_BODY_MARGIN) {
     // Check if we're clicking on the margin gap
-    print('yuh');
-    return null;
+    return;
   }
 
-  final xIndex = REAL_POINTER_POSITION.dx ~/ (CELL_WIDTH + Config.MAIN_BODY_MARGIN);
-  final yIndex = REAL_POINTER_POSITION.dy ~/ (CELL_HEIGHT + Config.MAIN_BODY_MARGIN);
+  final xIndex =
+      REAL_POINTER_POSITION.dx ~/ (CELL_WIDTH + Config.MAIN_BODY_MARGIN);
+  final yIndex =
+      REAL_POINTER_POSITION.dy ~/ (CELL_HEIGHT + Config.MAIN_BODY_MARGIN);
 
-  final hoveredIndex = xIndex + yIndex * ROW_COUNT;
+  final index = (xIndex + yIndex * ROW_COUNT).toInt();
+
+  print(index);
+
+  final items = context.read<ItemProvider>().list;
+
+  if (index >= items.length || index < 0) return;
+
+  cachedProvider.selectedUUID = items[index].uuid;
+
+  cachedProvider.draggedObject = OverlayEntry(
+    builder: (_) {
+      // return SizedBox(
+      //   width: CELL_WIDTH,
+      //   height: CELL_HEIGHT,
+      //   // child: Item.Class(index: index),
+      // );
+
+      if (cachedProvider.pointerDownOrigin == null) {
+        return SizedBox.expand();
+      }
+
+      final origin = cachedProvider.draggedObjectOrigin;
+
+      if (origin == null) {
+        return SizedBox.expand();
+      }
+
+      final offset =
+          cachedProvider.pointerPosition - cachedProvider.pointerDownOrigin!;
+
+      return Positioned(
+        left: origin.dx + offset.dx,
+        top: origin.dy + offset.dy,
+        width: CELL_WIDTH,
+        height: CELL_HEIGHT,
+        child: Material(
+          color: Colors.transparent,
+          child: Item.Class(index: index, dragging: true),
+        ),
+      );
+    },
+  );
+
+  final xOrigin =
+      (xIndex * (CELL_WIDTH + Config.MAIN_BODY_MARGIN)) +
+      Config.MAIN_BODY_MARGIN;
+  final yOrigin =
+      yIndex * (CELL_HEIGHT + Config.MAIN_BODY_MARGIN) +
+      Config.MAIN_BODY_MARGIN -
+      cachedProvider.mainBodyScrollOffset;
+
+  cachedProvider.draggedObjectOrigin = Offset(xOrigin, yOrigin);
+
+  Overlay.of(context).insert(cachedProvider.draggedObject!);
 }

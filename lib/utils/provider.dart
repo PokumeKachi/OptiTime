@@ -25,6 +25,13 @@ class ItemProvider with ChangeNotifier {
     if (_list.remove(item)) _save();
   }
 
+  void removeAt(int itemIndex) {
+    if (itemIndex >= 0 && itemIndex < _list.length) {
+      _list.removeAt(itemIndex);
+      _save();
+    }
+  }
+
   void addToGroup(SingleTask task, GroupTask group) {
     group.tasks.add(task);
     _save();
@@ -102,7 +109,7 @@ class CachedProvider extends ChangeNotifier {
 
   bool clickEvent = false;
   void fireClickEvent() {
-    clickEvent = !clickEvent;    
+    clickEvent = !clickEvent;
     notifyListeners();
   }
 
@@ -145,5 +152,21 @@ class CachedProvider extends ChangeNotifier {
       _mainBodyScrollOffset = value;
       notifyListeners();
     }
+  }
+
+  Offset? _draggedObjectOrigin;
+  Offset? get draggedObjectOrigin => _draggedObjectOrigin;
+  set draggedObjectOrigin(Offset? value) {
+    if (_draggedObjectOrigin == value) return;
+    _draggedObjectOrigin = value;
+    notifyListeners();
+  }
+
+  OverlayEntry? _draggedObject;
+  OverlayEntry? get draggedObject => _draggedObject;
+  set draggedObject(OverlayEntry? value) {
+    if (_draggedObject == value) return;
+    _draggedObject = value;
+    notifyListeners();
   }
 }

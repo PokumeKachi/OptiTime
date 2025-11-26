@@ -4,7 +4,7 @@ import 'package:todo/utils/provider.dart';
 import 'dart:async';
 
 import 'package:todo/utils/config.dart' as Config;
-import 'package:todo/utils/algorithm.dart' as Algorithms;
+import 'package:todo/utils/pointer.dart' as Pointer;
 import 'elements/body.dart' as Body;
 import 'elements/nav_bar.dart' as NavBar;
 import 'elements/overlay.dart' as Overlay;
@@ -35,7 +35,8 @@ class Class extends StatelessWidget {
             cachedProvider.pointerDragging = true;
           });
 
-          cachedProvider.selectedUUID = Algorithms.getUuidUnderPointer(context);
+          Pointer.selectItem(context);
+          // Algorithms.getUuidUnderPointer(context);
         },
         onPointerMove: (e) {
           cachedProvider.pointerPosition = e.localPosition;
@@ -44,6 +45,8 @@ class Class extends StatelessWidget {
               Config.MIN_DRAG_DISTANCE) {
             cachedProvider.pointerDragging = true;
           }
+
+          cachedProvider.draggedObject?.markNeedsBuild();
         },
         onPointerUp: (e) {
           cachedProvider.pointerDown = false;
@@ -61,6 +64,8 @@ class Class extends StatelessWidget {
           cachedProvider.pointerDragging = false;
 
           clickTimer?.cancel();
+          cachedProvider.draggedObject?.remove();
+          cachedProvider.draggedObject = null;
         },
         child: Stack(
           children: [

@@ -16,6 +16,8 @@ class Class extends StatelessWidget {
 
     cachedProvider.overlayIndex = cachedProvider.overlayIndex == targetIndex ? 0 : targetIndex;
 
+    print(cachedProvider.overlayIndex);
+
     if (targetIndex == 0) {
       context.read<CachedProvider>().dialogIndex = 1;
     }
@@ -30,7 +32,7 @@ class Class extends StatelessWidget {
     return Expanded(
       child: SizedBox.expand(
         child: Selector<CachedProvider, bool>(
-          selector: (_, provider) => provider.dialogIndex == targetIndex,
+          selector: (_, p) => p.overlayIndex == targetIndex,
           builder: (context, isFocused, child) {
             return AnimatedContainer(
               duration: Config.ANIMATION.SHORT,
@@ -38,7 +40,7 @@ class Class extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isFocused ? colorScheme.tertiary : Colors.transparent,
                 borderRadius: isFocused
-                    ? BorderRadius.circular(Config.CORNER.MIN)
+                    ? BorderRadius.circular(Config.CORNER.SHARPEST)
                     : BorderRadius.circular(Config.CORNER.ROUNDEST),
                 boxShadow: isFocused
                     ? [
@@ -61,7 +63,7 @@ class Class extends StatelessWidget {
                 style: TextButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: isFocused
-                        ? BorderRadius.circular(Config.CORNER.MIN)
+                        ? BorderRadius.circular(Config.CORNER.SHARPEST)
                         : BorderRadius.circular(Config.CORNER.ROUNDEST),
                   ),
                   elevation: isFocused ? 32 : 0,

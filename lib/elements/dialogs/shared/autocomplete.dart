@@ -46,14 +46,14 @@ class _ClassState extends State<Class> {
               borderRadius: BorderRadius.vertical(
                 top: Radius.circular(Config.CORNER.ROUNDEST),
                 bottom: (isFocused && matchingOptions.isNotEmpty)
-                    ? Radius.circular(Config.CORNER.MIN)
+                    ? Radius.circular(Config.CORNER.SHARPEST)
                     : Radius.circular(Config.CORNER.ROUNDEST),
               ),
               border: Border.all(
                 color: isFocused ? colorScheme.primary : colorScheme.outline,
                 width: isFocused
-                    ? Config.FOCUSED_BORDER_WIDTH
-                    : Config.BORDER_WIDTH,
+                    ? Config.BORDER_WIDTH.FOCUSED
+                    : Config.BORDER_WIDTH.MEDIUM,
               ),
             ),
             child: TextField(
@@ -111,18 +111,18 @@ class _ClassState extends State<Class> {
             child: CompositedTransformFollower(
               link: _layerLink,
               showWhenUnlinked: false,
-              offset: Offset(0, size.height - Config.FOCUSED_BORDER_WIDTH),
+              offset: Offset(0, size.height - Config.BORDER_WIDTH.FOCUSED),
               child: Material(
                 clipBehavior: Clip.antiAlias,
                 color: Colors.transparent,
                 elevation: Config.ELEVATION.MEDIUM,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
-                    width: Config.FOCUSED_BORDER_WIDTH,
+                    width: Config.BORDER_WIDTH.FOCUSED,
                     color: colorScheme.primary,
                   ),
                   borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(Config.CORNER.MIN),
+                    top: Radius.circular(Config.CORNER.SHARPEST),
                     bottom: Radius.circular(Config.CORNER.ROUNDEST),
                   ),
                 ),

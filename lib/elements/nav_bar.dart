@@ -35,8 +35,6 @@ class Class extends StatelessWidget {
       top: (!portraitView) ? 0 : null,
       right: 0,
       bottom: 0,
-      // child: SafeArea(
-      //   top: false,
       child: SizedBox(
         height: portraitView ? height * Config.NAV_BAR_RATIO : double.infinity,
         width: (!portraitView) ? width * Config.NAV_BAR_RATIO : double.infinity,
@@ -48,7 +46,6 @@ class Class extends StatelessWidget {
               : _cachedButtons.reversed.toList(),
         ),
       ),
-      // ),
     );
   }
 }
