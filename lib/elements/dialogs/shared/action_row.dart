@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:todo/utils/data_types.dart';
+import 'package:todo/utils/data_type.dart';
 import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/config.dart' as Config;
 

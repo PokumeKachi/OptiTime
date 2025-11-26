@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:todo/utils/data_types.dart';
+import 'package:todo/utils/data_type.dart';
 import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
@@ -15,23 +15,67 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> {
-  Offset? mouseOrigin;
+  late final _controller = ScrollController();
+
+  void updateScrollOffset() {
+    context.read<CachedProvider>().mainBodyScrollOffset = _controller.offset;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(updateScrollOffset);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(updateScrollOffset);
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    // final itemProvider = context.watch<ItemProvider>();
-    final items = context.select<StoredProvider, List<TaskItem>>((p) => p.taskItems);
+    final SIZE = MediaQuery.of(context).size;
+    final HEIGHT = SIZE.height;
+    final WIDTH = SIZE.width;
+    final PORTRAIT = HEIGHT > WIDTH;
+
+    late final BODY_WIDTH;
+    late final BODY_HEIGHT;
+    late final NAVBAR_WIDTH;
+    late final NAVBAR_HEIGHT;
+
+    if (PORTRAIT) {
+      BODY_WIDTH = NAVBAR_WIDTH = WIDTH;
+      BODY_HEIGHT = HEIGHT * (1 - Config.NAV_BAR_RATIO);
+      NAVBAR_HEIGHT = HEIGHT * Config.NAV_BAR_RATIO;
+    } else {
+      BODY_HEIGHT = NAVBAR_HEIGHT = HEIGHT;
+      BODY_WIDTH = WIDTH * (1 - Config.NAV_BAR_RATIO);
+      NAVBAR_WIDTH = WIDTH * Config.NAV_BAR_RATIO;
+    }
+
+    final items = context.watch<ItemProvider>().list;
 
     return GridView.builder(
+      padding: EdgeInsets.all(Config.MAIN_BODY_MARGIN),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 200,
+        maxCrossAxisExtent: Config.TASK_ITEM_MAX_WIDTH,
+        crossAxisSpacing: Config.MAIN_BODY_MARGIN,
+        mainAxisSpacing: Config.MAIN_BODY_MARGIN,
         childAspectRatio: 1,
       ),
+      controller: _controller,
       physics: Config.SCROLL_PHYSICS,
       itemCount: items.length,
       itemBuilder: (context, index) {
+        final ROW_COUNT = BODY_WIDTH ~/ Config.TASK_ITEM_MAX_WIDTH + 1;
+        final CELL_WIDTH = BODY_WIDTH / ROW_COUNT;
+        final CELL_HEIGHT = CELL_WIDTH;
+
         final item = items[index];
 
         late final itemWidget;
@@ -62,14 +106,54 @@ class _ClassState extends State<Class> {
           itemWidget = groupTaskWidgetFactory(item);
         }
 
-        return Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: item is SingleTask ? null : colorScheme.tertiaryContainer,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: itemWidget,
-          // child: Text(item.name),
+        return Selector<CachedProvider, bool>(
+          selector: (_, p) {
+            if (!p.pointerDown) {
+              return false;
+            }
+            if (p.selectedUUID != null) {
+              return p.selectedUUID == item.uuid;
+            }
+
+            // if (Algorithms.aabbCollision(
+            //       p.pointerPosition,
+            //       Offset(
+            //         (index % ROW_COUNT).toDouble() * CELL_WIDTH,
+            //         (index ~/ ROW_COUNT).toDouble() * CELL_HEIGHT,
+            //       ),
+            //       Offset(CELL_WIDTH, CELL_HEIGHT),
+            //     )) {
+            //   p.selectedUUID = item.uuid;
+            //   return true;
+            // } else
+            return false;
+          },
+          builder: (_, isDragged, child) {
+            return Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: item is SingleTask
+                    ? colorScheme.secondaryContainer
+                    : colorScheme.tertiaryContainer,
+                borderRadius: BorderRadius.circular(
+                  isDragged ? Config.CORNER.ROUNDEST : Config.CORNER.NONE,
+                ),
+              ),
+              // child: itemWidget,
+              child: Text(
+                index.toString() +
+                    ' and ' +
+                    ROW_COUNT.toString() +
+                    ' and ' +
+                    Offset(
+                      (index % ROW_COUNT).toDouble() * CELL_WIDTH,
+                      (index ~/ ROW_COUNT).toDouble() * CELL_HEIGHT,
+                    ).toString() +
+                    ' and ' +
+                    Offset(CELL_WIDTH, CELL_HEIGHT).toString(),
+              ),
+            );
+          },
         );
       },
     );

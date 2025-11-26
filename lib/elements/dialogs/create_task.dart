@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/notify.dart' as Notify;
 import 'package:todo/utils/provider.dart';
-import 'package:todo/utils/data_types.dart';
+import 'package:todo/utils/data_type.dart';
 
 import 'shared/action_row.dart' as ActionRow;
 import 'shared/autocomplete.dart' as Autocomplete;
@@ -29,7 +29,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     debugPrint('create task dialog rebuild');
 
     final colorScheme = Theme.of(context).colorScheme;
-    final storedProvider = context.read<StoredProvider>();
+    final itemProvider = context.read<ItemProvider>();
 
     final size = MediaQuery.of(context).size;
     final height = size.height;
@@ -48,8 +48,10 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       ),
       Autocomplete.Class(
         controller: _groupController,
-        getOptions: () =>
-            storedProvider.taskItems.whereType<GroupTask>().map((i) => i.name).toList(),
+        getOptions: () => itemProvider.list
+            .whereType<GroupTask>()
+            .map((i) => i.name)
+            .toList(),
       ),
     ];
 
@@ -135,6 +137,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   void _createTask([String? _]) {
     final storedProvider = context.read<StoredProvider>();
+    final itemProvider = context.read<ItemProvider>();
 
     final name = _nameController.text;
     final groupName = _groupController.text;
@@ -148,7 +151,10 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       return;
     }
 
-    final task = SingleTask(id: storedProvider.issueNewUUID(), name: name ?? '');
+    final task = SingleTask(
+      uuid: storedProvider.issueNewUUID(),
+      name: name ?? '',
+    );
 
     Notify.send(
       context: context,
@@ -159,22 +165,22 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     );
 
     if (groupName.isEmpty) {
-      storedProvider.addTaskItem(task);
+      itemProvider.add(task);
     } else {
-      final group = storedProvider.taskItems.whereType<GroupTask>().firstWhere(
+      final group = itemProvider.list.whereType<GroupTask>().firstWhere(
         (g) => g.name == groupName,
         orElse: () {
           final group = GroupTask(
-            id: storedProvider.issueNewUUID(),
+            uuid: storedProvider.issueNewUUID(),
             name: groupName,
             tasks: [],
           );
-          storedProvider.addTaskItem(group);
+          itemProvider.add(group);
           return group;
         },
       );
 
-      storedProvider.addTaskToGroup(task, group);
+      itemProvider.addToGroup(task, group);
     }
 
     _close();

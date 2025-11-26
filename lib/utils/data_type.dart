@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 enum ItemType { singleTask, groupTask }
 
 abstract class TaskItem {
-  final int id;
+  final int uuid;
   final String name;
 
-  const TaskItem({required this.id, required this.name});
+  const TaskItem({required this.uuid, required this.name});
 
   Map<String, dynamic> toMap();
   factory TaskItem.fromMap(Map<String, dynamic> map) {
@@ -17,7 +17,7 @@ abstract class TaskItem {
 }
 
 class SingleTask extends TaskItem {
-  final int id;
+  final int uuid;
   String name;
   String description;
   DateTime? deadline;
@@ -25,17 +25,17 @@ class SingleTask extends TaskItem {
   bool trashed;
 
   SingleTask({
-    required this.id,
+    required this.uuid,
     this.name = '',
     this.description = '',
     this.deadline,
     this.duration,
     this.trashed = false,
-  }) : super(id: id, name: name);
+  }) : super(uuid: uuid, name: name);
 
   Map<String, dynamic> toMap() => {
     'type': ItemType.singleTask.index,
-    'id': id,
+    'id': uuid,
     'title': name,
     'description': description,
     'deadline': deadline?.toIso8601String(),
@@ -45,7 +45,7 @@ class SingleTask extends TaskItem {
 
   factory SingleTask.fromMap(Map<String, dynamic> map) {
     return SingleTask(
-      id: map['id'],
+      uuid: map['id'],
       name: map['title'] as String? ?? '',
       description: map['description'] as String? ?? '',
       deadline: map['deadline'] != null
@@ -60,21 +60,21 @@ class SingleTask extends TaskItem {
 }
 
 class GroupTask extends TaskItem {
-  final int id;
+  final int uuid;
   final String name;
   final List<SingleTask> tasks;
 
-  GroupTask({required this.id, required this.name, required this.tasks}) : super(id: id, name: name);
+  GroupTask({required this.uuid, required this.name, required this.tasks}) : super(uuid: uuid, name: name);
 
   Map<String, dynamic> toMap() => {
     'type': ItemType.groupTask.index,
-    'id': id,
+    'id': uuid,
     'name': name,
     'tasks': tasks.map((t) => t.toMap()).toList(),
   };
 
   factory GroupTask.fromMap(Map<String, dynamic> map) => GroupTask(
-    id: map['id'],
+    uuid: map['id'],
     name: map['name'],
     tasks: (map['tasks'] as List)
         .map((e) => SingleTask.fromMap(Map<String, dynamic>.from(e)))

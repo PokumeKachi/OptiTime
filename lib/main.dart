@@ -19,6 +19,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<ItemProvider>(
+          create: (context) => ItemProvider(),
+        ),
         ChangeNotifierProvider<StoredProvider>(
           create: (context) => StoredProvider(),
         ),
