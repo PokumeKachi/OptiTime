@@ -82,6 +82,17 @@ void selectItem(BuildContext context) {
   if (index >= items.length || index < 0) return;
 
   cachedProvider.selectedUUID = items[index].uuid;
+  // cachedProvider.draggedObjectIndex = index;
+
+  final xOrigin =
+      (xIndex * (CELL_WIDTH + Config.MAIN_BODY_MARGIN)) +
+      Config.MAIN_BODY_MARGIN;
+  final yOrigin =
+      yIndex * (CELL_HEIGHT + Config.MAIN_BODY_MARGIN) +
+      Config.MAIN_BODY_MARGIN -
+      cachedProvider.mainBodyScrollOffset;
+
+  cachedProvider.draggedObjectOrigin = Offset(xOrigin, yOrigin);
 
   cachedProvider.draggedObject = OverlayEntry(
     builder: (_) {
@@ -116,16 +127,9 @@ void selectItem(BuildContext context) {
       );
     },
   );
+}
 
-  final xOrigin =
-      (xIndex * (CELL_WIDTH + Config.MAIN_BODY_MARGIN)) +
-      Config.MAIN_BODY_MARGIN;
-  final yOrigin =
-      yIndex * (CELL_HEIGHT + Config.MAIN_BODY_MARGIN) +
-      Config.MAIN_BODY_MARGIN -
-      cachedProvider.mainBodyScrollOffset;
-
-  cachedProvider.draggedObjectOrigin = Offset(xOrigin, yOrigin);
-
+void dragItem(BuildContext context) {
+  final cachedProvider = context.read<CachedProvider>();
   Overlay.of(context).insert(cachedProvider.draggedObject!);
 }

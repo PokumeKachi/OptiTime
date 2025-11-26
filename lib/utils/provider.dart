@@ -153,7 +153,15 @@ class CachedProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
+  //
+  // int? _draggedObjectIndex;
+  // int? get draggedObjectIndex => _draggedObjectIndex;
+  // set draggedObjectIndex(int? value) {
+  //   if (_draggedObjectIndex == value) return;
+  //   _draggedObjectIndex = value;
+  //   notifyListeners();
+  // }
+  //
   Offset? _draggedObjectOrigin;
   Offset? get draggedObjectOrigin => _draggedObjectOrigin;
   set draggedObjectOrigin(Offset? value) {

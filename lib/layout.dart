@@ -32,7 +32,10 @@ class Class extends StatelessWidget {
           }
 
           clickTimer = Timer(Config.MAX_POINTER_CLICK_DURATION, () {
-            cachedProvider.pointerDragging = true;
+            if (!cachedProvider.pointerDragging) {
+              cachedProvider.pointerDragging = true;
+              Pointer.dragItem(context);
+            }
           });
 
           Pointer.selectItem(context);
@@ -42,8 +45,10 @@ class Class extends StatelessWidget {
           cachedProvider.pointerPosition = e.localPosition;
 
           if ((e.localPosition - cachedProvider.pointerDownOrigin!).distance >
-              Config.MIN_DRAG_DISTANCE) {
+                  Config.MIN_DRAG_DISTANCE &&
+              !cachedProvider.pointerDragging) {
             cachedProvider.pointerDragging = true;
+            Pointer.dragItem(context);
           }
 
           cachedProvider.draggedObject?.markNeedsBuild();
@@ -66,6 +71,8 @@ class Class extends StatelessWidget {
           clickTimer?.cancel();
           cachedProvider.draggedObject?.remove();
           cachedProvider.draggedObject = null;
+          cachedProvider.draggedObjectOrigin = null;
+          // cachedProvider.draggedObjectIndex = null;
         },
         child: Stack(
           children: [
