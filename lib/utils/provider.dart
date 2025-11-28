@@ -13,21 +13,40 @@ class ItemProvider with ChangeNotifier {
     _list = List.from(
       _storage.read('items') ?? [],
     ).map((e) => TaskItem.fromMap(Map<String, dynamic>.from(e))).toList();
+
+    _rebuildIndexMap();
+  }
+  final Map<int, int> _indexOfUuid = {};
+
+  void _rebuildIndexMap() {
+    _indexOfUuid.clear();
+    for (var i = 0; i < _list.length; i++) {
+      _indexOfUuid[_list[i].uuid] = i;
+    }
+  }
+
+  int getIndexOfUuid(int uuid) {
+    return _indexOfUuid[uuid] ?? -1;
   }
 
   List<TaskItem> get list => List.unmodifiable(_list);
   void add(TaskItem item) {
     _list.add(item);
+    _rebuildIndexMap();
     _save();
   }
 
   void remove(TaskItem item) {
-    if (_list.remove(item)) _save();
+    if (_list.remove(item)) {
+      _rebuildIndexMap();
+      _save();
+    }
   }
 
   void removeAt(int itemIndex) {
     if (itemIndex >= 0 && itemIndex < _list.length) {
       _list.removeAt(itemIndex);
+      _rebuildIndexMap();
       _save();
     }
   }
@@ -40,6 +59,7 @@ class ItemProvider with ChangeNotifier {
   void reorder(int oldIndex, int newIndex) {
     final item = _list.removeAt(oldIndex);
     _list.insert(newIndex, item);
+    _rebuildIndexMap();
     _save();
   }
 
@@ -153,15 +173,15 @@ class CachedProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  //
-  // int? _draggedObjectIndex;
-  // int? get draggedObjectIndex => _draggedObjectIndex;
-  // set draggedObjectIndex(int? value) {
-  //   if (_draggedObjectIndex == value) return;
-  //   _draggedObjectIndex = value;
-  //   notifyListeners();
-  // }
-  //
+
+  int? _draggedObjectIndex;
+  int? get draggedObjectIndex => _draggedObjectIndex;
+  set draggedObjectIndex(int? value) {
+    if (_draggedObjectIndex == value) return;
+    _draggedObjectIndex = value;
+    notifyListeners();
+  }
+
   Offset? _draggedObjectOrigin;
   Offset? get draggedObjectOrigin => _draggedObjectOrigin;
   set draggedObjectOrigin(Offset? value) {
@@ -175,6 +195,22 @@ class CachedProvider extends ChangeNotifier {
   set draggedObject(OverlayEntry? value) {
     if (_draggedObject == value) return;
     _draggedObject = value;
+    notifyListeners();
+  }
+
+  bool _draggedObjectShouldBeVisible = false;
+  bool get draggedObjectShouldBeVisible => _draggedObjectShouldBeVisible;
+  set draggedObjectShouldBeVisible(bool value) {
+    if (_draggedObjectShouldBeVisible == value) return;
+    _draggedObjectShouldBeVisible = value;
+    notifyListeners();
+  }
+
+  bool _draggedObjectIsVisible = false;
+  bool get draggedObjectIsVisible => _draggedObjectIsVisible;
+  set draggedObjectIsVisible(bool value) {
+    if (_draggedObjectIsVisible == value) return;
+    _draggedObjectIsVisible = value;
     notifyListeners();
   }
 }

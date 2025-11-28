@@ -11,9 +11,9 @@ import 'package:todo/utils/config.dart' as Config;
 import 'parallax.dart' as Parallax;
 
 class Class extends StatefulWidget {
-  final int index;
+  final int uuid;
   final bool dragging;
-  const Class({super.key, required this.index, this.dragging = false});
+  const Class({super.key, required this.uuid, this.dragging = false});
   @override
   State<Class> createState() => _ClassState();
 }
@@ -21,35 +21,34 @@ class Class extends StatefulWidget {
 class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: Config.ANIMATION.LONG,
+    duration: Config.DRAGGED_OBJECT_IN_OUT_DURATION,
   );
   late final Animation<double> _paddingAnim = Tween<double>(
     begin: Config.ITEM_PADDING.NARROWEST,
     end: Config.ITEM_PADDING.WIDER,
-  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
   late final Animation<double> _radiusAnim = Tween<double>(
     begin: Config.CORNER.NONE,
     end: Config.CORNER.ROUNDEST,
-  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
-  late final Animation<double> _streakPosition =
-      Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-          parent: _controller,
-          curve: Curves.easeInOutCubicEmphasized,
-        ),
-      );
+  late final Animation<double> _streakPosition = Tween<double>(
+    begin: 0.0,
+    end: 1.0,
+  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
   // late final Animation<double> _streakSize = Tween<double>(
   //   begin: 0.0,
   //   end: 0.0,
   // ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
-  late final Animation<double> _streakSize = TweenSequence([
-    TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.4), weight: 50),
-    TweenSequenceItem(tween: Tween(begin: 0.4, end: 0.0), weight: 50),
-  ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  late final Animation<double> _streakSize = TweenSequence(
+    [
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.4), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 0.4, end: 0.0), weight: 50),
+    ],
+  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
   @override
   void initState() {
@@ -62,10 +61,15 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   @override
   void didUpdateWidget(covariant Class oldWidget) {
+    final cachedProvider = context.read<CachedProvider>();
     super.didUpdateWidget(oldWidget);
-    if (widget.dragging != oldWidget.dragging) {
-      widget.dragging ? _controller.forward() : _controller.reverse();
-    }
+
+    (cachedProvider.draggedObjectShouldBeVisible && widget.dragging)
+        ? _controller.forward()
+        : _controller.reverse();
+    // if (widget.dragging != oldWidget.dragging || cachedProvider.draggedObjectShouldBeVisible) {
+    //   widget.dragging ? _controller.forward() : _controller.reverse();
+    // }
   }
 
   @override
@@ -79,7 +83,8 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     final colorScheme = Theme.of(context).colorScheme;
 
     final items = context.watch<ItemProvider>().list;
-    final item = items[widget.index];
+    final item =
+        items[context.read<ItemProvider>().getIndexOfUuid(widget.uuid)];
 
     late final itemWidget;
 
@@ -111,12 +116,11 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     return SizedBox.expand(
       child: MouseRegion(
         cursor: widget.dragging
-            ? SystemMouseCursors.none
+            ? SystemMouseCursors.grabbing
             : SystemMouseCursors.click,
         child: AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
-            // return Parallax.Class();
             final backgroundColor = item is SingleTask
                 ? colorScheme.secondaryContainer
                 : colorScheme.tertiaryContainer;
@@ -129,11 +133,13 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
               decoration: BoxDecoration(
                 border: Border.all(
                   color: secondaryColor,
-                  width: lerpDouble(
-                    Config.BORDER_WIDTH.MEDIUM,
-                    Config.BORDER_WIDTH.FOCUSED,
-                    _controller.value,
-                  ) ?? Config.BORDER_WIDTH.MEDIUM,
+                  width:
+                      lerpDouble(
+                        Config.BORDER_WIDTH.MEDIUM,
+                        Config.BORDER_WIDTH.FOCUSED,
+                        _controller.value,
+                      ) ??
+                      Config.BORDER_WIDTH.MEDIUM,
                 ),
                 boxShadow: [
                   BoxShadow(

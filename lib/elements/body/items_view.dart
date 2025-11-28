@@ -62,13 +62,7 @@ class _ClassState extends State<Class> {
 
     final items = context.watch<ItemProvider>().list;
     final isDraggingItem = context.select<CachedProvider, bool>(
-      (p) {
-        if (p.selectedUUID != null) {
-          return true;
-        }
-
-        return false;
-      }
+      (p) => p.draggedObjectIsVisible,
     );
 
     return AnimatedGridView(
@@ -80,7 +74,9 @@ class _ClassState extends State<Class> {
         childAspectRatio: 1,
       ),
       controller: _controller,
-      physics: isDraggingItem ? const NeverScrollableScrollPhysics() : Config.SCROLL_PHYSICS,
+      physics: isDraggingItem
+          ? const NeverScrollableScrollPhysics()
+          : Config.SCROLL_PHYSICS,
       // itemCount: items.length,
       items: items,
       enterTransition: [FadeIn(), ScaleIn()],
@@ -95,12 +91,13 @@ class _ClassState extends State<Class> {
 
         return Selector<CachedProvider, bool>(
           key: ValueKey(item.uuid),
-          selector: (_, p) => p.pointerDragging && p.selectedUUID == item.uuid,
+          selector: (_, p) =>
+              p.draggedObjectIsVisible && p.selectedUUID == item.uuid,
           builder: (_, isDragged, child) {
             if (isDragged) {
               return SizedBox.expand();
             }
-            return Item.Class(index: index);
+            return Item.Class(uuid: item.uuid);
           },
         );
       },

@@ -147,6 +147,8 @@ class BORDER_WIDTH {
 
 class ANIMATION {
   static const NONE = const Duration(milliseconds: 0);
+  static const SHORTEST = const Duration(milliseconds: 50);
+  static const SHORTER = const Duration(milliseconds: 100);
   static const SHORT = const Duration(milliseconds: 150);
   static const MEDIUM = const Duration(milliseconds: 300);
   static const LONG = const Duration(milliseconds: 450);
@@ -171,7 +173,10 @@ class BOBBING_SCALE {
   static const AGGRESSIVE = 0.9;
 }
 
+const DRAGGED_OBJECT_IN_OUT_DURATION = ANIMATION.MEDIUM;
+
 // Input
 
-const MAX_POINTER_CLICK_DURATION = const Duration(milliseconds: 500);
+const MAX_POINTER_TAP_DURATION = const Duration(milliseconds: 400);
+const MAX_POINTER_CLICK_DURATION = const Duration(milliseconds: 200);
 const MIN_DRAG_DISTANCE = 20.0;
