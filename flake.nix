@@ -17,6 +17,7 @@
             buildInputs = with pkgs; [
                 kdePackages.qtwayland
                 android-tools
+                firebase-tools
                 sdkmanager
                 mesa-demos
                 flutter

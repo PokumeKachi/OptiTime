@@ -8,12 +8,9 @@ import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
 
-import 'parallax.dart' as Parallax;
-
 class Class extends StatefulWidget {
   final int uuid;
-  final bool dragging;
-  const Class({super.key, required this.uuid, this.dragging = false});
+  const Class({super.key, required this.uuid});
   @override
   State<Class> createState() => _ClassState();
 }
@@ -23,6 +20,7 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     vsync: this,
     duration: Config.DRAGGED_OBJECT_IN_OUT_DURATION,
   );
+
   late final Animation<double> _paddingAnim = Tween<double>(
     begin: Config.ITEM_PADDING.NARROWEST,
     end: Config.ITEM_PADDING.WIDER,
@@ -38,39 +36,12 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     end: 1.0,
   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
-  // late final Animation<double> _streakSize = Tween<double>(
-  //   begin: 0.0,
-  //   end: 0.0,
-  // ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
-
   late final Animation<double> _streakSize = TweenSequence(
     [
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.4), weight: 50),
       TweenSequenceItem(tween: Tween(begin: 0.4, end: 0.0), weight: 50),
     ],
   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget.dragging) {
-      _controller.forward();
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant Class oldWidget) {
-    final cachedProvider = context.read<CachedProvider>();
-    super.didUpdateWidget(oldWidget);
-
-    (cachedProvider.draggedObjectShouldBeVisible && widget.dragging)
-        ? _controller.forward()
-        : _controller.reverse();
-    // if (widget.dragging != oldWidget.dragging || cachedProvider.draggedObjectShouldBeVisible) {
-    //   widget.dragging ? _controller.forward() : _controller.reverse();
-    // }
-  }
 
   @override
   void dispose() {
@@ -113,80 +84,86 @@ class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
     } else if (item is GroupTask) {
       itemWidget = groupTaskWidgetFactory(item);
     }
-    return SizedBox.expand(
-      child: MouseRegion(
-        cursor: widget.dragging
-            ? SystemMouseCursors.grabbing
-            : SystemMouseCursors.click,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final backgroundColor = item is SingleTask
-                ? colorScheme.secondaryContainer
-                : colorScheme.tertiaryContainer;
+    return GestureDetector(
+      onTap: () {
+        final cachedProvider = context.read<CachedProvider>();
 
-            final secondaryColor = item is SingleTask
-                ? colorScheme.primary
-                : colorScheme.tertiary;
-            return Container(
-              padding: EdgeInsets.all(_paddingAnim.value),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: secondaryColor,
-                  width:
-                      lerpDouble(
+        if (cachedProvider.selectedUUID != widget.uuid) {
+          cachedProvider.selectedUUID = widget.uuid;
+          _controller.forward();
+          print('case 3');
+
+          // cachedProvider.addListener(() {
+          //   if (cachedProvider.selectedUUID != widget.uuid) {
+          //     cachedProvider.selectedUUID = null;
+          //     _controller.reverse();
+          //     print('case 2');
+          //   }
+          // });
+        } else {
+          cachedProvider.selectedUUID = null;
+          _controller.reverse();
+          print('case 1');
+        }
+      },
+      child: SizedBox.expand(
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final backgroundColor = item is SingleTask
+                  ? colorScheme.secondaryContainer
+                  : colorScheme.tertiaryContainer;
+
+              final secondaryColor = item is SingleTask
+                  ? colorScheme.primary
+                  : colorScheme.tertiary;
+              return Container(
+                padding: EdgeInsets.all(_paddingAnim.value),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: secondaryColor,
+                    width:
+                        lerpDouble(
+                          Config.BORDER_WIDTH.MEDIUM,
+                          Config.BORDER_WIDTH.FOCUSED,
+                          _controller.value,
+                        ) ??
                         Config.BORDER_WIDTH.MEDIUM,
-                        Config.BORDER_WIDTH.FOCUSED,
-                        _controller.value,
-                      ) ??
-                      Config.BORDER_WIDTH.MEDIUM,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.inverseSurface.withOpacity(
-                      Config.BLUR_OPACITY.LESS * _controller.value,
-                    ),
-                    blurRadius: Config.BLUR_RADIUS.MEDIUM,
                   ),
-                ],
-                gradient: widget.dragging
-                    ? LinearGradient(
-                        colors: [
-                          backgroundColor,
-                          backgroundColor,
-                          secondaryColor,
-                          backgroundColor,
-                          backgroundColor,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        stops: [
-                          0.0,
-                          _streakPosition.value - _streakSize.value,
-                          _streakPosition.value,
-                          _streakPosition.value + _streakSize.value,
-                          1.0,
-                        ],
-                      )
-                    : null,
-                color: widget.dragging ? null : backgroundColor,
-                borderRadius: BorderRadius.circular(_radiusAnim.value),
-              ),
-              child: itemWidget,
-              // child: Text(
-              //   index.toString() +
-              //       ' and ' +
-              //       ROW_COUNT.toString() +
-              //       ' and ' +
-              //       Offset(
-              //         (index % ROW_COUNT).toDouble() * CELL_WIDTH,
-              //         (index ~/ ROW_COUNT).toDouble() * CELL_HEIGHT,
-              //       ).toString() +
-              //       ' and ' +
-              //       Offset(CELL_WIDTH, CELL_HEIGHT).toString(),
-              // ),
-            );
-          },
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.inverseSurface.withOpacity(
+                        Config.BLUR_OPACITY.LESS * _controller.value,
+                      ),
+                      blurRadius: Config.BLUR_RADIUS.MEDIUM,
+                    ),
+                  ],
+                  gradient: LinearGradient(
+                    colors: [
+                      backgroundColor,
+                      backgroundColor,
+                      secondaryColor,
+                      backgroundColor,
+                      backgroundColor,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    stops: [
+                      0.0,
+                      _streakPosition.value - _streakSize.value,
+                      _streakPosition.value,
+                      _streakPosition.value + _streakSize.value,
+                      1.0,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(_radiusAnim.value),
+                ),
+                child: itemWidget,
+              );
+            },
+          ),
         ),
       ),
     );

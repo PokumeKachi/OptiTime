@@ -119,13 +119,13 @@ class ELEVATION {
 
 class CORNER {
   static const NONE = 0.0;
-  static const SHARPEST = 4.0;
-  static const SHARPER = 8.0;
-  static const SHARP = 12.0;
-  static const MEDIUM = 16.0;
-  static const ROUND = 24.0;
-  static const ROUNDER = 32.0;
-  static const ROUNDEST = 48.0;
+  static const SHARPEST = 2.0;
+  static const SHARPER = 4.0;
+  static const SHARP = 8.0;
+  static const MEDIUM = 12.0;
+  static const ROUND = 16.0;
+  static const ROUNDER = 24.0;
+  static const ROUNDEST = 32.0;
 }
 
 class BLUR_OPACITY {

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get_storage_plus/get_storage_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'layout.dart' as Layout;
 import 'utils/config.dart' as Config;
@@ -13,6 +14,12 @@ void main() async {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await GetStorage.init();
+
+  await Supabase.initialize(
+    url: 'https://qwfmauulihuwtraimelf.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3Zm1hdXVsaWh1d3RyYWltZWxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MDEzODQsImV4cCI6MjA4MDE3NzM4NH0.A4EaTF82qG2enGIzRiEbjrwQa0T-U_DT6GLDeMSVGHo',
+  );
 
   // await GetStorage().erase();
 

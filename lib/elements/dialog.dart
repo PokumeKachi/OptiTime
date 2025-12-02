@@ -5,6 +5,7 @@ import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
 import 'dialogs/create_task.dart' as NewTask;
+// import 'dialogs/sign_in.dart' as SignIn;
 
 class Class extends StatefulWidget {
   const Class({super.key});
@@ -14,11 +15,10 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> {
-  static final _dialogKeys = [GlobalKey<NewTask.ClassState>()];
-  static final _dialogs = [
-    const SizedBox.shrink(),
-    NewTask.Class(key: _dialogKeys[0], index: 1),
-  ];
+  static final newTaskDialogKey = GlobalKey<NewTask.ClassState>();
+  static final newTaskDialog = NewTask.Class(key: newTaskDialogKey, index: 1);
+
+  static final _dialogs = [const SizedBox.shrink(), newTaskDialog];
 
   @override
   void initState() {
@@ -35,15 +35,23 @@ class _ClassState extends State<Class> {
   void _handleKey(RawKeyEvent event) {
     final dialogIndex = context.read<CachedProvider>().dialogIndex;
 
-    if (dialogIndex != 0) {
-      _dialogKeys[dialogIndex - 1].currentState?.handleKey(event);
+    switch (dialogIndex) {
+      case 1:
+        newTaskDialogKey.currentState?.handleKey(event);
+        break;
     }
+
+    // if (dialogIndex != 0) {
+    //   _dialogKeys[dialogIndex - 1].currentState?.handleKey(event);
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     debugPrint('dialog rebuild');
-    final dialogIndex = context.select<CachedProvider, int>((c) => c.dialogIndex);
+    final dialogIndex = context.select<CachedProvider, int>(
+      (c) => c.dialogIndex,
+    );
     final colorScheme = Theme.of(context).colorScheme;
     final isDialogOpen = dialogIndex != 0;
 

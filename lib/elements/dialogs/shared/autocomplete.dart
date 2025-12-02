@@ -38,16 +38,16 @@ class _ClassState extends State<Class> {
           child: AnimatedContainer(
             duration: Config.ANIMATION.SHORT,
             curve: Curves.easeInOut,
-            padding: EdgeInsets.only(top: Config.CORNER.ROUNDEST / 2),
+            padding: EdgeInsets.only(top: Config.CORNER.ROUND / 2),
             decoration: BoxDecoration(
               color: isFocused
                   ? colorScheme.surfaceBright
                   : colorScheme.surface,
               borderRadius: BorderRadius.vertical(
-                top: Radius.circular(Config.CORNER.ROUNDEST),
+                top: Radius.circular(Config.CORNER.ROUND),
                 bottom: (isFocused && matchingOptions.isNotEmpty)
-                    ? Radius.circular(Config.CORNER.SHARPEST)
-                    : Radius.circular(Config.CORNER.ROUNDEST),
+                    ? Radius.circular(Config.CORNER.NONE)
+                    : Radius.circular(Config.CORNER.ROUND),
               ),
               border: Border.all(
                 color: isFocused ? colorScheme.primary : colorScheme.outline,
@@ -122,8 +122,8 @@ class _ClassState extends State<Class> {
                     color: colorScheme.primary,
                   ),
                   borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(Config.CORNER.SHARPEST),
-                    bottom: Radius.circular(Config.CORNER.ROUNDEST),
+                    top: Radius.circular(Config.CORNER.NONE),
+                    bottom: Radius.circular(Config.CORNER.ROUND),
                   ),
                 ),
                 child: AnimatedSize(

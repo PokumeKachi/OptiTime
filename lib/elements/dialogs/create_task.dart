@@ -20,7 +20,8 @@ class Class extends StatefulWidget {
   State<Class> createState() => ClassState();
 }
 
-class ClassState extends State<Class> with SingleTickerProviderStateMixin {
+class ClassState extends State<Class>
+    with SingleTickerProviderStateMixin {
   late final _nameController = TextEditingController();
   late final _groupController = TextEditingController();
 
@@ -42,7 +43,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
         decoration: InputDecoration(
           labelText: 'Name',
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(Config.CORNER.ROUNDEST),
+            borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
           ),
         ),
       ),
@@ -152,7 +153,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     }
 
     final task = SingleTask(
-      uuid: storedProvider.issueNewUUID(),
+      uuid: itemProvider.issueNewUUID(),
       name: name ?? '',
     );
 
@@ -171,7 +172,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
         (g) => g.name == groupName,
         orElse: () {
           final group = GroupTask(
-            uuid: storedProvider.issueNewUUID(),
+            uuid: itemProvider.issueNewUUID(),
             name: groupName,
             tasks: [],
           );
