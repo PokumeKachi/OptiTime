@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage_plus/get_storage_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:realtime_client/realtime_client.dart';
 
 import 'data_type.dart';
 
@@ -86,18 +85,11 @@ class ItemProvider with ChangeNotifier {
           event: PostgresChangeEvent.all,
           schema: 'public',
           table: 'users',
-          // filter: PostgresChangeFilter(
-          //   column: 'id',
-          //   value: userId,
-          //   type: PostgresChangeFilterType.eq,
-          // ),
           callback: (payload) {
             final updatedUser = Map<String, dynamic>.from(
               payload.newRecord ?? {},
             );
-            print(updatedUser);
-
-            print(payload);
+            print(updatedUser['data']);
           },
         )
         .subscribe();
@@ -106,8 +98,8 @@ class ItemProvider with ChangeNotifier {
 
 class StoredProvider with ChangeNotifier {
   late final GetStorage _storage;
-
-  late String _appThemeMode;
+  late ThemeMode _appThemeMode;
+  late Locale _locale;
 
   void _save(String key, dynamic value) {
     _storage.write(key, value);
@@ -116,14 +108,26 @@ class StoredProvider with ChangeNotifier {
 
   StoredProvider() {
     _storage = GetStorage();
-    _appThemeMode = _storage.read('themeMode') ?? 'System';
+    _appThemeMode = ThemeMode.values.firstWhere(
+      (m) => m.name == _storage.read('themeMode'),
+      orElse: () => ThemeMode.system,
+    );
+    _locale = Locale(_storage.read('locale') ?? 'en');
   }
 
-  String get appThemeMode => _appThemeMode;
-  set appThemeMode(String value) {
+  ThemeMode get appThemeMode => _appThemeMode;
+  set appThemeMode(ThemeMode value) {
     if (_appThemeMode != value) {
       _appThemeMode = value;
-      _save('themeMode', value);
+      _save('themeMode', value.toString());
+    }
+  }
+
+  Locale get locale => _locale;
+  set locale(Locale value) {
+    if (_locale != value) {
+      _locale = value;
+      _save('locale', value.toString());
     }
   }
 }

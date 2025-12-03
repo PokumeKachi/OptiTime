@@ -5,6 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:todo/l10n/app_localizations.dart';
+// import 'package:localization_i18n_arb/l10n/l10n.dart';
+
 import 'layout.dart' as Layout;
 import 'utils/config.dart' as Config;
 import 'utils/provider.dart';
@@ -57,15 +62,22 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('app rebuild');
 
-    final themeMode = context.select<StoredProvider, ThemeMode>((p) {
-      return switch (p.appThemeMode) {
-        'Light' => ThemeMode.light,
-        'Dark' => ThemeMode.dark,
-        _ => ThemeMode.system,
-      };
-    });
+    final themeMode = context.select<StoredProvider, ThemeMode>(
+      (p) => p.appThemeMode,
+    );
+
+    final locale = context.select<StoredProvider, Locale>((p) => p.locale);
 
     return MaterialApp(
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       title: Config.TITLE,
       theme: Config.THEME,
       darkTheme: Config.THEME_DARK,

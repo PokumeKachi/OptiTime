@@ -12,7 +12,6 @@ const SCROLL_PHYSICS = const BouncingScrollPhysics(
 // final SCROLL_PHYSICS = BouncingScrollPhysics().applyTo(const ClampingScrollPhysics());
 // final SCROLL_PHYSICS = FixedExtentScrollPhysics();
 
-
 // Color scheming
 
 // const SEED_COLOR = Color.fromRGBO(225, 215, 125, 1);

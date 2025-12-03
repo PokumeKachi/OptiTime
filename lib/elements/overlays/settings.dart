@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:todo/l10n/app_localizations.dart';
+import 'package:todo/main.dart';
 
 import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/supabase.dart' as _Supabase;
+import 'package:todo/utils/config.dart' as Config;
 
 class Class extends StatefulWidget {
   const Class({super.key});
@@ -13,27 +16,46 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> {
-  static const _themeModes = ['System', 'Light', 'Dark'];
-  static final _items = _themeModes
-      .map((m) => DropdownMenuItem(value: m, child: Text(m)))
-      .toList();
-
   @override
   Widget build(BuildContext context) {
     final storedProvider = context.read<StoredProvider>();
-    final value = context.select<StoredProvider, String>((p) => p.appThemeMode);
     final colorScheme = Theme.of(context).colorScheme;
+
+    final _themeModeItems = ThemeMode.values.map((m) {
+      final text = switch (m) {
+        ThemeMode.system => AppLocalizations.of(context)!.systemThemeMode,
+        ThemeMode.light => AppLocalizations.of(context)!.lightThemeMode,
+        ThemeMode.dark => AppLocalizations.of(context)!.darkThemeMode,
+      };
+      return DropdownMenuItem(value: m, child: Text(text));
+    }).toList();
+    final themeMode = context.select<StoredProvider, ThemeMode>(
+      (p) => p.appThemeMode,
+    );
+    final _localeItems = AppLocalizations.supportedLocales.map((locale) {
+      final name = locale.language;
+
+      return DropdownMenuItem(value: locale, child: Text(name));
+    }).toList();
+    final locale = context.select<StoredProvider, Locale>((p) => p.locale);
 
     return ColoredBox(
       color: Colors.transparent,
       child: Center(
         child: Column(
           children: [
-            DropdownButton<String>(
-              value: value,
-              items: _items,
+            DropdownButton<ThemeMode>(
+              items: _themeModeItems,
+              value: themeMode,
               onChanged: (newMode) {
                 if (newMode != null) storedProvider.appThemeMode = newMode;
+              },
+            ),
+            DropdownButton<String>(
+              items: _localeItems,
+              value: locale,
+              onChanged: (newLocale) {
+                if (newLocale != null) storedProvider.locale = newLocale;
               },
             ),
             TextButton(

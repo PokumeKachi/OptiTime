@@ -10,11 +10,11 @@ class Class extends StatelessWidget {
   const Class({super.key});
 
   static const navItems = [
-    {'icon': Icons.delete, 'target': 1},
-    {'icon': Icons.energy_savings_leaf, 'target': 2},
+    {'icon': Icons.history, 'target': 1},
+    {'icon': Icons.star_border, 'target': 2},
     {'icon': Icons.add, 'target': 0},
-    {'icon': Icons.notifications, 'target': 3},
-    {'icon': Icons.settings, 'target': 4},
+    {'icon': Icons.notifications_outlined, 'target': 3},
+    {'icon': Icons.settings_outlined, 'target': 4},
   ];
 
   static final List<Widget> _cachedButtons = navItems.map((item) {
