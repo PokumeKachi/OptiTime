@@ -32,6 +32,7 @@ void send({
     duration: duration,
     mobilePositionSettings: const MobilePositionSettings(
       topOnAppearance: 10,
+      topOnDisappearance: -120,
       left: 10,
       right: 10,
     ),
@@ -50,7 +51,7 @@ void send({
             curve: Curves.easeOut,
             builder: (BuildContext context, double t, _) {
               final iconSize = lerpDouble(
-                Config.ICON_SIZE.VERY_BIG,
+                Config.ICON_SIZE.BIGGER,
                 Config.ICON_SIZE.MEDIUM,
                 t,
               );

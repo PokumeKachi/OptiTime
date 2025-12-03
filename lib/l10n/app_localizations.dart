@@ -104,6 +104,96 @@ abstract class AppLocalizations {
   /// **'English'**
   String get language;
 
+  /// No description provided for @buttonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get buttonCancel;
+
+  /// No description provided for @buttonCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get buttonCreate;
+
+  /// No description provided for @buttonConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get buttonConfirm;
+
+  /// No description provided for @newTaskDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Task'**
+  String get newTaskDialogTitle;
+
+  /// No description provided for @newTaskDialogTaskName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get newTaskDialogTaskName;
+
+  /// No description provided for @newTaskDialogTaskGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get newTaskDialogTaskGroup;
+
+  /// No description provided for @newTaskNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'has been added to your todo list!'**
+  String get newTaskNotificationSubtitle;
+
+  /// No description provided for @signedInLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in as {name} (Tap here to log out)'**
+  String signedInLabel(Object name);
+
+  /// No description provided for @signInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInButton;
+
+  /// No description provided for @signOutDialogLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing out'**
+  String get signOutDialogLabel;
+
+  /// No description provided for @signOutDialogWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to sign out? (Your data will be preserved)'**
+  String get signOutDialogWarning;
+
+  /// No description provided for @signOutSuccessNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully signed out!'**
+  String get signOutSuccessNotificationTitle;
+
+  /// No description provided for @signOutSuccessNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is now available locally only.'**
+  String get signOutSuccessNotificationSubtitle;
+
+  /// No description provided for @signOutFailureNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something has gone wrong...'**
+  String get signOutFailureNotificationTitle;
+
+  /// No description provided for @signOutFailureNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out failed.'**
+  String get signOutFailureNotificationSubtitle;
+
   /// No description provided for @systemThemeMode.
   ///
   /// In en, this message translates to:

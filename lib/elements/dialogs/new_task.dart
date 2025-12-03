@@ -3,47 +3,97 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:todo/l10n/app_localizations.dart';
+
 import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/notify.dart' as Notify;
 import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/data_type.dart';
 
+import 'shared/provider.dart';
 import 'shared/action_row.dart' as ActionRow;
 import 'shared/autocomplete.dart' as Autocomplete;
 
 class Class extends StatefulWidget {
   final int index;
+  final KeyEventProvider keyEventProvider;
 
-  const Class({super.key, required this.index});
+  const Class({super.key, required this.index, required this.keyEventProvider});
 
   @override
   State<Class> createState() => ClassState();
 }
 
-class ClassState extends State<Class>
-    with SingleTickerProviderStateMixin {
+class ClassState extends State<Class> with SingleTickerProviderStateMixin {
   late final _nameController = TextEditingController();
   late final _groupController = TextEditingController();
 
+  late final _nameShakeController = AnimationController(
+    vsync: this,
+    duration: Config.ANIMATION.MEDIUM,
+  );
+
+  late final _nameShakeAnimation =
+      Config.TWEEN.SHAKE.animate(
+        CurvedAnimation(parent: _nameShakeController, curve: Curves.easeOut),
+      );
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.keyEventProvider.addListener(_handleKey);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _groupController.dispose();
+    widget.keyEventProvider.removeListener(_handleKey);
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    debugPrint('create task dialog rebuild');
+    debugPrint('new task dialog rebuild');
 
     final colorScheme = Theme.of(context).colorScheme;
+    final loc = AppLocalizations.of(context)!;
+
     final itemProvider = context.read<ItemProvider>();
 
-    final size = MediaQuery.of(context).size;
-    final height = size.height;
-    final width = size.width;
-    final portrait = height > width;
-
     final formWidgets = [
-      TextField(
-        controller: _nameController,
-        decoration: InputDecoration(
-          labelText: 'Name',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
+      AnimatedBuilder(
+        animation: _nameShakeAnimation,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(_nameShakeAnimation.value, 0),
+            child: child,
+          );
+        },
+        child: TextField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            // labelText: 'Name',
+            labelText: loc.newTaskDialogTaskName,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
+              borderSide: BorderSide(
+                color: colorScheme.primary,
+                width: Config.BORDER_WIDTH.MEDIUM,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
+              borderSide: BorderSide(
+                color: colorScheme.primary,
+                width: Config.BORDER_WIDTH.FOCUSED,
+              ),
+            ),
           ),
         ),
       ),
@@ -53,6 +103,7 @@ class ClassState extends State<Class>
             .whereType<GroupTask>()
             .map((i) => i.name)
             .toList(),
+        labelText: loc.newTaskDialogTaskGroup,
       ),
     ];
 
@@ -61,13 +112,13 @@ class ClassState extends State<Class>
       padding: Config.MARGIN_PADDING.MEDIUM,
       decoration: BoxDecoration(
         color: colorScheme.background,
-        borderRadius: BorderRadius.circular(Config.CORNER.ROUNDEST),
+        borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'New Task',
+          Text(
+            loc.newTaskDialogTitle,
             style: TextStyle(
               fontSize: Config.FONT_SIZE.BIG,
               fontWeight: FontWeight.bold,
@@ -87,20 +138,20 @@ class ClassState extends State<Class>
                 visible: visible,
                 buttons: [
                   ActionRow.Button(
-                    text: 'Cancel',
+                    text: loc.buttonCancel,
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       foregroundColor: colorScheme.error,
                     ),
-                    callback: _close,
+                    callback: _cancel,
                   ),
                   ActionRow.Button(
-                    text: 'Create',
+                    text: loc.buttonCreate,
                     style: TextButton.styleFrom(
                       backgroundColor: colorScheme.primary,
                       foregroundColor: colorScheme.onPrimary,
                     ),
-                    callback: _createTask,
+                    callback: _create,
                   ),
                 ],
               );
@@ -111,24 +162,20 @@ class ClassState extends State<Class>
     );
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _groupController.dispose();
-
-    super.dispose();
-  }
-
-  void handleKey(RawKeyEvent event) {
+  void _handleKey() {
     if (!mounted) return;
     if (context.read<CachedProvider>().dialogIndex != widget.index) return;
+
+    final event = widget.keyEventProvider.lastEvent;
+    if (event == null) return;
+
     if (event is RawKeyUpEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.enter) _createTask();
-      if (event.logicalKey == LogicalKeyboardKey.escape) _close();
+      if (event.logicalKey == LogicalKeyboardKey.enter) _create();
+      if (event.logicalKey == LogicalKeyboardKey.escape) _cancel();
     }
   }
 
-  void _close() {
+  void _cancel() {
     FocusScope.of(context).unfocus();
     context.read<CachedProvider>().dialogIndex = 0;
 
@@ -136,31 +183,31 @@ class ClassState extends State<Class>
     _groupController.text = "";
   }
 
-  void _createTask([String? _]) {
-    final storedProvider = context.read<StoredProvider>();
+  void _missingWarning(AnimationController controller) {
+    controller.forward(from: 0);
+  }
+
+  void _create([String? _]) {
+    final loc = AppLocalizations.of(context)!;
     final itemProvider = context.read<ItemProvider>();
 
     final name = _nameController.text;
     final groupName = _groupController.text;
-    debugPrint('');
     debugPrint('Creating a new task from the dialog');
     debugPrint('Name: $name');
     debugPrint('Group: $groupName');
-    debugPrint('');
 
     if (name.isEmpty) {
+      _missingWarning(_nameShakeController);
       return;
     }
 
-    final task = SingleTask(
-      uuid: itemProvider.issueNewUUID(),
-      name: name ?? '',
-    );
+    final task = SingleTask(uuid: itemProvider.issueNewUUID(), name: name);
 
     Notify.send(
       context: context,
-      title: "$name" + (groupName.isEmpty ? "" : " ($groupName)"),
-      subtitle: "has been added to your todo list!",
+      title: "$name${groupName.isEmpty ? '' : ' ($groupName)'}",
+      subtitle: loc.newTaskNotificationSubtitle,
       accentColor: Colors.green,
       duration: Config.NOTIFICATION.MEDIUM,
     );
@@ -184,6 +231,6 @@ class ClassState extends State<Class>
       itemProvider.addToGroup(task, group);
     }
 
-    _close();
+    _cancel();
   }
 }

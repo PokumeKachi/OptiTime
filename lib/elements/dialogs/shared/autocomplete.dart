@@ -6,10 +6,16 @@ import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/config.dart' as Config;
 
 class Class extends StatefulWidget {
-  const Class({super.key, required this.controller, required this.getOptions});
+  const Class({
+    super.key,
+    required this.controller,
+    required this.getOptions,
+    required this.labelText,
+  });
 
   final TextEditingController controller;
   final List<String> Function() getOptions;
+  final String labelText;
 
   @override
   _ClassState createState() => _ClassState();
@@ -50,7 +56,7 @@ class _ClassState extends State<Class> {
                     : Radius.circular(Config.CORNER.ROUND),
               ),
               border: Border.all(
-                color: isFocused ? colorScheme.primary : colorScheme.outline,
+                color: isFocused ? colorScheme.tertiary : colorScheme.outline,
                 width: isFocused
                     ? Config.BORDER_WIDTH.FOCUSED
                     : Config.BORDER_WIDTH.MEDIUM,
@@ -61,7 +67,7 @@ class _ClassState extends State<Class> {
               controller: widget.controller,
               style: TextStyle(fontSize: Config.FONT_SIZE.MEDIUM),
               decoration: InputDecoration(
-                labelText: 'Group',
+                labelText: widget.labelText,
                 border: InputBorder.none,
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
                 contentPadding: EdgeInsets.symmetric(
@@ -113,13 +119,12 @@ class _ClassState extends State<Class> {
               showWhenUnlinked: false,
               offset: Offset(0, size.height - Config.BORDER_WIDTH.FOCUSED),
               child: Material(
-                clipBehavior: Clip.antiAlias,
                 color: Colors.transparent,
                 elevation: Config.ELEVATION.MEDIUM,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
                     width: Config.BORDER_WIDTH.FOCUSED,
-                    color: colorScheme.primary,
+                    color: colorScheme.tertiary,
                   ),
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(Config.CORNER.NONE),
@@ -143,6 +148,10 @@ class _ClassState extends State<Class> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(Config.CORNER.NONE),
+                          bottom: Radius.circular(Config.CORNER.ROUND),
+                        ),
                       ),
                       child: MediaQuery.removePadding(
                         context: context,
@@ -150,7 +159,8 @@ class _ClassState extends State<Class> {
                         removeBottom: true,
                         child: ListView(
                           shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
+                          // physics: const ClampingScrollPhysics(),
+                          physics: Config.SCROLL_PHYSICS,
                           children: [
                             for (final option in matchingOptions)
                               TextButton(

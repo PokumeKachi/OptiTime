@@ -1,5 +1,26 @@
 {
     "language": "English",
+
+    "buttonCancel": "Cancel",
+    "buttonCreate": "Create",
+    "buttonConfirm": "Confirm",
+
+    "newTaskDialogTitle": "New Task",
+    "newTaskDialogTaskName": "Name",
+    "newTaskDialogTaskGroup": "Group",
+    "newTaskNotificationSubtitle": "has been added to your todo list!",
+
+    "signedInLabel": "Signed in as {name} (Tap here to log out)",
+    "signInButton": "Sign in",
+
+    "signOutDialogLabel": "Signing out",
+    "signOutDialogWarning": "Are you sure you want to sign out? (Your data will be preserved)",
+
+    "signOutSuccessNotificationTitle": "Successfully signed out!",
+    "signOutSuccessNotificationSubtitle": "Your data is now available locally only.",
+    "signOutFailureNotificationTitle": "Something has gone wrong...",
+    "signOutFailureNotificationSubtitle": "Sign out failed.",
+
     "systemThemeMode": "System",
     "lightThemeMode": "Light",
     "darkThemeMode": "Dark"

@@ -28,22 +28,13 @@ void main() async {
 
   // await GetStorage().erase();
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<ItemProvider>(
-          create: (context) => ItemProvider(),
-        ),
-        ChangeNotifierProvider<StoredProvider>(
-          create: (context) => StoredProvider(),
-        ),
-        ChangeNotifierProvider<CachedProvider>(
-          create: (context) => CachedProvider(),
-        ),
-      ],
-      child: const App(),
-    ),
-  );
+  final providers = [
+    ChangeNotifierProvider(create: (_) => ItemProvider()),
+    ChangeNotifierProvider(create: (_) => StoredProvider()),
+    ChangeNotifierProvider(create: (_) => CachedProvider()),
+  ];
+
+  runApp(MultiProvider(providers: providers, child: const App()));
 
   doWhenWindowReady(() {
     // const initialSize = Size(600, 450);

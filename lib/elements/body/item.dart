@@ -16,27 +16,27 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
+  late final _controller = AnimationController(
     vsync: this,
     duration: Config.DRAGGED_OBJECT_IN_OUT_DURATION,
   );
 
-  late final Animation<double> _paddingAnim = Tween<double>(
+  late final _paddingAnim = Tween<double>(
     begin: Config.ITEM_PADDING.NARROWEST,
     end: Config.ITEM_PADDING.WIDER,
   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
-  late final Animation<double> _radiusAnim = Tween<double>(
+  late final _radiusAnim = Tween<double>(
     begin: Config.CORNER.NONE,
     end: Config.CORNER.ROUNDEST,
   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
-  late final Animation<double> _streakPosition = Tween<double>(
+  late final _streakPosition = Tween<double>(
     begin: 0.0,
     end: 1.0,
   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
-  late final Animation<double> _streakSize = TweenSequence(
+  late final _streakSize = TweenSequence(
     [
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.4), weight: 50),
       TweenSequenceItem(tween: Tween(begin: 0.4, end: 0.0), weight: 50),

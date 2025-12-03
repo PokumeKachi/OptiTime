@@ -119,7 +119,7 @@ class StoredProvider with ChangeNotifier {
   set appThemeMode(ThemeMode value) {
     if (_appThemeMode != value) {
       _appThemeMode = value;
-      _save('themeMode', value.toString());
+      _save('themeMode', value.name.toString());
     }
   }
 
@@ -163,5 +163,12 @@ class CachedProvider extends ChangeNotifier {
     if (_userId == value) return;
     _userId = value;
     notifyListeners();
+  }
+
+  CachedProvider({String? userId}) {
+    _userId = userId ?? Supabase.instance.client.auth.currentUser?.id;
+
+    print('rad this');
+    print(Supabase.instance.client.auth.currentUser?.id);
   }
 }

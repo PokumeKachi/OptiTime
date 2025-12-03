@@ -44,6 +44,9 @@ final ThemeData THEME_DARK = ThemeData.from(colorScheme: COLOR_SCHEME_DARK);
 // const DIM.MEDIUM = 0.7;
 class DIM {
   static const NONE = 0.0;
+  static const CLEAREST = 0.1;
+  static const CLEARER = 0.3;
+  static const CLEAR = 0.4;
   static const MEDIUM = 0.5;
   static const NEAR_SOLID = 0.9;
   static const SOLID = 1.0;
@@ -100,11 +103,13 @@ class FONT_SIZE {
 }
 
 class ICON_SIZE {
-  static const VERY_SMALL = 12.0;
-  static const SMALL = 18.0;
+  static const SMALLEST = 8.0;
+  static const SMALLER = 12.0;
+  static const SMALL = 16.0;
   static const MEDIUM = 24.0;
   static const BIG = 32.0;
-  static const VERY_BIG = 36.0;
+  static const BIGGER = 36.0;
+  static const BIGGEST = 48.0;
 }
 
 // Element decorating
@@ -143,6 +148,15 @@ class BORDER_WIDTH {
 }
 
 // Timing
+
+class TWEEN {
+  static final SHAKE = TweenSequence([
+    TweenSequenceItem(tween: Tween(begin: 0.0, end: 16.0), weight: 25),
+    TweenSequenceItem(tween: Tween(begin: 16.0, end: -12.0), weight: 25),
+    TweenSequenceItem(tween: Tween(begin: -12.0, end: 8.0), weight: 25),
+    TweenSequenceItem(tween: Tween(begin: 8.0, end: 0.0), weight: 25),
+  ]);
+}
 
 class ANIMATION {
   static const NONE = const Duration(milliseconds: 0);

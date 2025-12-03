@@ -48,6 +48,7 @@ dependencies:
   animated_reorderable_list: ^1.3.0
   google_sign_in: ^7.2.0
   supabase_flutter: ^2.10.3
+  dropdown_button2: ^2.3.9
 
 dependency_overrides:
   get_storage_plus:

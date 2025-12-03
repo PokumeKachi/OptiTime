@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage_plus/get_storage_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:todo/l10n/app_localizations.dart';
-import 'package:todo/main.dart';
 
 import 'package:todo/utils/provider.dart';
-import 'package:todo/utils/supabase.dart' as _Supabase;
+
 import 'package:todo/utils/config.dart' as Config;
+import 'package:todo/utils/supabase.dart' as _Supabase;
 
 class Class extends StatefulWidget {
   const Class({super.key});
@@ -16,92 +18,181 @@ class Class extends StatefulWidget {
 }
 
 class _ClassState extends State<Class> {
-  @override
-  Widget build(BuildContext context) {
-    final storedProvider = context.read<StoredProvider>();
+  late Future<List<DropdownMenuItem<Locale>>> _localeItemsFuture =
+      _loadLocaleItems();
+
+  static Future<List<DropdownMenuItem<Locale>>> _loadLocaleItems() async {
+    return Future.wait(
+      AppLocalizations.supportedLocales.map((locale) async {
+        final localization = await AppLocalizations.delegate.load(locale);
+        return DropdownMenuItem<Locale>(
+          value: locale,
+          child: Text(localization.language),
+        );
+      }),
+    );
+  }
+
+  Widget buildDropdown<T>({
+    required T value,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+    double width = 200,
+    required BuildContext context,
+  }) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    final _themeModeItems = ThemeMode.values.map((m) {
-      final text = switch (m) {
-        ThemeMode.system => AppLocalizations.of(context)!.systemThemeMode,
-        ThemeMode.light => AppLocalizations.of(context)!.lightThemeMode,
-        ThemeMode.dark => AppLocalizations.of(context)!.darkThemeMode,
-      };
-      return DropdownMenuItem(value: m, child: Text(text));
-    }).toList();
+    return DropdownButtonHideUnderline(
+      child: DropdownButton2<T>(
+        isExpanded: true,
+        items: items,
+        value: value,
+        onChanged: onChanged,
+        buttonStyleData: ButtonStyleData(
+          height: 48,
+          width: width,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM),
+            border: Border.all(
+              // color: colorScheme.outline,
+              color: colorScheme.primary,
+              width: Config.BORDER_WIDTH.MEDIUM,
+            ),
+            color: colorScheme.secondaryContainer,
+          ),
+        ),
+        dropdownStyleData: DropdownStyleData(
+          maxHeight: 200,
+          width: width,
+          openInterval: Interval(0.0, 0.5, curve: Curves.easeOutQuad),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM),
+            border: Border.all(
+              color: colorScheme.onSecondaryContainer,
+              width: Config.BORDER_WIDTH.MEDIUM,
+            ),
+
+            color: colorScheme.secondaryContainer,
+          ),
+          // scrollbarTheme: ScrollbarThemeData(
+          //   radius: const Radius.circular(Config.CORNER.MEDIUM),
+          //   thickness: MaterialStateProperty.all(6),
+          //   thumbColor: MaterialStateProperty.all(Colors.blue.shade200),
+          // ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final storedProvider = context.read<StoredProvider>();
+    final cachedProvider = context.read<CachedProvider>();
+
     final themeMode = context.select<StoredProvider, ThemeMode>(
       (p) => p.appThemeMode,
     );
-    final _localeItems = AppLocalizations.supportedLocales.map((locale) {
-      final name = locale.language;
-
-      return DropdownMenuItem(value: locale, child: Text(name));
-    }).toList();
     final locale = context.select<StoredProvider, Locale>((p) => p.locale);
+
+    final _themeModeItems = ThemeMode.values.map((m) {
+      final text = switch (m) {
+        ThemeMode.system => loc.systemThemeMode,
+        ThemeMode.light => loc.lightThemeMode,
+        ThemeMode.dark => loc.darkThemeMode,
+      };
+      return DropdownMenuItem<ThemeMode>(value: m, child: Text(text));
+    }).toList();
 
     return ColoredBox(
       color: Colors.transparent,
       child: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            DropdownButton<ThemeMode>(
-              items: _themeModeItems,
+            buildDropdown<ThemeMode>(
               value: themeMode,
-              onChanged: (newMode) {
-                if (newMode != null) storedProvider.appThemeMode = newMode;
+              items: _themeModeItems,
+              onChanged: (v) => storedProvider.appThemeMode = v!,
+              context: context,
+            ),
+
+            const SizedBox(height: Config.ITEM_PADDING.NARROW),
+
+            FutureBuilder<List<DropdownMenuItem<Locale>>>(
+              future: _localeItemsFuture,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const CircularProgressIndicator();
+                return buildDropdown<Locale>(
+                  value: locale,
+                  items: snapshot.data!,
+                  onChanged: (v) => storedProvider.locale = v!,
+                  context: context,
+                );
               },
             ),
-            DropdownButton<String>(
-              items: _localeItems,
-              value: locale,
-              onChanged: (newLocale) {
-                if (newLocale != null) storedProvider.locale = newLocale;
-              },
-            ),
+
+            // const SizedBox(height: Config.ITEM_PADDING.NARROW),
+            //
+            // TextButton(
+            //   onPressed: () {
+            //     GetStorage().erase();
+            //   },
+            //   child: Text('Delete Data'),
+            // ),
+            const SizedBox(height: Config.ITEM_PADDING.NARROW),
+
             TextButton(
               onPressed: () async {
-                final cachedProvider = context.read<CachedProvider>();
                 final itemProvider = context.read<ItemProvider>();
-
-                if (cachedProvider.userId == null) {
+                final user = Supabase.instance.client.auth.currentUser;
+                if (user == null) {
                   final res = await _Supabase.Auth.signInOrSignUp(
                     'enene@gmail',
                     'roblox',
                   );
-                  cachedProvider.userId = res?.user?.id;
-
-                  if (cachedProvider.userId != null) {
-                    itemProvider.listenToSupabase(cachedProvider.userId!);
+                  final userId = res?.user?.id;
+                  if (userId != null) {
+                    itemProvider.listenToSupabase(userId!);
                   }
                 } else {
-                  _Supabase.Auth.signOut()
-                      .then((_) {
-                        cachedProvider.userId = null;
-                      })
-                      .catchError((e) {
-                        print('error during log out!');
-                        print(e);
-                      });
+                  print('else what??');
                 }
               },
-              child: Text('click me lil nga'),
+              child: const Text('click me lil nga'),
             ),
+
+            const SizedBox(height: Config.ITEM_PADDING.NARROW),
+
             StreamBuilder(
               stream: Supabase.instance.client.auth.onAuthStateChange,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text('nahhh');
-                }
-
                 final session = snapshot.hasData
                     ? snapshot.data!.session
                     : null;
 
+                late final void Function() onPressed;
+                late final String text;
+
                 if (session == null) {
-                  return Text('log');
+                  onPressed = () {
+                    print('sign in now');
+                    cachedProvider.dialogIndex = 2;
+                  };
+                  text = loc.signInButton;
                 } else {
-                  return Text(session.user.email.toString());
+                  onPressed = () {
+                    print('signed in now');
+                    cachedProvider.dialogIndex = 3;
+                  };
+                  text = loc.signedInLabel(session.user.email!);
                 }
+
+                return TextButton(onPressed: onPressed, child: Text(text));
               },
             ),
           ],

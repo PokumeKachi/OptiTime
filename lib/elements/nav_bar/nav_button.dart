@@ -79,7 +79,7 @@ class Class extends StatelessWidget {
                   tween: Tween(
                     begin: Config.ICON_SIZE.MEDIUM,
                     end: isFocused
-                        ? Config.ICON_SIZE.BIG
+                        ? Config.ICON_SIZE.BIGGER
                         : Config.ICON_SIZE.SMALL,
                   ),
                   curve: Curves.easeOut,
