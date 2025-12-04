@@ -8,13 +8,13 @@ List<Widget> dialog({
   double offset = 1.0,
 }) {
   return AnimationConfiguration.toStaggeredList(
-    duration: Config.STAGGER_DURATION,
+    duration: Config.DIALOG.IN_OUT_DURATION,
     childAnimationBuilder: (widget) => SlideAnimation(
       curve: Curves.easeOutQuart,
-      duration: Config.STAGGER_DURATION,
-      horizontalOffset: Config.DIALOG_STAGGER_OFFSET * offset,
+      duration: Config.DIALOG.STAGGER_DURATION,
+      horizontalOffset: Config.DIALOG.STAGGER_OFFSET * offset,
       child: FadeInAnimation(
-        duration: Config.DIALOG_IN_OUT_DURATION,
+        duration: Config.DIALOG.IN_OUT_DURATION,
         child: widget,
       ),
     ),

@@ -32,7 +32,7 @@ void send({
     duration: duration,
     mobilePositionSettings: const MobilePositionSettings(
       topOnAppearance: 10,
-      topOnDisappearance: -120,
+      topOnDisappearance: -300,
       left: 10,
       right: 10,
     ),

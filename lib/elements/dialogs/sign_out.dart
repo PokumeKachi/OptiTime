@@ -28,6 +28,8 @@ class Class extends StatefulWidget {
 }
 
 class ClassState extends State<Class> with SingleTickerProviderStateMixin {
+  static const SPACING = Config.DIALOG.SPACING;
+
   @override
   void initState() {
     super.initState();
@@ -42,8 +44,6 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  static const spacing = Config.ITEM_PADDING.MEDIUM;
-
   @override
   Widget build(BuildContext context) {
     debugPrint('sign out dialog rebuild');
@@ -56,11 +56,38 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
         loc.signOutDialogWarning,
         style: TextStyle(color: colorScheme.onErrorContainer),
       ),
-    ];
+    ].expand((widget) => [widget, const SizedBox(height: SPACING)]).toList();
+
+    final actionButtonRow = Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: Stagger.dialog(
+        offset: -1.0,
+        children: [
+          ActionButton.Class(
+            text: loc.buttonCancel,
+            icon: Icon(Icons.cancel),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: colorScheme.error,
+            ),
+            callback: _cancel,
+          ),
+          ActionButton.Class(
+            text: loc.buttonConfirm,
+            icon: Icon(Icons.check),
+            style: TextButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+            ),
+            callback: _confirm,
+          ),
+        ],
+      ),
+    );
 
     return Container(
-      width: 300,
-      padding: Config.MARGIN_PADDING.MEDIUM,
+      width: Config.DIALOG.WIDTH,
+      padding: EdgeInsets.all(SPACING),
       decoration: BoxDecoration(
         color: colorScheme.background,
         borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
@@ -69,61 +96,27 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            loc.signOutDialogLabel,
+            loc.newTaskDialogTitle,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: Config.FONT_SIZE.BIG,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: spacing),
+          const SizedBox(height: Config.DIALOG.TITLE_PADDING),
 
           Selector<CachedProvider, bool>(
             selector: (_, provider) => provider.dialogIndex == widget.index,
-            builder: (context, visible, child) {
-              if (!visible) {
-                return SizedBox();
-              }
-
-              return Column(
+            builder: (context, visible, child) => Visibility(
+              visible: visible,
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ...Stagger.dialog(
-                    children: [
-                      for (final widget in formWidgets) ...[
-                        widget,
-                        const SizedBox(height: spacing),
-                      ],
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: Stagger.dialog(
-                      offset: -1.0,
-                      children: [
-                        ActionButton.Class(
-                          text: loc.buttonCancel,
-                          icon: Icon(Icons.cancel),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: colorScheme.error,
-                          ),
-                          callback: _cancel,
-                        ),
-                        ActionButton.Class(
-                          text: loc.buttonConfirm,
-                          icon: Icon(Icons.check),
-                          style: TextButton.styleFrom(
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                          ),
-                          callback: _confirm,
-                        ),
-                      ],
-                    ),
-                  ),
+                  ...Stagger.dialog(children: formWidgets),
+                  actionButtonRow,
                 ],
-              );
-            },
+              ),
+            ),
           ),
         ],
       ),
@@ -151,24 +144,32 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
   void _confirm([String? _]) {
     final loc = AppLocalizations.of(context)!;
 
+    Notify.send(
+      context: context,
+      title: loc.signOutSuccessNotificationTitle,
+      subtitle: loc.signOutSuccessNotificationSubtitle,
+      accentColor: Colors.green,
+      duration: Config.NOTIFICATION.MEDIUM,
+    );
+
     _Supabase.Auth.signOut()
         .then((_) {
-          Notify.send(
-            context: context,
-            title: loc.signOutSuccessNotificationTitle,
-            subtitle: loc.signOutSuccessNotificationSubtitle,
-            accentColor: Colors.green,
-            duration: Config.NOTIFICATION.MEDIUM,
-          );
+          // Notify.send(
+          //   context: context,
+          //   title: loc.signOutSuccessNotificationTitle,
+          //   subtitle: loc.signOutSuccessNotificationSubtitle,
+          //   accentColor: Colors.green,
+          //   duration: Config.NOTIFICATION.MEDIUM,
+          // );
         })
         .catchError((e) {
-          Notify.send(
-            context: context,
-            title: loc.signOutFailureNotificationTitle,
-            subtitle: loc.signOutFailureNotificationSubtitle,
-            accentColor: Colors.red,
-            duration: Config.NOTIFICATION.MEDIUM,
-          );
+          // Notify.send(
+          //   context: context,
+          //   title: loc.signOutFailureNotificationTitle,
+          //   subtitle: loc.signOutFailureNotificationSubtitle,
+          //   accentColor: Colors.red,
+          //   duration: Config.NOTIFICATION.MEDIUM,
+          // );
           print('error during log out!');
           print(e);
         });

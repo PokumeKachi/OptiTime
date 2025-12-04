@@ -39,6 +39,8 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     CurvedAnimation(parent: _nameShakeController, curve: Curves.easeOut),
   );
 
+  static const SPACING = Config.DIALOG.SPACING;
+
   @override
   void initState() {
     super.initState();
@@ -64,6 +66,16 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
     final itemProvider = context.read<ItemProvider>();
 
+    final inputBorder = ([bool focused = false]) => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
+      borderSide: BorderSide(
+        color: colorScheme.primary,
+        width: focused
+            ? Config.BORDER_WIDTH.FOCUSED
+            : Config.BORDER_WIDTH.MEDIUM,
+      ),
+    );
+
     final formWidgets = [
       AnimatedBuilder(
         animation: _nameShakeAnimation,
@@ -76,25 +88,10 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
         child: TextField(
           controller: _nameController,
           decoration: InputDecoration(
-            // labelText: 'Name',
             labelText: loc.newTaskDialogTaskName,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-              borderSide: BorderSide(
-                color: colorScheme.primary,
-                width: Config.BORDER_WIDTH.MEDIUM,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-              borderSide: BorderSide(
-                color: colorScheme.primary,
-                width: Config.BORDER_WIDTH.FOCUSED,
-              ),
-            ),
+            border: inputBorder(),
+            enabledBorder: inputBorder(),
+            focusedBorder: inputBorder(true),
           ),
         ),
       ),
@@ -106,11 +103,38 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
             .toList(),
         labelText: loc.newTaskDialogTaskGroup,
       ),
-    ];
+    ].expand((widget) => [widget, const SizedBox(height: SPACING)]).toList();
+
+    final actionButtonRow = Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: Stagger.dialog(
+        offset: -1.0,
+        children: [
+          ActionButton.Class(
+            text: loc.buttonCancel,
+            icon: Icon(Icons.cancel),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: colorScheme.error,
+            ),
+            callback: _cancel,
+          ),
+          ActionButton.Class(
+            text: loc.buttonCreate,
+            icon: Icon(Icons.check),
+            style: TextButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+            ),
+            callback: _create,
+          ),
+        ],
+      ),
+    );
 
     return Container(
-      width: 300,
-      padding: Config.MARGIN_PADDING.MEDIUM,
+      width: Config.DIALOG.WIDTH,
+      padding: EdgeInsets.all(SPACING),
       decoration: BoxDecoration(
         color: colorScheme.background,
         borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
@@ -120,62 +144,26 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
         children: [
           Text(
             loc.newTaskDialogTitle,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: Config.FONT_SIZE.BIG,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
+          const SizedBox(height: Config.DIALOG.TITLE_PADDING),
 
           Selector<CachedProvider, bool>(
             selector: (_, provider) => provider.dialogIndex == widget.index,
-            builder: (context, visible, child) {
-              if (!visible) {
-                return SizedBox();
-              }
-
-              return Column(
+            builder: (context, visible, child) => Visibility(
+              visible: visible,
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Column(
-                    children: Stagger.dialog(
-                      children: [
-                        for (final widget in formWidgets) ...[
-                          widget,
-                          const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-                        ],
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: Stagger.dialog(
-                      offset: -1.0,
-                      children: [
-                        ActionButton.Class(
-                          text: loc.buttonCancel,
-                          icon: Icon(Icons.cancel),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: colorScheme.error,
-                          ),
-                          callback: _cancel,
-                        ),
-                        ActionButton.Class(
-                          text: loc.buttonCreate,
-                          icon: Icon(Icons.check),
-                          style: TextButton.styleFrom(
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                          ),
-                          callback: _create,
-                        ),
-                      ],
-                    ),
-                  ),
+                  ...Stagger.dialog(children: formWidgets),
+                  actionButtonRow,
                 ],
-              );
-            },
+              ),
+            ),
           ),
         ],
       ),

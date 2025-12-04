@@ -7,6 +7,7 @@ const PRELOAD_DURATION = Duration(milliseconds: 200);
 const SCROLL_PHYSICS = const BouncingScrollPhysics(
   parent: AlwaysScrollableScrollPhysics(),
 );
+const NO_SCROLL_PHYSICS = const NeverScrollableScrollPhysics();
 
 // const SCROLL_PHYSICS = const AlwaysScrollableScrollPhysics();
 // final SCROLL_PHYSICS = BouncingScrollPhysics().applyTo(const ClampingScrollPhysics());
@@ -66,12 +67,12 @@ class DIM {
 
 class ITEM_PADDING {
   static const NONE = 0.0;
-  static const NARROWEST = 4.0;
-  static const NARROWER = 8.0;
-  static const NARROW = 12.0;
-  static const MEDIUM = 16.0;
-  static const WIDE = 24.0;
-  static const WIDER = 32.0;
+  static const NARROWEST = 8.0;
+  static const NARROWER = 12.0;
+  static const NARROW = 16.0;
+  static const MEDIUM = 24.0;
+  static const WIDE = 32.0;
+  static const WIDER = 36.0;
   static const WIDEST = 48.0;
 }
 
@@ -87,7 +88,6 @@ class MARGIN_PADDING {
 }
 
 const SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT = 12.0;
-const DIALOG_STAGGER_OFFSET = -100.0;
 
 // Element sizing
 
@@ -189,15 +189,23 @@ class BOBBING_SCALE {
 
 const DRAGGED_OBJECT_IN_OUT_DURATION = ANIMATION.MEDIUM;
 const OVERLAY_IN_OUT_DURATION = ANIMATION.MEDIUM;
-const DIALOG_IN_OUT_DURATION = ANIMATION.SHORTER;
-
-final STAGGER_DURATION = Duration(
-  milliseconds:
-      DIALOG_IN_OUT_DURATION.inMilliseconds + ANIMATION.SHORTER.inMilliseconds,
-);
 
 // Input
 
 const MAX_POINTER_TAP_DURATION = const Duration(milliseconds: 400);
 const MAX_POINTER_CLICK_DURATION = const Duration(milliseconds: 200);
 const MIN_DRAG_DISTANCE = 20.0;
+
+class DIALOG {
+  static const WIDTH = 300.0;
+  static const STAGGER_OFFSET = -100.0;
+
+  static const SPACING = ITEM_PADDING.MEDIUM;
+  static const TITLE_PADDING = ITEM_PADDING.WIDE;
+
+  static const IN_OUT_DURATION = ANIMATION.SHORTER;
+  static final STAGGER_DURATION = Duration(
+    milliseconds:
+        IN_OUT_DURATION.inMilliseconds + ANIMATION.SHORTEST.inMilliseconds,
+  );
+}
