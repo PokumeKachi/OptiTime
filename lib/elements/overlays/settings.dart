@@ -8,6 +8,7 @@ import 'package:todo/l10n/app_localizations.dart';
 import 'package:todo/utils/provider.dart';
 
 import 'package:todo/utils/config.dart' as Config;
+import 'package:todo/utils/notify.dart' as Notify;
 import 'package:todo/utils/supabase.dart' as _Supabase;
 
 class Class extends StatefulWidget {
@@ -55,7 +56,6 @@ class _ClassState extends State<Class> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM),
             border: Border.all(
-              // color: colorScheme.outline,
               color: colorScheme.primary,
               width: Config.BORDER_WIDTH.MEDIUM,
             ),

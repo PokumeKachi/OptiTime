@@ -29,7 +29,7 @@ class Class extends StatelessWidget {
     return Stack(
       children: [
         AnimatedOpacity(
-          duration: Config.ANIMATION.MEDIUM,
+          duration: Config.OVERLAY_IN_OUT_DURATION,
           curve: Curves.easeOutQuad,
           opacity: overlayIndex == 0 ? 0 : 1,
           child: IgnorePointer(
@@ -49,7 +49,7 @@ class Class extends StatelessWidget {
           ),
         ),
         AnimatedSwitcher(
-          duration: Config.ANIMATION.MEDIUM,
+          duration: Config.OVERLAY_IN_OUT_DURATION,
           switchInCurve: Curves.decelerate,
           switchOutCurve: Curves.easeIn,
           transitionBuilder: (child, animation) {

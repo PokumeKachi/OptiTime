@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:todo/l10n/app_localizations.dart';
 
+import 'package:todo/utils/supabase.dart' as _Supabase;
 import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/notify.dart' as Notify;
+import 'package:todo/utils/stagger.dart' as Stagger;
 import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/data_type.dart';
 
 import 'shared/provider.dart';
-import 'shared/action_row.dart' as ActionRow;
+import 'shared/action_button.dart' as ActionButton;
 import 'shared/autocomplete.dart' as Autocomplete;
 
 class Class extends StatefulWidget {
@@ -156,24 +159,48 @@ class ClassState extends State<Class> with TickerProviderStateMixin {
           Selector<CachedProvider, bool>(
             selector: (_, provider) => provider.dialogIndex == widget.index,
             builder: (context, visible, child) {
-              return ActionRow.Class(
-                visible: visible,
-                buttons: [
-                  ActionRow.Button(
-                    text: loc.buttonCancel,
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: colorScheme.error,
+              if (!visible) {
+                return SizedBox();
+              }
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    children: Stagger.dialog(
+                      children: [
+                        for (final widget in formWidgets) ...[
+                          widget,
+                          const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
+                        ],
+                      ],
                     ),
-                    callback: _cancel,
                   ),
-                  ActionRow.Button(
-                    text: loc.buttonCreate,
-                    style: TextButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.onPrimary,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: Stagger.dialog(
+                      offset: -1.0,
+                      children: [
+                        ActionButton.Class(
+                          text: loc.buttonCancel,
+                          icon: Icon(Icons.cancel),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: colorScheme.error,
+                          ),
+                          callback: _confirm,
+                        ),
+                        ActionButton.Class(
+                          text: loc.buttonCreate,
+                          icon: Icon(Icons.check),
+                          style: TextButton.styleFrom(
+                            backgroundColor: colorScheme.primary,
+                            foregroundColor: colorScheme.onPrimary,
+                          ),
+                          callback: _confirm,
+                        ),
+                      ],
                     ),
-                    callback: _create,
                   ),
                 ],
               );
@@ -193,11 +220,11 @@ class ClassState extends State<Class> with TickerProviderStateMixin {
 
     if (event is RawKeyUpEvent) {
       if (event.logicalKey == LogicalKeyboardKey.enter) _create();
-      if (event.logicalKey == LogicalKeyboardKey.escape) _cancel();
+      if (event.logicalKey == LogicalKeyboardKey.escape) _confirm();
     }
   }
 
-  void _cancel() {
+  void _confirm() {
     FocusScope.of(context).unfocus();
     context.read<CachedProvider>().dialogIndex = 0;
 

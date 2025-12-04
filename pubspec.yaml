@@ -49,6 +49,7 @@ dependencies:
   google_sign_in: ^7.2.0
   supabase_flutter: ^2.10.3
   dropdown_button2: ^2.3.9
+  flutter_staggered_animations: ^1.1.1
 
 dependency_overrides:
   get_storage_plus:

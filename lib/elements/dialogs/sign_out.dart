@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -8,11 +9,12 @@ import 'package:todo/l10n/app_localizations.dart';
 import 'package:todo/utils/supabase.dart' as _Supabase;
 import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/notify.dart' as Notify;
+import 'package:todo/utils/stagger.dart' as Stagger;
 import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/data_type.dart';
 
 import 'shared/provider.dart';
-import 'shared/action_row.dart' as ActionRow;
+import 'shared/action_button.dart' as ActionButton;
 import 'shared/autocomplete.dart' as Autocomplete;
 
 class Class extends StatefulWidget {
@@ -39,6 +41,8 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
     super.dispose();
   }
+
+  static const spacing = Config.ITEM_PADDING.MEDIUM;
 
   @override
   Widget build(BuildContext context) {
@@ -71,34 +75,51 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-
-          for (final widget in formWidgets) ...[
-            widget,
-            const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-          ],
+          const SizedBox(height: spacing),
 
           Selector<CachedProvider, bool>(
             selector: (_, provider) => provider.dialogIndex == widget.index,
             builder: (context, visible, child) {
-              return ActionRow.Class(
-                visible: visible,
-                buttons: [
-                  ActionRow.Button(
-                    text: loc.buttonCancel,
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: colorScheme.error,
-                    ),
-                    callback: _cancel,
+              if (!visible) {
+                return SizedBox();
+              }
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...Stagger.dialog(
+                    children: [
+                      for (final widget in formWidgets) ...[
+                        widget,
+                        const SizedBox(height: spacing),
+                      ],
+                    ],
                   ),
-                  ActionRow.Button(
-                    text: loc.buttonConfirm,
-                    style: TextButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.onPrimary,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: Stagger.dialog(
+                      offset: -1.0,
+                      children: [
+                        ActionButton.Class(
+                          text: loc.buttonCancel,
+                          icon: Icon(Icons.cancel),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: colorScheme.error,
+                          ),
+                          callback: _cancel,
+                        ),
+                        ActionButton.Class(
+                          text: loc.buttonConfirm,
+                          icon: Icon(Icons.check),
+                          style: TextButton.styleFrom(
+                            backgroundColor: colorScheme.primary,
+                            foregroundColor: colorScheme.onPrimary,
+                          ),
+                          callback: _confirm,
+                        ),
+                      ],
                     ),
-                    callback: _confirm,
                   ),
                 ],
               );
@@ -136,7 +157,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
             context: context,
             title: loc.signOutSuccessNotificationTitle,
             subtitle: loc.signOutSuccessNotificationSubtitle,
-            accentColor: Colors.blue,
+            accentColor: Colors.green,
             duration: Config.NOTIFICATION.MEDIUM,
           );
         })

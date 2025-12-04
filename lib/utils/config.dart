@@ -87,6 +87,7 @@ class MARGIN_PADDING {
 }
 
 const SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT = 12.0;
+const DIALOG_STAGGER_OFFSET = -100.0;
 
 // Element sizing
 
@@ -160,14 +161,14 @@ class TWEEN {
 
 class ANIMATION {
   static const NONE = const Duration(milliseconds: 0);
-  static const SHORTEST = const Duration(milliseconds: 50);
-  static const SHORTER = const Duration(milliseconds: 100);
-  static const SHORT = const Duration(milliseconds: 150);
+  static const SHORTEST = const Duration(milliseconds: 100);
+  static const SHORTER = const Duration(milliseconds: 200);
+  static const SHORT = const Duration(milliseconds: 250);
   static const MEDIUM = const Duration(milliseconds: 300);
-  static const LONG = const Duration(milliseconds: 450);
-  static const VERY_LONG = const Duration(milliseconds: 600);
-  static const VERY_LONGER = const Duration(milliseconds: 750);
-  static const EXTREMELY_LONG = const Duration(milliseconds: 900);
+  static const LONG = const Duration(milliseconds: 350);
+  static const LONGER = const Duration(milliseconds: 450);
+  static const LONGEST = const Duration(milliseconds: 600);
+  static const EXTREMELY_LONG = const Duration(milliseconds: 1000);
   static const LONG_HAUL = const Duration(seconds: 3);
 }
 
@@ -187,6 +188,13 @@ class BOBBING_SCALE {
 }
 
 const DRAGGED_OBJECT_IN_OUT_DURATION = ANIMATION.MEDIUM;
+const OVERLAY_IN_OUT_DURATION = ANIMATION.MEDIUM;
+const DIALOG_IN_OUT_DURATION = ANIMATION.SHORTER;
+
+final STAGGER_DURATION = Duration(
+  milliseconds:
+      DIALOG_IN_OUT_DURATION.inMilliseconds + ANIMATION.SHORTER.inMilliseconds,
+);
 
 // Input
 

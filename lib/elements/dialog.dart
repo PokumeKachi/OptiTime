@@ -59,7 +59,7 @@ class _ClassState extends State<Class> {
           children: [
             AnimatedOpacity(
               opacity: isDialogOpen ? 1 : 0,
-              duration: Config.ANIMATION.MEDIUM,
+              duration: Config.DIALOG_IN_OUT_DURATION,
               child: IgnorePointer(
                 ignoring: !isDialogOpen,
                 child: Container(
@@ -73,16 +73,17 @@ class _ClassState extends State<Class> {
               return IgnorePointer(
                 ignoring: !active,
                 child: AnimatedSlide(
-                  offset: active ? Offset.zero : const Offset(0, -0.5),
-                  duration: Config.ANIMATION.MEDIUM,
-                  curve: Curves.easeInOutCubic,
+                  offset: active ? Offset.zero : const Offset(0, -0.1),
+                  duration: Config.DIALOG_IN_OUT_DURATION,
+                  curve: Curves.easeOutCubic,
                   child: AnimatedScale(
-                    scale: active ? 1 : 0.3,
-                    duration: Config.ANIMATION.MEDIUM,
-                    curve: Curves.easeInOutSine,
+                    scale: active ? 1 : 0.9,
+                    duration: Config.DIALOG_IN_OUT_DURATION,
+                    curve: Curves.easeInOutCubic,
                     child: AnimatedOpacity(
                       opacity: active ? 1 : 0,
-                      duration: Config.ANIMATION.MEDIUM,
+                      duration: Config.DIALOG_IN_OUT_DURATION,
+                    curve: Curves.easeInCubic,
                       child: Center(
                         // child: Container(
                         //   decoration: BoxDecoration(
