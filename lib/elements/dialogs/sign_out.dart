@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import 'package:todo/l10n/app_localizations.dart';
 
 import 'package:todo/utils/supabase.dart' as _Supabase;
@@ -29,27 +28,35 @@ class Class extends StatefulWidget {
 
 class ClassState extends State<Class> with SingleTickerProviderStateMixin {
   static const SPACING = Config.DIALOG.SPACING;
+  late AnimationController _flashController = AnimationController(
+    duration: const Duration(milliseconds: 600),
+    vsync: this,
+  );
+  late Animation<Color?> _colorAnimation;
 
   @override
   void initState() {
     super.initState();
-
     widget.keyEventProvider.addListener(_handleKey);
   }
 
   @override
   void dispose() {
     widget.keyEventProvider.removeListener(_handleKey);
-
+    _flashController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     debugPrint('sign out dialog rebuild');
-
     final colorScheme = Theme.of(context).colorScheme;
     final loc = AppLocalizations.of(context)!;
+
+    final _colorAnimation = ColorTween(begin: colorScheme.errorContainer, end: colorScheme.background)
+        .animate(
+          CurvedAnimation(parent: _flashController, curve: Curves.easeInOut),
+        );
 
     final formWidgets = [
       Text(
@@ -85,18 +92,24 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       ),
     );
 
-    return Container(
-      width: Config.DIALOG.WIDTH,
-      padding: EdgeInsets.all(SPACING),
-      decoration: BoxDecoration(
-        color: colorScheme.background,
-        borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-      ),
+    return AnimatedBuilder(
+      animation: _flashController,
+      builder: (context, child) {
+        return Container(
+          width: Config.DIALOG.WIDTH,
+          padding: EdgeInsets.all(SPACING),
+          decoration: BoxDecoration(
+            color: _colorAnimation.value ?? colorScheme.background,
+            borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
+          ),
+          child: child,
+        );
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            loc.newTaskDialogTitle,
+            loc.signOutDialogLabel,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: Config.FONT_SIZE.BIG,
@@ -104,19 +117,28 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
             ),
           ),
           const SizedBox(height: Config.DIALOG.TITLE_PADDING),
-
           Selector<CachedProvider, bool>(
             selector: (_, provider) => provider.dialogIndex == widget.index,
-            builder: (context, visible, child) => Visibility(
-              visible: visible,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...Stagger.dialog(children: formWidgets),
-                  actionButtonRow,
-                ],
-              ),
-            ),
+            builder: (context, visible, child) {
+              // Trigger flash animation when becoming visible
+              if (visible) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
+                  _flashController.forward(from: 0.0);
+                });
+              }
+
+              return Visibility(
+                visible: visible,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ...Stagger.dialog(children: formWidgets),
+                    actionButtonRow,
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -143,7 +165,6 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   void _confirm([String? _]) {
     final loc = AppLocalizations.of(context)!;
-
     Notify.send(
       context: context,
       title: loc.signOutSuccessNotificationTitle,
@@ -152,27 +173,11 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
       duration: Config.NOTIFICATION.MEDIUM,
     );
 
-    _Supabase.Auth.signOut()
-        .then((_) {
-          // Notify.send(
-          //   context: context,
-          //   title: loc.signOutSuccessNotificationTitle,
-          //   subtitle: loc.signOutSuccessNotificationSubtitle,
-          //   accentColor: Colors.green,
-          //   duration: Config.NOTIFICATION.MEDIUM,
-          // );
-        })
-        .catchError((e) {
-          // Notify.send(
-          //   context: context,
-          //   title: loc.signOutFailureNotificationTitle,
-          //   subtitle: loc.signOutFailureNotificationSubtitle,
-          //   accentColor: Colors.red,
-          //   duration: Config.NOTIFICATION.MEDIUM,
-          // );
-          print('error during log out!');
-          print(e);
-        });
+    _Supabase.Auth.signOut().then((_) {}).catchError((e) {
+      print('error during log out!');
+      print(e);
+    });
+
     _cancel();
   }
 }

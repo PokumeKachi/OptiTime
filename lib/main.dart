@@ -6,13 +6,13 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:todo/l10n/app_localizations.dart';
-// import 'package:localization_i18n_arb/l10n/l10n.dart';
 
 import 'layout.dart' as Layout;
 import 'utils/config.dart' as Config;
 import 'utils/provider.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ void main() async {
   // await GetStorage().erase();
 
   final providers = [
-    ChangeNotifierProvider(create: (_) => ItemProvider()),
+    ChangeNotifierProvider(create: (_) => SyncedProvider(navigatorKey)),
     ChangeNotifierProvider(create: (_) => StoredProvider()),
     ChangeNotifierProvider(create: (_) => CachedProvider()),
   ];
@@ -60,9 +60,9 @@ class App extends StatelessWidget {
     final locale = context.select<StoredProvider, Locale>((p) => p.locale);
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
-
       localizationsDelegates: [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

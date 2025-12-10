@@ -21,7 +21,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get buttonConfirm => 'Xác nhận nha!';
 
   @override
-  String get newTaskDialogTitle => 'Nhiệm vụ mới';
+  String get newTaskDialogLabel => 'Nhiệm vụ mới';
 
   @override
   String get newTaskDialogTaskName => 'Tên';
@@ -34,12 +34,36 @@ class AppLocalizationsVi extends AppLocalizations {
       'đã được thêm vào danh sách cần làm!';
 
   @override
-  String signedInLabel(Object name) {
+  String signedInButton(Object name) {
     return 'Signed in as $name (Tap here to log out)';
   }
 
   @override
   String get signInButton => 'Sign in';
+
+  @override
+  String get signInDialogLabel => 'Sign in';
+
+  @override
+  String get signInDialogEmail => 'Email';
+
+  @override
+  String get signInDialogPassword => 'Password';
+
+  @override
+  String get signInSuccessNotificationTitle => 'Successfully signed in!';
+
+  @override
+  String get signInSuccessNotificationSubtitle =>
+      'Your data is now synced to the Supabase cloud platform.';
+
+  @override
+  String get databaseUpdateNotificationTitle =>
+      'Remote database has been updated';
+
+  @override
+  String get databaseUpdateNotificationSubtitle =>
+      'Remote changes have been applied to the local data save.';
 
   @override
   String get signOutDialogLabel => 'Signing out';
@@ -60,6 +84,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get signOutFailureNotificationSubtitle => 'Sign out failed.';
+
+  @override
+  String get timerDialogDescription =>
+      'Please input the span of time during which you will be performing this task.';
+
+  @override
+  String get timerDialogLabel => 'Focus Mode!';
 
   @override
   String get systemThemeMode => 'Hệ thống';

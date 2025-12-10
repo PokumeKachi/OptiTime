@@ -56,6 +56,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  auto_height_grid_view:
+    dependency: "direct main"
+    description:
+      name: auto_height_grid_view
+      sha256: c6b91f673aa3e1ba8630eb8003111b96a7d20669a29d746d8bd8c617eb3e703d
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   bitsdojo_window:
     dependency: "direct main"
     description:
@@ -160,6 +168,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.9"
+  dynamic_height_grid_view:
+    dependency: "direct main"
+    description:
+      name: dynamic_height_grid_view
+      sha256: "89b37bf6179af6bc496135c0c786c1f13e117c4ec7ce2278be52df75be90e1d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   fake_async:
     dependency: transitive
     description:
@@ -215,6 +231,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_timer_countdown:
+    dependency: "direct main"
+    description:
+      name: flutter_timer_countdown
+      sha256: "0c73e1593ad7949c007752199a17e7ed50bb581568743dbc32f061f49873219e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.7"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -247,10 +271,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: c752e2d08d088bf83742cb05bf83003f3e9d276ff1519b5c92f9d5e60e5ddd23
+      sha256: d8f590a69729f719177ea68eb1e598295e8dbc41bbc247fed78b2c8a25660d7c
       url: "https://pub.dev"
     source: hosted
-    version: "16.2.4"
+    version: "16.3.0"
   google_identity_services_web:
     dependency: transitive
     description:
@@ -347,6 +371,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  kiosk_mode:
+    dependency: "direct main"
+    description:
+      name: kiosk_mode
+      sha256: "3606e0fa335309ac8c8daf799bbfdf5037cf7c44acc3588af82f8a59375e9293"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0+1"
   leak_tracker:
     dependency: transitive
     description:
@@ -447,10 +479,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-      sha256: "993381400e94d18469750e5b9dcb8206f15bc09f9da86b9e44a9b0092a0066db"
+      sha256: "3b4c1fc3aa55ddc9cd4aa6759984330d5c8e66aa7702a6223c61540dc6380c37"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.18"
+    version: "2.2.19"
   path_provider_foundation:
     dependency: transitive
     description:
@@ -640,6 +672,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  stream_transform:
+    dependency: transitive
+    description:
+      name: stream_transform
+      sha256: ad47125e588cfd37a9a7f86c7d6356dde8dfe89d071d293f80ca9e9273a33871
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   string_scanner:
     dependency: transitive
     description:
@@ -800,6 +840,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  wheel_picker:
+    dependency: "direct main"
+    description:
+      name: wheel_picker
+      sha256: bb1d913e5a7ab45158fd2154ca7309bc6e5666233dd5bdbdc583ee208b4257fa
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2"
   win32:
     dependency: transitive
     description:

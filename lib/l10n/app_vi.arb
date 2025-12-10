@@ -5,7 +5,7 @@
     "buttonCreate": "Tạo thôi nào!",
     "buttonConfirm": "Xác nhận nha!",
 
-    "newTaskDialogTitle": "Nhiệm vụ mới",
+    "newTaskDialogLabel": "Nhiệm vụ mới",
     "newTaskDialogTaskName": "Tên",
     "newTaskDialogTaskGroup": "Nhóm",
     "newTaskNotificationSubtitle": "đã được thêm vào danh sách cần làm!",

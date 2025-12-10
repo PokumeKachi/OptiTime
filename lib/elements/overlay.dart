@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:blur/blur.dart';
 
 import 'overlays/settings.dart' as SettingsPage;
+import 'overlays/focus.dart' as FocusPage;
 import 'package:todo/utils/config.dart' as Config;
 import 'package:todo/utils/provider.dart';
 
@@ -12,7 +13,8 @@ class Class extends StatelessWidget {
   static final pages = [
     const SizedBox.shrink(),
     Center(child: Text('trash bin')),
-    Center(child: Text('tree')),
+    // Center(child: Text('tree')),
+    const FocusPage.Class(),
     Center(child: Text('alarms')),
     const SettingsPage.Class(),
   ];

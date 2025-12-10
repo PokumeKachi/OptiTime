@@ -38,7 +38,7 @@ class _ClassState extends State<Class> {
     required T value,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
-    double width = 200,
+    double width = 300,
     required BuildContext context,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -54,7 +54,7 @@ class _ClassState extends State<Class> {
           width: width,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM),
+            borderRadius: BorderRadius.circular(Config.CORNER.SHARP),
             border: Border.all(
               color: colorScheme.primary,
               width: Config.BORDER_WIDTH.MEDIUM,
@@ -67,7 +67,7 @@ class _ClassState extends State<Class> {
           width: width,
           openInterval: Interval(0.0, 0.5, curve: Curves.easeOutQuad),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Config.CORNER.MEDIUM),
+            borderRadius: BorderRadius.circular(Config.CORNER.SHARP),
             border: Border.all(
               color: colorScheme.onSecondaryContainer,
               width: Config.BORDER_WIDTH.MEDIUM,
@@ -76,7 +76,7 @@ class _ClassState extends State<Class> {
             color: colorScheme.secondaryContainer,
           ),
           // scrollbarTheme: ScrollbarThemeData(
-          //   radius: const Radius.circular(Config.CORNER.MEDIUM),
+          //   radius: const Radius.circular(Config.CORNER.SHARP),
           //   thickness: MaterialStateProperty.all(6),
           //   thumbColor: MaterialStateProperty.all(Colors.blue.shade200),
           // ),
@@ -110,92 +110,80 @@ class _ClassState extends State<Class> {
     return ColoredBox(
       color: Colors.transparent,
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildDropdown<ThemeMode>(
-              value: themeMode,
-              items: _themeModeItems,
-              onChanged: (v) => storedProvider.appThemeMode = v!,
-              context: context,
-            ),
+        child: SizedBox(
+          width: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              buildDropdown<ThemeMode>(
+                value: themeMode,
+                items: _themeModeItems,
+                onChanged: (v) => storedProvider.appThemeMode = v!,
+                context: context,
+              ),
 
-            const SizedBox(height: Config.ITEM_PADDING.NARROW),
+              const SizedBox(height: Config.ITEM_PADDING.NARROW),
 
-            FutureBuilder<List<DropdownMenuItem<Locale>>>(
-              future: _localeItemsFuture,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) return const CircularProgressIndicator();
-                return buildDropdown<Locale>(
-                  value: locale,
-                  items: snapshot.data!,
-                  onChanged: (v) => storedProvider.locale = v!,
-                  context: context,
-                );
-              },
-            ),
-
-            // const SizedBox(height: Config.ITEM_PADDING.NARROW),
-            //
-            // TextButton(
-            //   onPressed: () {
-            //     GetStorage().erase();
-            //   },
-            //   child: Text('Delete Data'),
-            // ),
-            const SizedBox(height: Config.ITEM_PADDING.NARROW),
-
-            TextButton(
-              onPressed: () async {
-                final itemProvider = context.read<ItemProvider>();
-                final user = Supabase.instance.client.auth.currentUser;
-                if (user == null) {
-                  final res = await _Supabase.Auth.signInOrSignUp(
-                    'enene@gmail',
-                    'roblox',
+              FutureBuilder<List<DropdownMenuItem<Locale>>>(
+                future: _localeItemsFuture,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData)
+                    return const CircularProgressIndicator();
+                  return buildDropdown<Locale>(
+                    value: locale,
+                    items: snapshot.data!,
+                    onChanged: (v) => storedProvider.locale = v!,
+                    context: context,
                   );
-                  final userId = res?.user?.id;
-                  if (userId != null) {
-                    itemProvider.listenToSupabase(userId!);
+                },
+              ),
+
+              const SizedBox(height: Config.ITEM_PADDING.NARROW),
+
+              StreamBuilder(
+                stream: Supabase.instance.client.auth.onAuthStateChange,
+                builder: (context, snapshot) {
+                  final session = snapshot.hasData
+                      ? snapshot.data!.session
+                      : null;
+
+                  late final void Function() onPressed;
+                  late final String text;
+
+                  if (session == null) {
+                    onPressed = () {
+                      cachedProvider.dialogIndex = 2;
+                    };
+                    text = loc.signInButton;
+                  } else {
+                    onPressed = () {
+                      cachedProvider.dialogIndex = 3;
+                    };
+                    text = loc.signedInButton(session.user.email!);
                   }
-                } else {
-                  print('else what??');
-                }
-              },
-              child: const Text('click me lil nga'),
-            ),
 
-            const SizedBox(height: Config.ITEM_PADDING.NARROW),
-
-            StreamBuilder(
-              stream: Supabase.instance.client.auth.onAuthStateChange,
-              builder: (context, snapshot) {
-                final session = snapshot.hasData
-                    ? snapshot.data!.session
-                    : null;
-
-                late final void Function() onPressed;
-                late final String text;
-
-                if (session == null) {
-                  onPressed = () {
-                    print('sign in now');
-                    cachedProvider.dialogIndex = 2;
-                  };
-                  text = loc.signInButton;
-                } else {
-                  onPressed = () {
-                    print('signed in now');
-                    cachedProvider.dialogIndex = 3;
-                  };
-                  text = loc.signedInLabel(session.user.email!);
-                }
-
-                return TextButton(onPressed: onPressed, child: Text(text));
-              },
-            ),
-          ],
+                  return TextButton(
+                    onPressed: onPressed,
+                    child: Text(text),
+                    style: ElevatedButton.styleFrom(
+                      padding: Config.MARGIN_PADDING.MEDIUM,
+                      backgroundColor: colorScheme.tertiary,
+                      foregroundColor: colorScheme.onTertiary,
+                      elevation: 4,
+                      shadowColor: colorScheme.inverseSurface.withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Config.CORNER.SHARP),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: Config.FONT_SIZE.MEDIUM,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

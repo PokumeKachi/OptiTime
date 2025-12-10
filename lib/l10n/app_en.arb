@@ -5,13 +5,23 @@
     "buttonCreate": "Create",
     "buttonConfirm": "Confirm",
 
-    "newTaskDialogTitle": "New Task",
+    "newTaskDialogLabel": "New Task",
     "newTaskDialogTaskName": "Name",
     "newTaskDialogTaskGroup": "Group",
     "newTaskNotificationSubtitle": "has been added to your todo list!",
 
-    "signedInLabel": "Signed in as {name} (Tap here to log out)",
+    "signedInButton": "Signed in as {name} (Tap here to log out)",
     "signInButton": "Sign in",
+
+    "signInDialogLabel": "Sign in",
+    "signInDialogEmail": "Email",
+    "signInDialogPassword": "Password",
+
+    "signInSuccessNotificationTitle": "Successfully signed in!",
+    "signInSuccessNotificationSubtitle": "Your data is now synced to the Supabase cloud platform.",
+
+    "databaseUpdateNotificationTitle": "Remote database has been updated",
+    "databaseUpdateNotificationSubtitle": "Remote changes have been applied to the local data save.",
 
     "signOutDialogLabel": "Signing out",
     "signOutDialogWarning": "Are you sure you want to sign out? (Your data will be preserved)",
@@ -20,6 +30,9 @@
     "signOutSuccessNotificationSubtitle": "Your data is now available locally only.",
     "signOutFailureNotificationTitle": "Something has gone wrong...",
     "signOutFailureNotificationSubtitle": "Sign out failed.",
+
+    "timerDialogDescription": "Please input the span of time during which you will be performing this task.",
+    "timerDialogLabel": "Focus Mode!",
 
     "systemThemeMode": "System",
     "lightThemeMode": "Light",

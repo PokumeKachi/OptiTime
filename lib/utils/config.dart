@@ -93,14 +93,15 @@ const SOME_RANDOM_AHH_TEXT_FIELD_PADDING_SHIT = 12.0;
 
 const NAV_BAR_RATIO = 0.07;
 const DIALOG_RATIO = 0.8;
-const TASK_ITEM_MAX_WIDTH = 200.0;
+const TASK_ENTRY_MAX_WIDTH = 200.0;
 
-const MAIN_BODY_MARGIN = ITEM_PADDING.WIDE;
+const MAIN_BODY_MARGIN = ITEM_PADDING.MEDIUM;
 
 class FONT_SIZE {
   static const SMALL = 12.0;
   static const MEDIUM = 16.0;
-  static const BIG = 24.0;
+  static const BIG = 20.0;
+  static const BIGGER = 24.0;
 }
 
 class ICON_SIZE {
@@ -203,9 +204,20 @@ class DIALOG {
   static const SPACING = ITEM_PADDING.MEDIUM;
   static const TITLE_PADDING = ITEM_PADDING.WIDE;
 
-  static const IN_OUT_DURATION = ANIMATION.SHORTER;
+  static const IN_OUT_DURATION = ANIMATION.MEDIUM;
   static final STAGGER_DURATION = Duration(
     milliseconds:
         IN_OUT_DURATION.inMilliseconds + ANIMATION.SHORTEST.inMilliseconds,
   );
 }
+
+OutlineInputBorder getDialogInputBorder({bool focused = false, required BuildContext context}) =>
+    OutlineInputBorder(
+      borderRadius: BorderRadius.circular(CORNER.ROUND),
+      borderSide: BorderSide(
+        color: Theme.of(context).colorScheme.primary,
+        width: focused
+            ? BORDER_WIDTH.FOCUSED
+            : BORDER_WIDTH.MEDIUM,
+      ),
+    );

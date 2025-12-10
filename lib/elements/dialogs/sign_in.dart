@@ -28,17 +28,25 @@ class Class extends StatefulWidget {
 }
 
 class ClassState extends State<Class> with TickerProviderStateMixin {
-  late final _usernameController = TextEditingController();
-  late final _passwordController = TextEditingController();
-
-  late final _usernameShakeController = AnimationController(
+  late final _emailController = TextEditingController();
+  late final _emailShakeController = AnimationController(
     vsync: this,
     duration: Config.ANIMATION.MEDIUM,
   );
-
-  late final _usernameShakeAnimation = Config.TWEEN.SHAKE.animate(
-    CurvedAnimation(parent: _usernameShakeController, curve: Curves.easeOut),
+  late final _emailShakeAnimation = Config.TWEEN.SHAKE.animate(
+    CurvedAnimation(parent: _emailShakeController, curve: Curves.easeOut),
   );
+
+  late final _passwordController = TextEditingController();
+  late final _passwordShakeController = AnimationController(
+    vsync: this,
+    duration: Config.ANIMATION.MEDIUM,
+  );
+  late final _passwordShakeAnimation = Config.TWEEN.SHAKE.animate(
+    CurvedAnimation(parent: _passwordShakeController, curve: Curves.easeOut),
+  );
+
+  static const SPACING = Config.DIALOG.SPACING;
 
   @override
   void initState() {
@@ -49,8 +57,10 @@ class ClassState extends State<Class> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
+    _emailShakeController.dispose();
     _passwordController.dispose();
+    _passwordShakeController.dispose();
     widget.keyEventProvider.removeListener(_handleKey);
 
     super.dispose();
@@ -58,83 +68,88 @@ class ClassState extends State<Class> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('new task dialog rebuild');
+    debugPrint('sign in dialog rebuild');
 
     final colorScheme = Theme.of(context).colorScheme;
     final loc = AppLocalizations.of(context)!;
 
-    final itemProvider = context.read<ItemProvider>();
-
     final formWidgets = [
       AnimatedBuilder(
-        animation: _usernameShakeAnimation,
+        animation: _emailShakeAnimation,
         builder: (context, child) {
           return Transform.translate(
-            offset: Offset(_usernameShakeAnimation.value, 0),
+            offset: Offset(_emailShakeAnimation.value, 0),
             child: child,
           );
         },
         child: TextField(
-          controller: _usernameController,
+          controller: _emailController,
           decoration: InputDecoration(
-            labelText: loc.newTaskDialogTaskName,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-              borderSide: BorderSide(
-                color: colorScheme.primary,
-                width: Config.BORDER_WIDTH.MEDIUM,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-              borderSide: BorderSide(
-                color: colorScheme.primary,
-                width: Config.BORDER_WIDTH.FOCUSED,
-              ),
+            labelText: loc.signInDialogEmail,
+            border: Config.getDialogInputBorder(context: context),
+            enabledBorder: Config.getDialogInputBorder(context: context),
+            focusedBorder: Config.getDialogInputBorder(
+              context: context,
+              focused: true,
             ),
           ),
         ),
       ),
       AnimatedBuilder(
-        animation: _usernameShakeAnimation,
+        animation: _passwordShakeAnimation,
         builder: (context, child) {
           return Transform.translate(
-            offset: Offset(_usernameShakeAnimation.value, 0),
+            offset: Offset(_passwordShakeAnimation.value, 0),
             child: child,
           );
         },
         child: TextField(
-          controller: _usernameController,
+          obscureText: true,
+          obscuringCharacter: '•',
+          controller: _passwordController,
           decoration: InputDecoration(
-            labelText: loc.newTaskDialogTaskName,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-              borderSide: BorderSide(
-                color: colorScheme.primary,
-                width: Config.BORDER_WIDTH.MEDIUM,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
-              borderSide: BorderSide(
-                color: colorScheme.primary,
-                width: Config.BORDER_WIDTH.FOCUSED,
-              ),
+            labelText: loc.signInDialogPassword,
+            border: Config.getDialogInputBorder(context: context),
+            enabledBorder: Config.getDialogInputBorder(context: context),
+            focusedBorder: Config.getDialogInputBorder(
+              context: context,
+              focused: true,
             ),
           ),
         ),
       ),
-    ];
+    ].expand((widget) => [widget, const SizedBox(height: SPACING)]).toList();
+
+    final actionButtonRow = Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: Stagger.dialog(
+        offset: -1.0,
+        children: [
+          ActionButton.Class(
+            text: loc.buttonCancel,
+            icon: Icon(Icons.cancel),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: colorScheme.error,
+            ),
+            callback: _cancel,
+          ),
+          ActionButton.Class(
+            text: loc.buttonConfirm,
+            icon: Icon(Icons.check),
+            style: TextButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+            ),
+            callback: _confirm,
+          ),
+        ],
+      ),
+    );
 
     return Container(
-      width: 300,
-      padding: Config.MARGIN_PADDING.MEDIUM,
+      width: Config.DIALOG.WIDTH,
+      padding: EdgeInsets.all(SPACING),
       decoration: BoxDecoration(
         color: colorScheme.background,
         borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
@@ -143,68 +158,27 @@ class ClassState extends State<Class> with TickerProviderStateMixin {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            loc.newTaskDialogTitle,
+            loc.signInDialogLabel,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: Config.FONT_SIZE.BIG,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-
-          for (final widget in formWidgets) ...[
-            widget,
-            const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-          ],
+          const SizedBox(height: Config.DIALOG.TITLE_PADDING),
 
           Selector<CachedProvider, bool>(
             selector: (_, provider) => provider.dialogIndex == widget.index,
-            builder: (context, visible, child) {
-              if (!visible) {
-                return SizedBox();
-              }
-
-              return Column(
+            builder: (context, visible, child) => Visibility(
+              visible: visible,
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Column(
-                    children: Stagger.dialog(
-                      children: [
-                        for (final widget in formWidgets) ...[
-                          widget,
-                          const SizedBox(height: Config.ITEM_PADDING.MEDIUM),
-                        ],
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: Stagger.dialog(
-                      offset: -1.0,
-                      children: [
-                        ActionButton.Class(
-                          text: loc.buttonCancel,
-                          icon: Icon(Icons.cancel),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: colorScheme.error,
-                          ),
-                          callback: _confirm,
-                        ),
-                        ActionButton.Class(
-                          text: loc.buttonCreate,
-                          icon: Icon(Icons.check),
-                          style: TextButton.styleFrom(
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                          ),
-                          callback: _confirm,
-                        ),
-                      ],
-                    ),
-                  ),
+                  ...Stagger.dialog(children: formWidgets),
+                  actionButtonRow,
                 ],
-              );
-            },
+              ),
+            ),
           ),
         ],
       ),
@@ -219,16 +193,16 @@ class ClassState extends State<Class> with TickerProviderStateMixin {
     if (event == null) return;
 
     if (event is RawKeyUpEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.enter) _create();
-      if (event.logicalKey == LogicalKeyboardKey.escape) _confirm();
+      if (event.logicalKey == LogicalKeyboardKey.enter) _confirm();
+      if (event.logicalKey == LogicalKeyboardKey.escape) _cancel();
     }
   }
 
-  void _confirm() {
+  void _cancel() {
     FocusScope.of(context).unfocus();
     context.read<CachedProvider>().dialogIndex = 0;
 
-    _usernameController.text = "";
+    _emailController.text = "";
     _passwordController.text = "";
   }
 
@@ -236,50 +210,31 @@ class ClassState extends State<Class> with TickerProviderStateMixin {
     controller.forward(from: 0);
   }
 
-  void _create([String? _]) {
-    // final loc = AppLocalizations.of(context)!;
-    // final itemProvider = context.read<ItemProvider>();
-    //
-    // final username = _usernameController.text;
-    // final passwordName = _passwordController.text;
-    // debugPrint('Creating a new task from the dialog');
-    // debugPrint('Name: $username');
-    // debugPrint('Group: $passwordName');
-    //
-    // if (username.isEmpty) {
-    //   _missingWarning(_usernameShakeController);
-    //   return;
-    // }
-    //
-    // final task = SingleTask(uuid: itemProvider.issueNewUUID(), username: username);
-    //
-    // Notify.send(
-    //   context: context,
-    //   title: "$username${passwordName.isEmpty ? '' : ' ($passwordName)'}",
-    //   subtitle: loc.newTaskNotificationSubtitle,
-    //   accentColor: Colors.green,
-    //   duration: Config.NOTIFICATION.MEDIUM,
-    // );
-    //
-    // if (passwordName.isEmpty) {
-    //   itemProvider.add(task);
-    // } else {
-    //   final password = itemProvider.list.whereType<GroupTask>().firstWhere(
-    //     (g) => g.username == passwordName,
-    //     orElse: () {
-    //       final password = GroupTask(
-    //         uuid: itemProvider.issueNewUUID(),
-    //         username: passwordName,
-    //         tasks: [],
-    //       );
-    //       itemProvider.add(password);
-    //       return password;
-    //     },
-    //   );
-    //
-    //   itemProvider.addToGroup(task, password);
-    // }
-    //
-    // _cancel();
+  void _confirm([String? _]) async {
+    final loc = AppLocalizations.of(context)!;
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    if (email.isEmpty) {
+      _missingWarning(_emailShakeController);
+    }
+
+    if (password.isEmpty) {
+      _missingWarning(_passwordShakeController);
+    }
+
+    final res = await _Supabase.Auth.signInOrSignUp(email, password);
+
+    if (res?.user?.id != null) {
+      Notify.send(
+        context: context,
+        title: loc.signInSuccessNotificationTitle,
+        subtitle: loc.signInSuccessNotificationSubtitle,
+        accentColor: Colors.green,
+        duration: Config.NOTIFICATION.MEDIUM,
+      );
+
+      _cancel();
+    }
   }
 }

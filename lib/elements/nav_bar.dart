@@ -10,7 +10,7 @@ class Class extends StatelessWidget {
   const Class({super.key});
 
   static const navItems = [
-    {'icon': Icons.history, 'target': 1},
+    {'icon': Icons.delete_outlined, 'target': 1},
     {'icon': Icons.star_border, 'target': 2},
     {'icon': Icons.add, 'target': 0},
     {'icon': Icons.notifications_outlined, 'target': 3},
@@ -26,22 +26,28 @@ class Class extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('navbar rebuild');
 
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-    final portraitView = height > width;
+    final HEIGHT = MediaQuery.of(context).size.height;
+    final WIDTH = MediaQuery.of(context).size.width;
+    final PORTRAIT = HEIGHT > WIDTH;
+
+    final locked = context.select<CachedProvider, bool>(
+      (p) => p.focusDuration != null,
+    );
+
+    if (locked) return SizedBox.shrink();
 
     return Positioned(
-      left: portraitView ? 0 : null,
-      top: (!portraitView) ? 0 : null,
+      left: PORTRAIT ? 0 : null,
+      top: (!PORTRAIT) ? 0 : null,
       right: 0,
       bottom: 0,
       child: SizedBox(
-        height: portraitView ? height * Config.NAV_BAR_RATIO : double.infinity,
-        width: (!portraitView) ? width * Config.NAV_BAR_RATIO : double.infinity,
+        height: PORTRAIT ? HEIGHT * Config.NAV_BAR_RATIO : double.infinity,
+        width: (!PORTRAIT) ? WIDTH * Config.NAV_BAR_RATIO : double.infinity,
         child: Flex(
-          direction: portraitView ? Axis.horizontal : Axis.vertical,
+          direction: PORTRAIT ? Axis.horizontal : Axis.vertical,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: portraitView
+          children: PORTRAIT
               ? _cachedButtons
               : _cachedButtons.reversed.toList(),
         ),

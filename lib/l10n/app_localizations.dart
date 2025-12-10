@@ -122,11 +122,11 @@ abstract class AppLocalizations {
   /// **'Confirm'**
   String get buttonConfirm;
 
-  /// No description provided for @newTaskDialogTitle.
+  /// No description provided for @newTaskDialogLabel.
   ///
   /// In en, this message translates to:
   /// **'New Task'**
-  String get newTaskDialogTitle;
+  String get newTaskDialogLabel;
 
   /// No description provided for @newTaskDialogTaskName.
   ///
@@ -146,17 +146,59 @@ abstract class AppLocalizations {
   /// **'has been added to your todo list!'**
   String get newTaskNotificationSubtitle;
 
-  /// No description provided for @signedInLabel.
+  /// No description provided for @signedInButton.
   ///
   /// In en, this message translates to:
   /// **'Signed in as {name} (Tap here to log out)'**
-  String signedInLabel(Object name);
+  String signedInButton(Object name);
 
   /// No description provided for @signInButton.
   ///
   /// In en, this message translates to:
   /// **'Sign in'**
   String get signInButton;
+
+  /// No description provided for @signInDialogLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInDialogLabel;
+
+  /// No description provided for @signInDialogEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get signInDialogEmail;
+
+  /// No description provided for @signInDialogPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get signInDialogPassword;
+
+  /// No description provided for @signInSuccessNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully signed in!'**
+  String get signInSuccessNotificationTitle;
+
+  /// No description provided for @signInSuccessNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is now synced to the Supabase cloud platform.'**
+  String get signInSuccessNotificationSubtitle;
+
+  /// No description provided for @databaseUpdateNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote database has been updated'**
+  String get databaseUpdateNotificationTitle;
+
+  /// No description provided for @databaseUpdateNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote changes have been applied to the local data save.'**
+  String get databaseUpdateNotificationSubtitle;
 
   /// No description provided for @signOutDialogLabel.
   ///
@@ -193,6 +235,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign out failed.'**
   String get signOutFailureNotificationSubtitle;
+
+  /// No description provided for @timerDialogDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Please input the span of time during which you will be performing this task.'**
+  String get timerDialogDescription;
+
+  /// No description provided for @timerDialogLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Mode!'**
+  String get timerDialogLabel;
 
   /// No description provided for @systemThemeMode.
   ///

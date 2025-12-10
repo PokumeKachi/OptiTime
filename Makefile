@@ -22,6 +22,8 @@ run: flake-develop
 
 web-run: flake-develop
 	flutter run -d chrome
+	# firefox -new-window http://localhost:41859
+	# flutter run -d web-server --web-port=41859
 	# flutter run
 
 apk-run: flake-develop

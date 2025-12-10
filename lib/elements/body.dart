@@ -5,7 +5,7 @@ import 'package:todo/utils/provider.dart';
 import 'package:todo/utils/data_type.dart';
 
 import 'package:todo/utils/config.dart' as Config;
-import 'body/items_view.dart' as ItemsView;
+import 'body/grid_view.dart' as GridView;
 
 class Class extends StatelessWidget {
   const Class({super.key});
@@ -29,7 +29,7 @@ class Class extends StatelessWidget {
               bottom: PORTRAIT ? HEIGHT * Config.NAV_BAR_RATIO : 0,
               right: !PORTRAIT ? WIDTH * Config.NAV_BAR_RATIO : 0,
             ),
-            child: ItemsView.Class(),
+            child: GridView.Class(),
           ),
         );
       },

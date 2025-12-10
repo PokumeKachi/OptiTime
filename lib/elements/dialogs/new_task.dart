@@ -51,6 +51,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _nameController.dispose();
+    _nameShakeController.dispose();
     _groupController.dispose();
     widget.keyEventProvider.removeListener(_handleKey);
 
@@ -64,7 +65,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     final colorScheme = Theme.of(context).colorScheme;
     final loc = AppLocalizations.of(context)!;
 
-    final itemProvider = context.read<ItemProvider>();
+    final itemProvider = context.read<SyncedProvider>();
 
     final inputBorder = ([bool focused = false]) => OutlineInputBorder(
       borderRadius: BorderRadius.circular(Config.CORNER.ROUND),
@@ -89,15 +90,15 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
           controller: _nameController,
           decoration: InputDecoration(
             labelText: loc.newTaskDialogTaskName,
-            border: inputBorder(),
-            enabledBorder: inputBorder(),
-            focusedBorder: inputBorder(true),
+            border: Config.getDialogInputBorder(context: context),
+            enabledBorder: Config.getDialogInputBorder(context: context),
+            focusedBorder: Config.getDialogInputBorder(context: context, focused: true),
           ),
         ),
       ),
       Autocomplete.Class(
         controller: _groupController,
-        getOptions: () => itemProvider.list
+        getOptions: () => itemProvider.items
             .whereType<GroupTask>()
             .map((i) => i.name)
             .toList(),
@@ -143,7 +144,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            loc.newTaskDialogTitle,
+            loc.newTaskDialogLabel,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: Config.FONT_SIZE.BIG,
@@ -197,7 +198,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
 
   void _create([String? _]) {
     final loc = AppLocalizations.of(context)!;
-    final itemProvider = context.read<ItemProvider>();
+    final itemProvider = context.read<SyncedProvider>();
 
     final name = _nameController.text;
     final groupName = _groupController.text;
@@ -223,7 +224,7 @@ class ClassState extends State<Class> with SingleTickerProviderStateMixin {
     if (groupName.isEmpty) {
       itemProvider.add(task);
     } else {
-      final group = itemProvider.list.whereType<GroupTask>().firstWhere(
+      final group = itemProvider.items.whereType<GroupTask>().firstWhere(
         (g) => g.name == groupName,
         orElse: () {
           final group = GroupTask(

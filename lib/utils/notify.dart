@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-
 import 'package:flutter/material.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:todo/utils/config.dart' as Config;
@@ -44,7 +43,7 @@ void send({
       return MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
-          onTap: () => snackBar.hide(),
+          onTap: () => snackBar.remove(),
           child: TweenAnimationBuilder<double>(
             tween: Tween(begin: 0.0, end: 1.0),
             duration: Config.ANIMATION.EXTREMELY_LONG,
@@ -103,6 +102,7 @@ void send({
                               ),
                               fontSize: Config.FONT_SIZE.BIG,
                             ),
+                            maxLines: 1,
                           ),
                           Text(
                             subtitle.substring(
@@ -113,6 +113,7 @@ void send({
                               color: Color.lerp(backgroundColor, textColor, t),
                               fontSize: Config.FONT_SIZE.MEDIUM,
                             ),
+                            maxLines: 1,
                           ),
                         ],
                       ),

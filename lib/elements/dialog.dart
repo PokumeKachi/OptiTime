@@ -9,6 +9,7 @@ import 'dialogs/shared/provider.dart';
 import 'dialogs/new_task.dart' as NewTask;
 import 'dialogs/sign_in.dart' as SignIn;
 import 'dialogs/sign_out.dart' as SignOut;
+import 'dialogs/timer.dart' as Timer;
 
 class Class extends StatefulWidget {
   const Class({super.key});
@@ -25,6 +26,7 @@ class _ClassState extends State<Class> {
     NewTask.Class(index: 1, keyEventProvider: keyEventProvider),
     SignIn.Class(index: 2, keyEventProvider: keyEventProvider),
     SignOut.Class(index: 3, keyEventProvider: keyEventProvider),
+    Timer.Class(index: 4, keyEventProvider: keyEventProvider),
   ];
 
   @override

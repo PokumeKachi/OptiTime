@@ -14,12 +14,33 @@ class Class extends StatelessWidget {
     debugPrint('Target index of navigation button is $targetIndex');
     final cachedProvider = context.read<CachedProvider>();
 
-    cachedProvider.overlayIndex = cachedProvider.overlayIndex == targetIndex ? 0 : targetIndex;
+    final selectedUUID = cachedProvider.selectedUUID;
 
-    print(cachedProvider.overlayIndex);
+    if (selectedUUID == null) {
+      cachedProvider.overlayIndex = cachedProvider.overlayIndex == targetIndex
+          ? 0
+          : targetIndex;
 
-    if (targetIndex == 0) {
-      context.read<CachedProvider>().dialogIndex = 1;
+      if (targetIndex == 0) {
+        context.read<CachedProvider>().dialogIndex = 1;
+      }
+    } else {
+      final syncedProvider = context.read<SyncedProvider>();
+
+      switch (targetIndex) {
+        case 1:
+          syncedProvider.remove(selectedUUID);
+          cachedProvider.selectedUUID = null;
+          break;
+
+        case 2:
+          context.read<CachedProvider>().dialogIndex = 4;
+          break;
+
+        case 3:
+          print('brea3');
+          break;
+      }
     }
   }
 
@@ -32,13 +53,19 @@ class Class extends StatelessWidget {
     return Expanded(
       child: SizedBox.expand(
         child: Selector<CachedProvider, bool>(
-          selector: (_, p) => p.overlayIndex == targetIndex,
+          selector: (_, p) =>
+              p.overlayIndex == targetIndex ||
+              (p.selectedUUID != null && targetIndex < 4),
           builder: (context, isFocused, child) {
             return AnimatedContainer(
               duration: Config.ANIMATION.SHORT,
               curve: Curves.easeOut,
               decoration: BoxDecoration(
-                color: isFocused ? colorScheme.tertiary : Colors.transparent,
+                color: isFocused
+                    ? (targetIndex == 0
+                          ? colorScheme.tertiary
+                          : colorScheme.primary)
+                    : Colors.transparent,
                 borderRadius: isFocused
                     ? BorderRadius.circular(Config.CORNER.SHARPEST)
                     : BorderRadius.circular(Config.CORNER.ROUNDEST),

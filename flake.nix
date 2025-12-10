@@ -25,6 +25,14 @@
                 zlib
                 bzip2
                 jdk
+                mesa
+                libGL
+                libGLU
+                libglvnd
+                gtk2
+                gtk3
+                gtk4
+                egl-wayland
             ];
             sdkPath = "$HOME/.android-sdk";
         in
@@ -45,10 +53,11 @@
                     export ANDROID_SDK_ROOT=${sdkPath}
                     export ANDROID_HOME=$ANDROID_SDK_ROOT
                     export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath buildInputs}:$LD_LIBRARY_PATH
+                    export LD_LIBRARY_PATH=${pkgs.mesa}/lib:${pkgs.libGL}/lib:${pkgs.libGLU}/lib:${pkgs.libglvnd}/lib:${pkgs.egl-wayland}/lib:${pkgs.mesa-demos}/lib:${pkgs.lib.makeLibraryPath buildInputs}:$LD_LIBRARY_PATH
                     export PATH=$HOME/.pub-cache/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/build-tools/34.0.0:$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
                     export QT_QPA_PLATFORM=xcb
 
-                    export CHROME_EXECUTABLE=$(which brave)
+                    export CHROME_EXECUTABLE=$(which chromium)
 
                     export FONTCONFIG_PATH="${pkgs.fontconfig.out}/etc/fonts"
                     export XDG_DATA_DIRS="${pkgs.noto-fonts}/share:${pkgs.noto-fonts-cjk-sans}/share:${pkgs.noto-fonts-emoji}/share:$XDG_DATA_DIRS"
