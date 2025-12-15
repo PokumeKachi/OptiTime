@@ -85,6 +85,7 @@ class CachedProvider extends ChangeNotifier {
 
   void endFocusSession() {
     Future.microtask(() {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
       focusDuration = null;
       overlayIndex = 0;
       print('done already?');
