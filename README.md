@@ -1,4 +1,4 @@
-# A todo app that I am writing as a STEM entry for the girlfriend of a close friend of mine.
+# A todo app that I wrote as a STEM project
 
 # References
 https://m3.material.io/styles/color/roles

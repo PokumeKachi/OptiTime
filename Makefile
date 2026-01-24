@@ -22,14 +22,9 @@ run: flake-develop
 
 web-run: flake-develop
 	flutter run -d chrome
-	# firefox -new-window http://localhost:41859
-	# flutter run -d web-server --web-port=41859
-	# flutter run
 
 apk-run: flake-develop
 	clear && flutter run -d R58WA1L5GYY | grep -v "VRI\|InsetsController\|InteractionJankMonitor\|ProfileInstaller\|W/om.example.todo\|D/\|E/flutter"
-	# | grep -v "I/VRI" | grep -v "I/InsetsController"
-	# flutter run
 
 watch: flake-develop
 	foot -e sh -c 'exec watchexec -r --ignore .git/ --ignore .gitignore --ignore .target-clippy/ --ignore build/ -- make run' & disown
