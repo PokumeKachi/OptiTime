@@ -1,4 +1,4 @@
-# A todo app that I wrote as a STEM project
+# A todo app that I wrote as a STEM project (First experiment with Flutter)
 
 # References
 https://m3.material.io/styles/color/roles
